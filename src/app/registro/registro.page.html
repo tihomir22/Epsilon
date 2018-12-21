@@ -1,0 +1,57 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>
+        Registro
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+        
+        <ion-content padding>
+        <form  (ngSubmit)="saveEntry()">
+            <ion-item >
+                <ion-input type="text" placeholder="Introduzca su nombre" required></ion-input>
+                <ion-input type="text" placeholder="Introduzca sus apellidos"></ion-input>
+              </ion-item>
+              
+              <ion-item>
+                <ion-label color="primary">Usuario</ion-label>
+                <ion-input type="text" placeholder="Introduzca su usuario"></ion-input>
+              </ion-item>
+              
+              <ion-item>
+                <ion-label color="primary">Email </ion-label>
+                <ion-input type="email" placeholder="Introduzca su email"></ion-input>
+              </ion-item>
+              
+              
+              <ion-item>
+                  <ion-input [type]="passwordType" placeholder="Introduzca su contraseña"></ion-input><ion-icon name="eye" item-right (click)="mostrarContrasenya(1)" [color]="colorOjo"></ion-icon>
+              </ion-item>
+              <ion-item>
+            
+                <ion-input [type]="passwordType2" placeholder="Repita su contraseña"></ion-input><ion-icon name="eye" item-right (click)="mostrarContrasenya(2)" [color]="colorOjo2"></ion-icon>
+              </ion-item>
+              <ion-item>
+                  <ion-label color="primary">Desea recibir actualizaciones o noticias a su email?</ion-label>
+                  <ion-toggle></ion-toggle>
+                </ion-item>
+
+              <div padding>
+                  <ion-grid fixed>
+                    <ion-row>
+                      <ion-col size="6">
+                          <ion-button size="large" expand="block" color="secondary" type="submit" [disabled]="!form.valid">Registrar</ion-button>
+                      </ion-col>
+                      <ion-col size="6">
+                          <ion-button size="large" expand="block" color="medium" (click)="cancelar()">Cancelar</ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                  
+                </div>
+            </form>
+        </ion-content>
+  
