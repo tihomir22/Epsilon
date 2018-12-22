@@ -7,7 +7,7 @@
 [![Downloads Stats][npm-downloads]][npm-url]
 
 
-![](https://images.pexels.com/photos/257360/pexels-photo-257360.jpeg?cs=srgb&dl=bench-carved-stones-cemetery-257360.jpg&fm=jpg)
+![](https://i.imgur.com/dRIPw3a.png)
 
 
 
