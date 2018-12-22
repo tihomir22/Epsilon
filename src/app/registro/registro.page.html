@@ -10,40 +10,68 @@
   </ion-header>
         
         <ion-content padding>
-        <form  (ngSubmit)="saveEntry()">
-            <ion-item >
-                <ion-input type="text" placeholder="Introduzca su nombre" required></ion-input>
-                <ion-input type="text" placeholder="Introduzca sus apellidos"></ion-input>
-              </ion-item>
-              
-              <ion-item>
-                <ion-label color="primary">Usuario</ion-label>
-                <ion-input type="text" placeholder="Introduzca su usuario"></ion-input>
-              </ion-item>
-              
-              <ion-item>
-                <ion-label color="primary">Email </ion-label>
-                <ion-input type="email" placeholder="Introduzca su email"></ion-input>
-              </ion-item>
-              
-              
-              <ion-item>
-                  <ion-input [type]="passwordType" placeholder="Introduzca su contraseña"></ion-input><ion-icon name="eye" item-right (click)="mostrarContrasenya(1)" [color]="colorOjo"></ion-icon>
-              </ion-item>
-              <ion-item>
+        <form (ngSubmit)="createEntry()" [formGroup]="formgroup" >
+            <!-- NOMBRE -->  
+              <ion-chip *ngIf="formgroup.status=='VALID'" disabled color="success">
+                <ion-icon name="thumbs-up"></ion-icon>
+                <ion-label>Enhorabuena esta correcto!</ion-label>
+              </ion-chip>  
             
-                <ion-input [type]="passwordType2" placeholder="Repita su contraseña"></ion-input><ion-icon name="eye" item-right (click)="mostrarContrasenya(2)" [color]="colorOjo2"></ion-icon>
+            <ion-item>
+                <ion-label position="floating">Usuario</ion-label>
+                <ion-input class="form-control" type="text"  formControlName="name" color="primary" [(ngModel)]="usuarioString"></ion-input>
               </ion-item>
+              <ion-label *ngIf="name.hasError('required') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Nombre es requerido</ion-label>
+              <ion-label *ngIf="name.hasError('maxLength') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres</ion-label>
+              
+              <!-- EMAIL -->  
               <ion-item>
-                  <ion-label color="primary">Desea recibir actualizaciones o noticias a su email?</ion-label>
-                  <ion-toggle></ion-toggle>
+                  <ion-label position="floating">Email</ion-label>
+                  <ion-input type="email"  formControlName="email" color="primary" [(ngModel)]="emailString"></ion-input>
                 </ion-item>
+                
+                <ion-label *ngIf="email.hasError('required') && email.touched" style="color:red;" ><ion-icon slot="start" name="at"></ion-icon> Email es requerido<br></ion-label>  
+                <ion-label *ngIf="email.hasError('pattern') && email.touched" style="color:red;" ><ion-icon slot="start" name="at"></ion-icon> Lo introducido no es un email<br></ion-label> 
+                <ion-label *ngIf="email.hasError('maxLength') && email.touched" style="color:red;" ><ion-icon slot="start" name="at"></ion-icon> No puede tener más de 100 caracteres</ion-label>
+                     
+              <!-- PASS 1  -->  
+              <ion-item>
+                  <ion-input [type]="passwordType" placeholder="Introduzca su contraseña" color="primary" formControlName="pass" [(ngModel)]="passString"></ion-input><ion-icon name="eye" item-right (click)="mostrarContrasenya(1)" [color]="colorOjo"></ion-icon>
+              </ion-item>
+              <ion-label *ngIf="pass.hasError('pattern') && pass.touched " style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> La contraseña debe contener al menos una letra, al menos un número y tener más de seis caracteres. <br></ion-label>  
+              <ion-label *ngIf="pass.hasError('required') && pass.touched " style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debe introducir la contraseña <br></ion-label>  
+              <ion-label *ngIf="pass.hasError('maxLength') && pass.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 40 caracteres</ion-label>
+              
+              
+              <!-- PASS 2 -->  
+              <ion-item>
+                <ion-input [type]="passwordType2" placeholder="Repita su contraseña" color="primary" formControlName="pass2" [(ngModel)]="passString2"></ion-input><ion-icon name="eye" item-right (click)="mostrarContrasenya(2)" [color]="colorOjo2"></ion-icon>
+              </ion-item>
+              <ion-label *ngIf="pass2.hasError('pattern') && pass2.touched " style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> La contraseña debe contener al menos una letra, al menos un número y tener más de seis caracteres. <br></ion-label>  
+              <ion-label *ngIf="pass2.hasError('required') && pass2.touched " style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debe introducir la segunda contraseña <br></ion-label>  
+              <ion-label *ngIf="passString!=passString2 && pass.touched && pass2.touched" style="color:red;"><ion-icon slot="start" name="alert"></ion-icon> Deben coincidir las contraseñas<br></ion-label>  
+              <ion-label *ngIf="pass2.hasError('maxLength') && pass2.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 40 caracteres</ion-label>
+                
+              <ion-list>
+                  <ion-radio-group name="sexo" [(ngModel)]="sexoString">
+                    <ion-list-header>Sexo</ion-list-header>
+                    <ion-item>
+                      <ion-label>Masculino</ion-label>
+                      <ion-radio value="masculino" checked></ion-radio>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>Femenino</ion-label>
+                      <ion-radio value="femenino" ></ion-radio>
+                    </ion-item>
+                  </ion-radio-group>
+                </ion-list>
+
 
               <div padding>
                   <ion-grid fixed>
                     <ion-row>
                       <ion-col size="6">
-                          <ion-button size="large" expand="block" color="secondary" type="submit" [disabled]="!form.valid">Registrar</ion-button>
+                          <ion-button size="large" expand="block" color="secondary" type="submit" >Registrar</ion-button>
                       </ion-col>
                       <ion-col size="6">
                           <ion-button size="large" expand="block" color="medium" (click)="cancelar()">Cancelar</ion-button>
