@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ToastController } from '@ionic/angular';
+import { NavController, ToastController } from '@ionic/angular';
 import {FormBuilder,FormGroup,AbstractControl,Validators,FormControl} from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @Component({
@@ -9,7 +10,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
 })
-export class RegistroPage implements OnInit {
+export class RegistroPage {
 
   passwordType:string = 'password';
   passwordShown:boolean=false;
@@ -20,18 +21,51 @@ export class RegistroPage implements OnInit {
   colorOjo2:string = 'medium';
   
   formgroup:FormGroup;
-  matching_passwords_group:FormGroup;
+ 
   name:AbstractControl;
   email:AbstractControl;
   pass:AbstractControl;
   pass2:AbstractControl;
 
-  usuarioString:String;
-  emailString:String;
-  passString:String;
-  passString2:String;
-  sexoString:String;
+   /**
+    * @name usuarioString
+    * @type {Any}
+    * @public
+    * @description     string de usuario en el form
+    */
+   public usuarioString        : any;
 
+   /**
+    * @name emailString
+    * @type {Any}
+    * @public
+    * @description     string de email en el form
+    */
+   public emailString        : any;
+
+  /**
+    * @name passString
+    * @type {Any}
+    * @public
+    * @description     string de pass1 en el form
+    */
+   public passString         : any;
+
+  /**
+    * @name passString2
+    * @type {Any}
+    * @public
+    * @description     string de pass2 en el form
+    */
+   public passString2        : any;
+
+   /**
+    * @name sexoString
+    * @type {Any}
+    * @public
+    * @description     string de sexo en el form
+    */
+   public sexoString        : any;
 
   /**
     * @name baseURI
@@ -42,7 +76,7 @@ export class RegistroPage implements OnInit {
    private baseURI               : string  = "http://dembow.gearhostpreview.com/";
 
 
-  constructor(public navCtrl:NavController,public formbuilder:FormBuilder,public http:HttpClient,public NP:NavParams,private toastCtrl:ToastController) {
+  constructor(public navCtrl:NavController,public http:HttpClient,public formbuilder:FormBuilder,public toastCtrl:ToastController) {
 
     this.formgroup=formbuilder.group({
       name:['',Validators.compose([Validators.required,Validators.maxLength(25)])],
@@ -78,24 +112,21 @@ export class RegistroPage implements OnInit {
     this.pass2=this.formgroup.controls['pass2'];
 
   }
+  checkValue(value:any){
+    if(value.target.value=="masculino"){
+      this.sexoString="masculino";
+    }else{
+      this.sexoString="femenino";
+    }
+  }
 
-   /**
-    * Save a new record that has been added to the page's HTML form
-    * Use angular's http post method to submit the record data
-    *
-    * @public
-    * @method createEntry
-    * @param this.usuarioString 			{String} 			Name value from form field
-    * @param this.emailString 	{String} 			Description value from form field
-    * @param this.passString 	{String} 			Pass value from form field
-    * @param this.sexoString 	{String} 			Gender value from form field
-    * @return {None}
-    */
-   createEntry(usuario : string, email : string,pass:string,sexo:string) : void
+  
+   createEntry() : void
    {
     if(this.formgroup.status=="VALID"){
+      
       let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
-          options 	: any		= { "key" : "create", "usuario" : usuario, "email" : email,"pass":pass,"sexo":sexo},
+          options 	: any		= { "key" : "create", "usuario" : this.usuarioString, "email" : this.emailString,"pass":this.passString,"sexo":this.sexoString},
           url       : any      	= this.baseURI + "manage-dataIONIC.php";
 
       this.http.post(url, JSON.stringify(options), headers)
@@ -103,11 +134,16 @@ export class RegistroPage implements OnInit {
       .subscribe((data : any) =>
       {
          // If the request was successful notify the user
-         this.sendNotification(`Felicidades el usuario: ${name} fue creado exitosamente`);
+         this.sendNotification(`Felicidades el usuario: ${this.usuarioString} fue creado exitosamente`);
+         this.navCtrl.goBack();
       },
       (error : any) =>
       {
-         this.sendNotification('Algo fue mal!' + JSON.stringify(options));
+        if(error.status==200){
+          this.sendNotification('El usuario: '+this.usuarioString+' ya existe! ');
+        }else{
+         this.sendNotification('Algo fue mal!' +JSON.stringify(options));
+        }
       });
     }
    }

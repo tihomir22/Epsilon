@@ -19,7 +19,7 @@
             
             <ion-item>
                 <ion-label position="floating">Usuario</ion-label>
-                <ion-input class="form-control" type="text"  formControlName="name" color="primary" [(ngModel)]="usuarioString"></ion-input>
+                <ion-input class="form-control" type="text"  formControlName="name" color="primary" [(ngModel)]="usuarioString" ></ion-input>
               </ion-item>
               <ion-label *ngIf="name.hasError('required') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Nombre es requerido</ion-label>
               <ion-label *ngIf="name.hasError('maxLength') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres</ion-label>
@@ -52,8 +52,8 @@
               <ion-label *ngIf="passString!=passString2 && pass.touched && pass2.touched" style="color:red;"><ion-icon slot="start" name="alert"></ion-icon> Deben coincidir las contraseñas<br></ion-label>  
               <ion-label *ngIf="pass2.hasError('maxLength') && pass2.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 40 caracteres</ion-label>
                 
-              <ion-list>
-                  <ion-radio-group name="sexo" [(ngModel)]="sexoString">
+              <ion-list >
+                  <ion-radio-group (ionChange)="checkValue($event)">
                     <ion-list-header>Sexo</ion-list-header>
                     <ion-item>
                       <ion-label>Masculino</ion-label>

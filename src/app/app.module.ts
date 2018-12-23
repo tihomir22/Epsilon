@@ -6,9 +6,11 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import {HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,9 +18,13 @@ import { AppRoutingModule } from './app-routing.module';
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
+    ReactiveFormsModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    HttpClientModule,
+    
+    
+   
   ],
   providers: [
     StatusBar,
