@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { IonicModule } from '@ionic/angular';
 
-import { DashboardPage } from './dashboard.page';
+import { AgregarActivosPage } from './agregar-activos.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: DashboardPage
+    component: AgregarActivosPage
   }
 ];
 
@@ -22,6 +21,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [DashboardPage]
+  declarations: [AgregarActivosPage]
 })
-export class DashboardPageModule {}
+export class AgregarActivosPageModule {}

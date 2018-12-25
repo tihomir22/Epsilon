@@ -142,7 +142,7 @@ export class RegistroPage {
         if(error.status==200){
           this.sendNotification('El usuario: '+this.usuarioString+' ya existe! ');
         }else{
-         this.sendNotification('Algo fue mal!' +JSON.stringify(options));
+          this.sendNotification('Algo fue mal!' +JSON.stringify(options));
         }
       });
     }

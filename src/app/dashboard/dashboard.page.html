@@ -12,10 +12,24 @@
 <ion-content padding color="primary">
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
-            <ion-card-title>{{data.usuario}}</ion-card-title>
+            <ion-card-title>Bienvenido! </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-            <p>The content for this card</p>
+            <p>{{data.usuario}}</p>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="!hayActivos" color="secondary" >
+        <ion-card-header>
+            <ion-card-title>Todavia no tienes ningun activo!</ion-card-title>
+        </ion-card-header>
+        <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
+            <ion-fab-button>
+              <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+          </ion-fab>
+        <ion-card-content>
+            <p>Empieza a agregarlos desde el boton de la derecha</p>
         </ion-card-content>
     </ion-card>
 </ion-content>
