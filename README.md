@@ -23,3 +23,4 @@
 * 0.0.1 : Creación de 2 paginas. Login y registro y implementado diseño basico.
 * 0.0.2 : Implementada validación en formularios, mejoras graficas, funcionabilidad y preparación para CRUD.
 * 0.0.3 : Terminado de implementar registro y login , junto a verificaciones importantes, empezada dashboard post-login
+* 0.0.4: Dashboard semifuncional, implementada funcionabilidad de añadir nuevos activos, diseño de interfaz basica, mejorado el CRUD y resueltos bugs menores.
