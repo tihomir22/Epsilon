@@ -5,14 +5,16 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-searchbar animated (ionChange)="buscar()" (ionBlur)="dejarDeBuscar()"></ion-searchbar>
-
+    <ion-searchbar animated  (ionChange)="filtrarActivos()" (ionBlur)="dejarDeBuscar()" [(ngModel)]="searchTerm" debounce="100"></ion-searchbar>
+ 
+      <ion-spinner *ngIf="searching" name="crescent"></ion-spinner>
+   
   <ion-list *ngIf="activos_cripto.length>0">
       <ion-list-header>
           <ion-label>Criptomonedas</ion-label>
         </ion-list-header>
     <ion-item-sliding *ngFor="let activo of activos_cripto">
-      <ion-item >
+      <ion-item (click)="abrirDetalles(activo)">
           <ion-avatar item-start style="margin:5px;">
               <img [src]="generarImgCripto(activo)">
             </ion-avatar>
@@ -35,7 +37,7 @@
           <ion-label>Stocks</ion-label>
         </ion-list-header>
     <ion-item-sliding *ngFor="let activo of activos_stock">
-      <ion-item >
+      <ion-item (click)="abrirDetalles(activo)">
           <ion-avatar item-start style="margin:5px;">
               <img [src]="generarImgStock(activo)">
             </ion-avatar>
