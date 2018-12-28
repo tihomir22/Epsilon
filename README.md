@@ -25,3 +25,4 @@
 * 0.0.3 : Terminado de implementar registro y login , junto a verificaciones importantes, empezada dashboard post-login
 * 0.0.4: Dashboard semifuncional, implementada funcionabilidad de añadir nuevos activos, diseño de interfaz basica, mejorado el CRUD y resueltos bugs menores.
 * 0.0.5: implementada searchbar en agregar-activos, creada nueva pagina y funcionabilidad basica, errores menores solucionados
+* 0.0.6 : Un usuario ya puede tener activos, tanto criptomonedas como acciones de empresas y se guardan en servidor SQL. Corregidos errores y bugs menores. Interfaz de detalles-activo.page mejorada. Solucionados bugs menores.Modificación de estructura de la BBDD. Preparación para uso de API's externas. Bugs menores arreglados
