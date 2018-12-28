@@ -1,19 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { ToastController, NavController, LoadingController } from '@ionic/angular';
+import { ToastController, NavController, LoadingController, AlertController } from '@ionic/angular';
 import "rxjs/add/operator/debounceTime";
+import "hammerjs"; // HAMMER TIME
+import { HammerGestureConfig } from "@angular/platform-browser";
+
 
 @Component({
   selector: 'app-agregar-activos',
   templateUrl: './agregar-activos.page.html',
   styleUrls: ['./agregar-activos.page.scss'],
 })
-export class AgregarActivosPage implements OnInit {
+export class AgregarActivosPage extends HammerGestureConfig{
+  buildHammer(element: HTMLElement) {
+    const mc = new (<any>window).Hammer(element);
+
+    for (const eventName in this.overrides) {
+      if (eventName) {
+        mc.get(eventName).set(this.overrides[eventName]);
+      }
+    }
+
+    return mc;
+  }
   data:Array<any>=new Array;
   
   searchTerm:string;
-
+ 
   copiaData:Array<any>=new Array;
   activos_cripto:Array<any>=new Array;
   activos_stock:Array<any>=new Array;
@@ -23,15 +37,18 @@ export class AgregarActivosPage implements OnInit {
   private baseURI               : string  = "http://dembow.gearhostpreview.com/";
 
 
-  constructor(public service:ServiceLoginDashboardService,public http:HttpClient,public toastCtrl:ToastController,public navCtrl:NavController,public loadingCtrl: LoadingController) {
+  constructor(public alertController: AlertController, public service:ServiceLoginDashboardService,public http:HttpClient,public toastCtrl:ToastController,public navCtrl:NavController,public loadingCtrl: LoadingController) {
+    super();
     this.data=service.getDestn();
-    
+
   }
 
   ngOnInit() {
     this.cargarActivos();
-   
   }
+ 
+  
+  
  
  
   filtrarActivos(){
@@ -49,9 +66,16 @@ export class AgregarActivosPage implements OnInit {
     this.clasificarResultado(array);
     
   }
-  
-  
+  async presentAlert(activo:any) {
+    const alert = await this.alertController.create({
+      header: activo.nombre,
+      subHeader: activo.tipo,
+      message: activo.descripcion,
+      buttons: ['OK']
+    });
 
+    await alert.present();
+  }
 
   cargarActivos(){
     let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -96,6 +120,7 @@ export class AgregarActivosPage implements OnInit {
     if(this.activos_stock.length>0){
       this.activos_stock.length=0;
     }
+
     this.data=data;
     data.forEach(element => {
       if (element.tipo=="Criptomoneda") {
@@ -109,14 +134,27 @@ export class AgregarActivosPage implements OnInit {
   }
   abrirDetalles(activo:any){
     this.service.setActivo(activo);
+    this.service.setTipoAdquisicion("indeterminada");
     this.navCtrl.navigateForward("/detalles-activo");
     console.dir(activo.nombre);
+  }
+  comprar(item:any){
+    this.service.setActivo(item);
+    this.service.setTipoAdquisicion("comprar");
+    this.navCtrl.navigateForward("/detalles-activo");
+    console.dir(item.nombre);
+  }
+  vender(item:any){
+    this.service.setActivo(item);
+    this.service.setTipoAdquisicion("vender");
+    this.navCtrl.navigateForward("/detalles-activo");
+    console.dir(item.nombre);
   }
   buscar(){
     console.dir("vamos a buscar loco"+ this.searchTerm);
   }
-  dejarDeBuscar(){
-    console.dir("dejemos de buscar wey "+ this.searchTerm);
+  mostrarDescripcion(activo:any){
+    console.dir(activo.descripcion);
   }
 
   async sendNotification(message : string)

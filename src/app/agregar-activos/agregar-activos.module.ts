@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { AgregarActivosPage } from './agregar-activos.page';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { ExpandableComponent } from '../expandable/expandable.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,6 @@ HttpModule,
 HttpClientModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [AgregarActivosPage]
+  declarations: [AgregarActivosPage,ExpandableComponent]
 })
 export class AgregarActivosPageModule {}

@@ -8,6 +8,7 @@ export class ServiceLoginDashboardService {
 
   private destn: any;
   private activo:any;
+  private tipoAdquisicion:string='';
 
   constructor() {}
 
@@ -24,5 +25,12 @@ export class ServiceLoginDashboardService {
   }
   getActivo(){
     return this.activo;
+  }
+
+  public setTipoAdquisicion(tipo:string){
+    this.tipoAdquisicion=tipo;
+  }
+  public getTipoAdquisicion(){
+    return this.tipoAdquisicion;
   }
 }

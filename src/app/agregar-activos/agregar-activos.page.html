@@ -13,8 +13,8 @@
       <ion-list-header>
           <ion-label>Criptomonedas</ion-label>
         </ion-list-header>
-    <ion-item-sliding *ngFor="let activo of activos_cripto">
-      <ion-item (click)="abrirDetalles(activo)">
+    <ion-item-sliding #slidingItem *ngFor="let activo of activos_cripto">
+      <ion-item #item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)">
           <ion-avatar item-start style="margin:5px;">
               <img [src]="generarImgCripto(activo)">
             </ion-avatar>
@@ -23,21 +23,22 @@
         <ion-button shape="round" fill="outline"><ion-icon slot="start" name="add"></ion-icon> ADD</ion-button>
       </ion-item>
       <ion-item-options side="start">
-        <ion-item-option color="success" (click)="favorite(item)">COMPRAR</ion-item-option>
-        <ion-item-option color="danger" (click)="share(item)">Vender</ion-item-option>
+        <ion-item-option color="success" (click)="comprar(activo)">COMPRAR</ion-item-option>
+        <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
       </ion-item-options>
-  
       <ion-item-options side="end">
         <ion-item-option (click)="unread(item)">Favorito</ion-item-option>
       </ion-item-options>
+      
     </ion-item-sliding>
   </ion-list>
+
   <ion-list *ngIf="activos_stock.length>0">
       <ion-list-header>
           <ion-label>Stocks</ion-label>
         </ion-list-header>
-    <ion-item-sliding *ngFor="let activo of activos_stock">
-      <ion-item (click)="abrirDetalles(activo)">
+    <ion-item-sliding #slidingItem *ngFor="let activo of activos_stock">
+      <ion-item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)">
           <ion-avatar item-start style="margin:5px;">
               <img [src]="generarImgStock(activo)">
             </ion-avatar>
@@ -46,14 +47,16 @@
         <ion-button shape="round" fill="outline"><ion-icon slot="start" name="add"></ion-icon> ADD</ion-button>
       </ion-item>
       <ion-item-options side="start">
-        <ion-item-option color="success" (click)="favorite(item)">COMPRAR</ion-item-option>
-        <ion-item-option color="danger" (click)="share(item)">Vender</ion-item-option>
+        <ion-item-option color="success" (click)="comprar(activo)">COMPRAR</ion-item-option>
+        <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
       </ion-item-options>
   
       <ion-item-options side="end">
         <ion-item-option (click)="unread(item)">Favorito</ion-item-option>
       </ion-item-options>
+     
     </ion-item-sliding>
+    
   </ion-list>
 
 </ion-content>
