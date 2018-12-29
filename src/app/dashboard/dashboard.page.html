@@ -18,6 +18,11 @@
             <p>{{data.usuario}}</p>
         </ion-card-content>
     </ion-card>
+    <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
+        <ion-fab-button>
+          <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
 
     <ion-card *ngIf="!hayActivos" color="secondary" >
         <ion-card-header>
@@ -32,4 +37,30 @@
             <p>Empieza a agregarlos desde el boton de la derecha</p>
         </ion-card-content>
     </ion-card>
+
+    <ion-list>
+      
+    <ion-card-header color="dark" padding style="text-align:center;margin-left:-5px;">
+        dembow
+    </ion-card-header>
+    <ion-card-content style="margin:0px;">
+        <ion-item style="text-align:center;">
+                <ion-label>#</ion-label>
+                <ion-label>Precio Compra</ion-label>
+                <ion-label>Precio Actual</ion-label>
+                <ion-label>Nombre</ion-label>
+        </ion-item>
+        <ion-item *ngFor="let activo of arrayActivos;let i = index" style="text-align:center;">
+                <ion-avatar item-start >
+                        <img [src]="generarImgCripto(activo)">
+                </ion-avatar>
+                <!--<ion-label [(ngModel)]="getPrecioCompra(activo)"></ion-label>-->
+                <ion-label>{{relaciones[i].precio_compra}}</ion-label>
+                <ion-label>{{arrayActivosLive[i]}}</ion-label>
+                 <ion-label>{{activo.nombre}}</ion-label>
+        </ion-item>
+    </ion-card-content>
+
+    </ion-list>
+    
 </ion-content>

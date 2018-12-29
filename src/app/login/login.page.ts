@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, ToastController } from '@ionic/angular';
+import { NavController, ToastController, MenuController } from '@ionic/angular';
 import {FormBuilder,FormGroup,AbstractControl,Validators,FormControl} from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {ServiceLoginDashboardService} from '../service-login-dashboard.service';
+
 
 @Component({
   selector: 'app-login',
@@ -28,7 +29,7 @@ export class LoginPage implements OnInit {
 
 
 
-  constructor(public navCtrl:NavController,public http:HttpClient,public formbuilder:FormBuilder,public toastCtrl:ToastController,public service:ServiceLoginDashboardService) { 
+  constructor(public menuCtrl:MenuController,public navCtrl:NavController,public http:HttpClient,public formbuilder:FormBuilder,public toastCtrl:ToastController,public service:ServiceLoginDashboardService) { 
     this.formgroup=formbuilder.group({
       usuario:['',Validators.required],
       pass:['',Validators.required]
@@ -36,7 +37,7 @@ export class LoginPage implements OnInit {
 
     this.usuario=this.formgroup.controls['usuario'];
     this.pass=this.formgroup.controls['pass'];
-
+    this.menuCtrl.enable(false);
   }
 
   login(){
@@ -71,6 +72,7 @@ export class LoginPage implements OnInit {
    }
 
   ngOnInit() {
+    this.menuCtrl.enable(false);
   }
 
   abrirRegistro(){

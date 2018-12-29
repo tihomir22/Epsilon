@@ -130,7 +130,7 @@ export class DetallesActivoPage implements OnInit {
       this.idUsuario=this.usuario.idepsilon_usuarios;
       this.activoId=this.activo.id;
       let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options 	: any		= { "key" : "anyadir_activo_a_usuario", "id_usuario_ajeno" : this.idUsuario, "id_activo_ajeno" : this.activo.id,"tipo":this.tipo,"precio_compra":this.precioDouble,"fecha_operacion":this.fechaStr,"exchange":this.exchangeStr},
+      options 	: any		= { "key" : "anyadir_activo_a_usuario", "id_usuario_ajeno" : this.idUsuario, "id_activo_ajeno" : this.activo.id,"tipo":this.tipo,"precio_compra":this.precioDouble,"fecha_operacion":this.fechaStr,"exchange":this.exchangeStr,"siglas_operacion":this.parStr},
       url       : any      	= this.baseURI + "manage-dataIONIC.php";
 
     this.http.post(url, JSON.stringify(options), headers)
@@ -151,6 +151,7 @@ export class DetallesActivoPage implements OnInit {
     });
     }
   }
+  
   
 
   
