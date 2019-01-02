@@ -1,66 +1,124 @@
 <ion-header>
     <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>
-        Dashboard
-      </ion-title>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>
+            Dashboard
+        </ion-title>
     </ion-toolbar>
-  </ion-header>
+</ion-header>
 
 <ion-content padding color="primary">
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
-            <ion-card-title>Bienvenido! </ion-card-title>
+            <ion-card-title>Bienvenido! {{data.usuario}} <ion-label style="text-align:right;">Precio en USD</ion-label></ion-card-title>
+            
         </ion-card-header>
         <ion-card-content>
-            <p>{{data.usuario}}</p>
+            
+            <ion-row>
+                    <ion-col size="4"><ion-label>Posesiones Totales</ion-label></ion-col>
+                    <ion-col size="4"><ion-label>Posesiones Netas</ion-label></ion-col>
+                    <ion-col size="4"><ion-label>% Total</ion-label></ion-col>
+                </ion-row>
+            <ion-row>
+                <ion-col size="4"><ion-label>{{totalInvertidoBase}}</ion-label></ion-col>
+                <ion-col size="4"><ion-label>{{totalInvertidoActual}}</ion-label></ion-col>
+                <ion-col size="4" ><ion-label [color]="tenyirLabel(porcentajeNum)">{{porcentajeNum}}</ion-label></ion-col>
+            </ion-row>
+           
+            
         </ion-card-content>
     </ion-card>
+    <!--
     <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
         <ion-fab-button>
-          <ion-icon name="add"></ion-icon>
+            <ion-icon name="add"></ion-icon>
         </ion-fab-button>
-      </ion-fab>
-
-    <ion-card *ngIf="!hayActivos" color="secondary" >
+    </ion-fab>
+    -->
+    <ion-card *ngIf="!hayActivos" color="secondary">
         <ion-card-header>
             <ion-card-title>Todavia no tienes ningun activo!</ion-card-title>
         </ion-card-header>
         <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
             <ion-fab-button>
-              <ion-icon name="add"></ion-icon>
+                <ion-icon name="add"></ion-icon>
             </ion-fab-button>
-          </ion-fab>
+        </ion-fab>
         <ion-card-content>
             <p>Empieza a agregarlos desde el boton de la derecha</p>
         </ion-card-content>
     </ion-card>
 
-    <ion-list>
-      
-    <ion-card-header color="dark" padding style="text-align:center;margin-left:-5px;">
-        dembow
-    </ion-card-header>
-    <ion-card-content style="margin:0px;">
-        <ion-item style="text-align:center;">
-                <ion-label>#</ion-label>
-                <ion-label>Precio Compra</ion-label>
-                <ion-label>Precio Actual</ion-label>
-                <ion-label>Nombre</ion-label>
-        </ion-item>
-        <ion-item *ngFor="let activo of arrayActivos;let i = index" style="text-align:center;">
-                <ion-avatar item-start >
-                        <img [src]="generarImgCripto(activo)">
+    <ion-list *ngIf="hayActivos" style="padding:0px;">
+        <ion-list-header color="medium">
+            <ion-label>Seguimiento de activos</ion-label>
+
+        </ion-list-header>
+
+        <ion-item-sliding *ngFor="let activo of arrayActivos;" [attr.id]="'sliding' + activo.id_unico">
+            <ion-item style="text-align:center;" (press)="seleccionarItem()" (click)="expandItem(activo)">
+                <ion-avatar item-start>
+                    <img [src]="generarImgCripto(activo)">
                 </ion-avatar>
-                <!--<ion-label [(ngModel)]="getPrecioCompra(activo)"></ion-label>-->
-                <ion-label>{{relaciones[i].precio_compra}}</ion-label>
-                <ion-label>{{arrayActivosLive[i]}}</ion-label>
-                 <ion-label>{{activo.nombre}}</ion-label>
-        </ion-item>
-    </ion-card-content>
+
+                <ion-label style="font-size:14px;">{{activo.PAR_FULL}}</ion-label>
+                <ion-label>{{activo.precio_compra}}</ion-label>
+                <ion-label>{{activo.precio}}</ion-label>
+                <ion-label [color]="tenyirLabel(activo.rentabilidad)">{{activo.rentabilidad}}</ion-label>
+            </ion-item>
+            <ion-item-options side="start">
+                <ion-item-option (click)="abrir_acordeon(item)" color="warning">
+                    <ion-icon slot="start" name="eye" style="font-size:20px;"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+            <ion-item-options side="end">
+                <ion-item-option (click)="eliminar_activo(activo)" color="danger">
+                    <ion-icon slot="start" name="trash" style="font-size:20px;"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+            <div class="extendable" [attr.id]="'dembow' + activo.id_unico" style="display:none;border:1px solid white;">
+                <ion-item-group>
+                    <ion-item color="dark">
+                        <ion-label color="primary"><strong> Precio inicial : </strong>{{activo.precio_compra}} {{activo.contrapartida}}</ion-label>
+                    </ion-item>
+                    <ion-item color="dark">
+                            <ion-label color="primary"><strong> Precio Actual : </strong>{{activo.precio}} {{activo.contrapartida}}</ion-label>
+                        </ion-item>
+                    <ion-item color="dark">
+                            <ion-label color="primary"><strong>Cantidad : </strong>{{activo.cantidad}} {{activo.siglas}} </ion-label>
+                        </ion-item>
+                    <ion-item color="dark">
+                        <ion-label color="primary"><strong>Exchange : </strong>{{activo.exchange}}</ion-label>
+                    </ion-item>
+                    <ion-item color="dark">
+                        <ion-label color="primary"><strong>Tipo : </strong>{{activo.tipoRelacion}}</ion-label>
+                    </ion-item>
+                    <ion-item color="dark">
+                        <ion-label color="primary"><strong>Fecha : </strong>{{activo.fecha_operacion}}</ion-label>
+                    </ion-item>
+                    <ion-item color="dark">
+                       
+                         <ion-button expand="full" shape="round" color="secondary" fill="outline" (click)="expandItem(activo)"><ion-icon name="arrow-dropup"></ion-icon> Cerrar</ion-button> 
+                           <ion-button expand="full" shape="round" color="danger" fill="outline" (click)="eliminar_activo(activo)"><ion-icon name="trash"></ion-icon> Eliminar</ion-button>
+                        
+                    </ion-item>
+                    
+                
+                </ion-item-group>
+                
+
+                <!-- <ion-label color="primary"><strong>Anotaciones : </strong>{{activo.anotacion}}</ion-label>-->
+
+
+
+            </div>
+
+        </ion-item-sliding>
+
 
     </ion-list>
-    
+
 </ion-content>

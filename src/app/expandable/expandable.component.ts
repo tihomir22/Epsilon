@@ -6,17 +6,17 @@ import { Component, OnInit, ViewChild, ElementRef, Input, Renderer } from '@angu
   styleUrls: ['./expandable.component.scss']
 })
 export class ExpandableComponent implements OnInit {
-
-  @ViewChild('expandWrapper', {read: ElementRef}) expandWrapper;
   @Input('expandHeight') expandHeight;
   @Input('expanded') expanded;
+  @ViewChild('expandWrapper', {read: ElementRef}) expandWrapper;
+ 
   
  
 
   constructor(public renderer: Renderer) { }
 
   ngOnInit() {
-    this.renderer.setElementStyle(this.expandWrapper.nativeElement, 'height', this.expandHeight + 'px');   
+  
   }
 
   ngAfterViewInit(){

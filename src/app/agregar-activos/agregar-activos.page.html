@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-searchbar animated  (ionChange)="filtrarActivos()" (ionBlur)="dejarDeBuscar()" [(ngModel)]="searchTerm" debounce="100"></ion-searchbar>
+    <ion-searchbar animated  (ionChange)="filtrarActivos()"  [(ngModel)]="searchTerm" debounce="100"></ion-searchbar>
  
       <ion-spinner *ngIf="searching" name="crescent"></ion-spinner>
    

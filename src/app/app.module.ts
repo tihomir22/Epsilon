@@ -26,6 +26,8 @@ import { AgregarActivosPage } from './agregar-activos/agregar-activos.page';
     HttpClientModule,
     HttpModule,
     
+
+    
    
   ],
   providers: [

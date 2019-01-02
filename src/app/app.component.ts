@@ -17,6 +17,11 @@ export class AppComponent {
       icon: 'home'
     },
     {
+      title: 'Agregar Activos',
+      url: '/agregar-activos',
+      icon: 'add'
+    },
+    {
       title: 'Salir',
       url: '/login',
       icon: 'log-out'
@@ -42,7 +47,7 @@ export class AppComponent {
   }
   dembow(p:any){
     
-    if(p.title==this.appPages[1].title){
+    if(p.title==this.appPages[this.appPages.length].title){
       this.service.logOutMethod();
       this.menuCtrl.enable(false);
       this.navCtrl.navigateRoot("/login");

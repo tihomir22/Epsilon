@@ -14,36 +14,28 @@
       
     </ion-card-header>
 <ion-card>
-<ion-card-header>
+<ion-card-header *ngIf="tipo=='indeterminada'">
     {{activo.descripcion}}
 </ion-card-header>
 </ion-card>
   <ion-card-header color="dark">
       <ion-row>
-          <ion-col size="3"></ion-col>
+        
           <ion-col size="6">
             <ion-button (click)="cambiarTipo('compra')" color="success">
             Comprar
           </ion-button>
-          <ion-button (click)="cambiarTipo('venta')" color="danger">
+        </ion-col>
+          <ion-col size="6">
+            <ion-button (click)="cambiarTipo('venta')" color="danger">
               Vender
             </ion-button>
         </ion-col>
-        <ion-col size="3"></ion-col>
+       
         </ion-row>
        
   </ion-card-header>
 
-
-<ion-card *ngIf="tipo=='indeterminada'">
-  <ion-card-header>
-    <ion-card-subtitle>Nada indicado</ion-card-subtitle>
-    <ion-card-title>Nada indicado</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    Nada indicado
-  </ion-card-content>
-</ion-card>
 
 <ion-card *ngIf="tipo=='comprar'" color="success">
     <ion-card-header>
@@ -103,30 +95,50 @@
   <ion-card *ngIf="tipo=='vender'" color="danger">
       <ion-card-header>
           <ion-card-title>Venta {{activo.tipo}}</ion-card-title>
-        <ion-card-subtitle>Introduzca los datos a continuación para registrar su compra</ion-card-subtitle>
+        <ion-card-subtitle>Introduzca los datos a continuación para registrar su venta</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-          <form (ngSubmit)="anyadirActivoAPortfolio()" [formGroup]="formgroup" >
+          <form (ngSubmit)="dembow()" [formGroup]="formgroup" class="form-horizontal">
               <ion-item color="dark" style="text-align:right;">
-                  <ion-label fixed ><ion-badge></ion-badge>Cantidad</ion-label>
-                  <ion-input class="form-control" type="number" formControlName="name" color="danger" [(ngModel)]="cantidad" placeholder="0.0001" ></ion-input>
-                  <ion-label fixed style="margin-left:10px;">{{activo.nombre}}</ion-label>
+                  <ion-label fixed ><ion-badge></ion-badge>Precio</ion-label>
+                  <ion-input class="form-control" type="number" formControlName="precio" step="0.1" color="success" [(ngModel)]="precioDouble" [min]="activo.precio"  [placeholder]="activo.precio"></ion-input>
+                  
                 </ion-item>
-                <ion-label *ngIf="name.hasError('required') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Cantidad es requerida</ion-label>
+                <ion-label *ngIf="precio.hasError('required') && precio.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debes introducir el precio</ion-label>
+                <ion-label *ngIf="precio.hasError('maxLength') && precio.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres</ion-label>
+               
+  
+              <ion-item color="dark" style="text-align:right;margin-top:1px;">
+                  <ion-label fixed ><ion-badge></ion-badge>Cantidad</ion-label>
+                  <ion-input class="form-control" type="number" step="0.1" formControlName="name" color="success" [(ngModel)]="cantidad" placeholder="0.0001"></ion-input>
+                  <ion-label fixed style="margin-left:10px;" color="success">{{activo.siglas}}</ion-label>
+                </ion-item>
+                <ion-label *ngIf="name.hasError('required') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debes introducir la cantidad</ion-label>
                 <ion-label *ngIf="name.hasError('maxLength') && name.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres</ion-label>
-                <div padding>
-                    <ion-grid fixed>
-                      <ion-row>
-                        <ion-col size="6">
-                            <ion-button size="large" expand="block" color="secondary" type="submit" >Registrar</ion-button>
-                        </ion-col>
-                        <ion-col size="6">
-                            <ion-button size="large" expand="block" color="medium" (click)="cancelar()">Cancelar</ion-button>
-                        </ion-col>
-                      </ion-row>
-                    </ion-grid>
-                    
-                  </div>
+               
+                <ion-item color="dark" style="text-align:right;margin-top:1px;" (click)="mostrarListaExchanges();" *ngIf="activo.tipo=='Criptomoneda'">
+                    <ion-label fixed ><ion-badge></ion-badge>Exchange</ion-label>
+                    <ion-input class="form-control" type="text" formControlName="exchange" color="success"  placeholder="Elige el exchange" [(ngModel)]="exchangeStr" ></ion-input>
+                    <ion-label fixed style="margin-left:10px;"><ion-icon slot="start" name="arrow-dropdown" color="success"></ion-icon></ion-label>
+                  </ion-item>
+                <ion-label *ngIf="exchange.hasError('required') && exchange.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debes elegir un exchange</ion-label>
+                <ion-label *ngIf="exchange.hasError('maxLength') && exchange.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres</ion-label>
+                
+                <ion-item color="dark" style="text-align:right;margin-top:1px;" (click)="mostrarListaPares();" *ngIf="activo.tipo=='Criptomoneda'">
+                    <ion-label fixed ><ion-badge></ion-badge>Par en contrapartida</ion-label>
+                    <ion-input class="form-control" type="text" formControlName="par" color="success"  placeholder="USD" [(ngModel)]="parStr" ></ion-input>
+                    <ion-label fixed style="margin-left:10px;"><ion-icon slot="start" name="arrow-dropdown" color="success">activo.siglas</ion-icon></ion-label>
+                  </ion-item>
+                <ion-label *ngIf="par.hasError('required') && par.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debes elegir un par</ion-label>
+                <ion-label *ngIf="par.hasError('maxLength') && par.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres</ion-label>
+                
+                <ion-item color="dark" style="text-align:left;margin-top:1px;" *ngIf="activo.tipo=='Criptomoneda'">
+                    <ion-label >Fecha</ion-label>
+                    <ion-datetime displayFormat="DD/MM/YY" placeholder="Introduce fecha de inicio DD/MM/YY" [(ngModel)]="fechaStr" formControlName="fecha" color="success"></ion-datetime>
+                  </ion-item>
+                  <ion-label *ngIf="fecha.hasError('required') && fecha.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Debes elegir una fecha</ion-label>
+                  <ion-button size="large" expand="block" color="primary" type="submit"  >Registrar</ion-button>
+               
               </form>
       </ion-card-content>
     </ion-card>

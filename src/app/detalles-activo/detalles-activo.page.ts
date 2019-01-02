@@ -3,8 +3,9 @@ import { ServiceLoginDashboardService } from '../service-login-dashboard.service
 import {ElementRef, ViewChild} from '@angular/core';
 import { DomSanitizer  } from '@angular/platform-browser';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController, NavController } from '@ionic/angular';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-detalles-activo',
@@ -87,10 +88,9 @@ export class DetallesActivoPage implements OnInit {
 
   private baseURI               : string  = "http://dembow.gearhostpreview.com/";
  
+
   
-  navCtrl: any;
-  
-  constructor(private service:ServiceLoginDashboardService,public formbuilder:FormBuilder,private sanitizer: DomSanitizer,public alertCtrl:AlertController,public tostadita:ToastController,public http:HttpClient) { 
+  constructor(private service:ServiceLoginDashboardService,public formbuilder:FormBuilder,private sanitizer: DomSanitizer,public alertCtrl:AlertController,public tostadita:ToastController,public http:HttpClient,public router:Router) { 
     this.activo=service.getActivo();
     this.tipo=service.getTipoAdquisicion();
     this.usuario=service.getDestn();
@@ -120,7 +120,7 @@ export class DetallesActivoPage implements OnInit {
 
   dembow(){
     if(this.formgroup.invalid){
-      alert("sueltalo loco2");
+    
       this.tostadita.create({
         message: 'Te falta algun dato por introducir!',
         duration: 3000
@@ -130,7 +130,7 @@ export class DetallesActivoPage implements OnInit {
       this.idUsuario=this.usuario.idepsilon_usuarios;
       this.activoId=this.activo.id;
       let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options 	: any		= { "key" : "anyadir_activo_a_usuario", "id_usuario_ajeno" : this.idUsuario, "id_activo_ajeno" : this.activo.id,"tipo":this.tipo,"precio_compra":this.precioDouble,"fecha_operacion":this.fechaStr,"exchange":this.exchangeStr,"siglas_operacion":this.parStr},
+      options 	: any		= { "key" : "anyadir_activo_a_usuario", "id_usuario_ajeno" : this.idUsuario, "id_activo_ajeno" : this.activo.id,"tipo":this.tipo,"precio_compra":this.precioDouble,"fecha_operacion":this.fechaStr,"exchange":this.exchangeStr,"siglas_operacion":this.parStr,"cantidad":this.cantidad},
       url       : any      	= this.baseURI + "manage-dataIONIC.php";
 
     this.http.post(url, JSON.stringify(options), headers)
@@ -139,6 +139,8 @@ export class DetallesActivoPage implements OnInit {
     {
       // If the request was successful notify the user
       console.log(`Felicidades se ha agregado el activo correctamente`);
+      this.service.sendNotification("Felicidades se ha agregado el activo "+ this.parStr+" correctamente")
+      this.router.navigate(['dashboard'], { replaceUrl: true });
       //this.navCtrl.goBack();
     },
     (error : any) =>
@@ -149,6 +151,8 @@ export class DetallesActivoPage implements OnInit {
         console.log('Algo fue mal!' +JSON.stringify(options));
       }
     });
+    
+    
     }
   }
   
