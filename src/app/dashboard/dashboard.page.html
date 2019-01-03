@@ -12,7 +12,7 @@
 <ion-content padding color="primary">
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
-            <ion-card-title>Bienvenido! {{data.usuario}} <ion-label style="text-align:right;">Precio en USD</ion-label></ion-card-title>
+            <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title>
             
         </ion-card-header>
         <ion-card-content>
@@ -30,14 +30,25 @@
            
             
         </ion-card-content>
+        <ion-card color="light">
+            <ion-segment scrollable color="success">
+                <ion-segment-button value="USD" checked >
+                    <ion-label>USD</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="EUR">
+                    <ion-label>EUR</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="GBP">
+                    <ion-label>GBP</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="JPY">
+                    <ion-label>JPY</ion-label>
+                </ion-segment-button>
+            </ion-segment>
+        </ion-card>
     </ion-card>
-    <!--
-    <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
-        <ion-fab-button>
-            <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-    </ion-fab>
-    -->
+    
+    
     <ion-card *ngIf="!hayActivos" color="secondary">
         <ion-card-header>
             <ion-card-title>Todavia no tienes ningun activo!</ion-card-title>
@@ -60,8 +71,13 @@
 
         <ion-item-sliding *ngFor="let activo of arrayActivos;" [attr.id]="'sliding' + activo.id_unico">
             <ion-item style="text-align:center;" (press)="seleccionarItem()" (click)="expandItem(activo)">
-                <ion-avatar item-start>
-                    <img [src]="generarImgCripto(activo)">
+                <ion-icon color="success" *ngIf="activo.rentabilidad.charAt(0)=='+'" name="arrow-dropup"></ion-icon>
+                <ion-icon color="danger" *ngIf="activo.rentabilidad.charAt(0)=='-'" name="arrow-dropdown"></ion-icon>
+                <ion-avatar item-start *ngIf="activo.tipo=='Criptomoneda'">
+                    <img [src]="generarImgCripto(activo)" style="border-radius:0%;">
+                </ion-avatar>
+                <ion-avatar item-start *ngIf="activo.tipo=='Stock'">
+                    <img [src]="generarImgStock(activo)" style="border-radius:0%;">
                 </ion-avatar>
 
                 <ion-label style="font-size:14px;">{{activo.PAR_FULL}}</ion-label>

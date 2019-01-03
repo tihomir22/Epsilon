@@ -47,7 +47,7 @@ export class AppComponent {
   }
   dembow(p:any){
     
-    if(p.title==this.appPages[this.appPages.length].title){
+    if(p.title==this.appPages[this.appPages.length-1].title){
       this.service.logOutMethod();
       this.menuCtrl.enable(false);
       this.navCtrl.navigateRoot("/login");

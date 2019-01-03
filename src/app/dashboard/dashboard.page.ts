@@ -154,14 +154,30 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
                 this.arrayActivos.push(activoRec);
-                this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad,relacion.siglas_operacion);
-
-                //await this.arrayActivosLive.push(obj[activoRec.siglas][siglas]);
+                this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad,relacion.siglas_operacion,relacion.tipo);
                 this.calcularPorcentajeActivo(activoRec);
-                // alert(obj[activoRec.siglas][relacion.precio_compra]);
                 this.service.actualizarPrecioActivo(activoRec.id, obj[activoRec.siglas][relacion.siglas_operacion]);
-
               });
+          }else if(activoRec.tipo=="Stock"){
+            this.recuperarPrecioIEXTrading(activoRec.siglas).subscribe(response=>{
+              obj = response;
+              activoRec.precio = obj;
+              activoRec['precio_compra'] = relacion.precio_compra;
+              activoRec['id_unico'] = relacion.id;
+              activoRec['PAR_FULL'] = activoRec.siglas + "/" + relacion.siglas_operacion;
+              activoRec['id_relacion'] = relacion.id;
+              activoRec['expanded'] = false;
+              activoRec['exchange'] = relacion.exchange;
+              activoRec['fecha_operacion'] = relacion.fecha_operacion;
+              activoRec['tipoRelacion'] = relacion.tipo;
+              activoRec['cantidad'] = relacion.cantidad;
+              activoRec['contrapartida'] = relacion.siglas_operacion;
+
+              this.arrayActivos.push(activoRec);
+              this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad,relacion.siglas_operacion,relacion.tipo);
+              this.calcularPorcentajeActivo(activoRec);
+              this.service.actualizarPrecioActivo(activoRec.id, obj);
+            })
 
           }
         }
@@ -173,17 +189,29 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
 
   public recuperarPrecioCryptoCompare(siglasActivo: string, siglasContrapartida: string) {
-    // console.dir("https://min-api.cryptocompare.com/data/pricemulti?fsyms="+ siglasActivo +"&tsyms="+siglasContrapartida+"&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc")
-    return this.http.get("https://min-api.cryptocompare.com/data/pricemulti?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
-
+   return this.http.get("https://min-api.cryptocompare.com/data/pricemulti?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
   }
-  public actualizarFinanzasUsuario(precioInicial: number, precioActual: number, cantidad: number,siglas:string) {
+  public recuperarPrecioIEXTrading(siglasActivo:string){
+    return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/price");
+  }
+  public actualizarFinanzasUsuario(precioInicial: number, precioActual: number, cantidad: number,siglas:string,tipo:string) { // metodo que usamos para actualizar la información financiera del usuario
     if(siglas=="USD" || siglas=="USDT"){
+
+      if(tipo.toLocaleLowerCase()=="vender"){
+        var calculoNegativo=(+precioInicial - +precioActual);
+        if(calculoNegativo>0){ // la operacion de venta esta obteniendo beneficios
+          precioActual=(+precioInicial + +calculoNegativo);
+        }else{
+          precioActual=(+precioInicial - +calculoNegativo);
+        }
+      }
       this.totalInvertidoBase = (+this.totalInvertidoBase + (+precioInicial * +cantidad)).toFixed(2);
       this.totalInvertidoActual = (+this.totalInvertidoActual + (+precioActual * +cantidad)).toFixed(2);
+      // si es venta precioInicial 140 precioActual 100 ( 40 beneficio )
       var resta = this.totalInvertidoBase - this.totalInvertidoActual;
       if (resta > 0) {
         this.porcentajeNum = "-" + (resta * 100 / this.totalInvertidoBase).toFixed(2) + "%";
+      
       } else {
         var rentaNum = (resta * 100 / this.totalInvertidoBase).toFixed(2);
         this.porcentajeNum = "+" + (rentaNum.substr(1, rentaNum.length));
@@ -211,6 +239,15 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   public calcularPorcentajeActivo(item: any) {
     var precioActual = item.precio;
     var precioCompra = item.precio_compra;
+
+    if(item.tipoRelacion.toLocaleLowerCase()=="vender"){
+      var calculoNegativo=(+precioCompra - +precioActual);
+      if(calculoNegativo>0){ // la operacion de venta esta obteniendo beneficios
+        precioActual=(+precioCompra + +calculoNegativo);
+      }else{
+        precioActual=(+precioCompra - +calculoNegativo);
+      }
+    }
     var resta = precioCompra - precioActual;
     if (resta > 0) {
       console.dir("Hay perdidas" + (resta * 100 / precioCompra).toFixed(1) + "%");

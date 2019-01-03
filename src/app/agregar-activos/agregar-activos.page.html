@@ -15,7 +15,7 @@
         </ion-list-header>
     <ion-item-sliding #slidingItem *ngFor="let activo of activos_cripto">
       <ion-item #item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)">
-          <ion-avatar item-start style="margin:5px;">
+          <ion-avatar item-start style="margin:10px;">
               <img [src]="generarImgCripto(activo)">
             </ion-avatar>
         <ion-label >{{activo.nombre}}</ion-label>
@@ -23,7 +23,7 @@
         <ion-button shape="round" fill="outline"><ion-icon slot="start" name="add"></ion-icon> ADD</ion-button>
       </ion-item>
       <ion-item-options side="start">
-        <ion-item-option color="success" (click)="comprar(activo)">COMPRAR</ion-item-option>
+        <ion-item-option color="success" (click)="comprar(activo)">Comprar</ion-item-option>
         <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
       </ion-item-options>
       <ion-item-options side="end">
@@ -47,7 +47,7 @@
         <ion-button shape="round" fill="outline"><ion-icon slot="start" name="add"></ion-icon> ADD</ion-button>
       </ion-item>
       <ion-item-options side="start">
-        <ion-item-option color="success" (click)="comprar(activo)">COMPRAR</ion-item-option>
+        <ion-item-option color="success" (click)="comprar(activo)">Comprar</ion-item-option>
         <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
       </ion-item-options>
   
