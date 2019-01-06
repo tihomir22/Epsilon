@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content>
-  
+    <ion-card>
     <ion-card-header [style]="getStyle()">
         <br><br><br>
       <ion-card-subtitle><ion-badge color="medium" style="font-size:12px;margin-bottom: -12px;">{{activo.tipo}}</ion-badge></ion-card-subtitle>
@@ -13,12 +13,20 @@
       <ion-card-title><ion-badge color="dark" style="font-size:32px;">{{activo.nombre}}</ion-badge></ion-card-title>
       
     </ion-card-header>
+  </ion-card>
+    
+    <ion-card>
+      <canvas #barCanvas></canvas>
+    </ion-card>
+    
 <ion-card>
 <ion-card-header *ngIf="tipo=='indeterminada'">
     {{activo.descripcion}}
 </ion-card-header>
 </ion-card>
-  <ion-card-header color="dark">
+
+<ion-card>
+  <ion-card-header >
       <ion-row>
         
           <ion-col size="6">
@@ -35,7 +43,9 @@
         </ion-row>
        
   </ion-card-header>
-
+</ion-card>
+ 
+  
 
 <ion-card *ngIf="tipo=='comprar'" color="success">
     <ion-card-header>
@@ -118,11 +128,12 @@
               
                 <ion-button size="large" expand="block" color="dark" type="submit"  ><ion-label color="success">Añadir Compra</ion-label></ion-button>
             </form>
+            <!--
             <pre>{{formgroup.get('exchange').valid}}</pre>
             <pre>{{formgroup.get('par').valid}}</pre>
             <pre>{{formgroup.get('fecha').valid}}</pre>
              <pre>{{formgroup.get('observaciones').valid}}</pre>
-
+              -->
 
     </ion-card-content>
   </ion-card>

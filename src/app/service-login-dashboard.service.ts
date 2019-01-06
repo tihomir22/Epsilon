@@ -22,6 +22,45 @@ export class ServiceLoginDashboardService {
 
   constructor(public http:HttpClient,public tostCtrl:ToastController) {}
 
+
+  public recuperarPrecioCryptoCompare(siglasActivo: string, siglasContrapartida: string) {
+    return this.http.get("https://min-api.cryptocompare.com/data/pricemulti?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
+   }
+   public recuperarPrecioIEXTrading(siglasActivo:string){
+     return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/price");
+   }
+   cargarActivos(){
+
+    let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
+    options 	: any		= { "key" : "todos_activos"},
+    url       : any      	= this.baseURI + "retrieve-data.php";
+
+    return this.http.post(url, JSON.stringify(options), headers)
+   
+  }
+  actualizarActivos(array:any){
+
+    array.forEach(element => {
+      console.log(element)
+      if(element.tipo=="Criptomoneda"){
+        this.recuperarPrecioCryptoCompare(element.siglas,"USD").subscribe(respuesta=>{
+          console.log("precio recibido actual " + element.siglas+  respuesta[element.siglas]["USD"] )
+          element.precio=respuesta[element.siglas]["USD"];
+          this.actualizarPrecioActivo(element.id,element.precio)
+        })
+      }else if(element.tipo=="Stock"){
+        this.recuperarPrecioIEXTrading(element.siglas).subscribe(respuesta=>{
+          element.precio=respuesta;
+          this.actualizarPrecioActivo(element.id,element.precio)
+        })
+      }
+    });
+    
+     
+    
+    
+  }
+
   public setArrayActivos(array:any){
     this.arrayActivosServ=array;
   }
@@ -97,6 +136,11 @@ export class ServiceLoginDashboardService {
     }
   });
 }
+
+
+
+
+
 async sendNotification(message : string)
 {
    let toast = await this.tostCtrl.create({

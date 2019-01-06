@@ -12,10 +12,10 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpModule } from '@angular/http';
 import { AgregarActivosPage } from './agregar-activos/agregar-activos.page';
-
+import {ExpandableComponent} from '../app/expandable/expandable.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,ExpandableComponent],
   entryComponents: [],
   imports: [
     BrowserModule,

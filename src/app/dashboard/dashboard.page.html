@@ -10,29 +10,46 @@
 </ion-header>
 
 <ion-content padding color="primary">
+
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
             <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title>
-            
+
         </ion-card-header>
         <ion-card-content>
-            
+
             <ion-row>
-                    <ion-col size="4"><ion-label>Posesiones Totales</ion-label></ion-col>
-                    <ion-col size="4"><ion-label>Posesiones Netas</ion-label></ion-col>
-                    <ion-col size="4"><ion-label>% Total</ion-label></ion-col>
-                </ion-row>
-            <ion-row>
-                <ion-col size="4"><ion-label>{{totalInvertidoBase}}</ion-label></ion-col>
-                <ion-col size="4"><ion-label>{{totalInvertidoActual}}</ion-label></ion-col>
-                <ion-col size="4" ><ion-label [color]="tenyirLabel(porcentajeNum)">{{porcentajeNum}}</ion-label></ion-col>
+                <ion-col size="4">
+                    <ion-label>Posesiones Totales</ion-label>
+                </ion-col>
+                <ion-col size="4">
+                    <ion-label>Posesiones Netas</ion-label>
+                </ion-col>
+                <ion-col size="4">
+                    <ion-label>% Total</ion-label>
+                </ion-col>
             </ion-row>
-           
-            
+            <ion-row>
+                <ion-col size="4">
+                    <ion-label>{{totalInvertidoBase}}</ion-label>
+                </ion-col>
+                <ion-col size="4">
+                    <ion-label>{{totalInvertidoActual}}</ion-label>
+                </ion-col>
+                <ion-col size="4">
+                    <ion-label [color]="tenyirLabel(porcentajeNum)">{{porcentajeNum}}</ion-label>
+                </ion-col>
+            </ion-row>
+
+
         </ion-card-content>
         <ion-card color="light">
             <ion-segment scrollable color="success">
-                <ion-segment-button value="USD" checked >
+                <ion-segment-button value="USD" checked>
                     <ion-label>USD</ion-label>
                 </ion-segment-button>
                 <ion-segment-button value="EUR">
@@ -47,8 +64,8 @@
             </ion-segment>
         </ion-card>
     </ion-card>
-    
-    
+
+
     <ion-card *ngIf="!hayActivos" color="secondary">
         <ion-card-header>
             <ion-card-title>Todavia no tienes ningun activo!</ion-card-title>
@@ -62,6 +79,8 @@
             <p>Empieza a agregarlos desde el boton de la derecha</p>
         </ion-card-content>
     </ion-card>
+<ion-card>
+    
 
     <ion-list *ngIf="hayActivos" style="padding:0px;">
         <ion-list-header color="medium">
@@ -98,14 +117,17 @@
             <div class="extendable" [attr.id]="'dembow' + activo.id_unico" style="display:none;border:1px solid white;">
                 <ion-item-group>
                     <ion-item color="dark">
-                        <ion-label color="primary"><strong> Precio inicial : </strong>{{activo.precio_compra}} {{activo.contrapartida}}</ion-label>
+                        <ion-label color="primary"><strong> Precio inicial : </strong>{{activo.precio_compra}}
+                            {{activo.contrapartida}}</ion-label>
                     </ion-item>
                     <ion-item color="dark">
-                            <ion-label color="primary"><strong> Precio Actual : </strong>{{activo.precio}} {{activo.contrapartida}}</ion-label>
-                        </ion-item>
+                        <ion-label color="primary"><strong> Precio Actual : </strong>{{activo.precio}}
+                            {{activo.contrapartida}}</ion-label>
+                    </ion-item>
                     <ion-item color="dark">
-                            <ion-label color="primary"><strong>Cantidad : </strong>{{activo.cantidad}} {{activo.siglas}} </ion-label>
-                        </ion-item>
+                        <ion-label color="primary"><strong>Cantidad : </strong>{{activo.cantidad}} {{activo.siglas}}
+                        </ion-label>
+                    </ion-item>
                     <ion-item color="dark">
                         <ion-label color="primary"><strong>Exchange : </strong>{{activo.exchange}}</ion-label>
                     </ion-item>
@@ -116,15 +138,19 @@
                         <ion-label color="primary"><strong>Fecha : </strong>{{activo.fecha_operacion}}</ion-label>
                     </ion-item>
                     <ion-item color="dark">
-                       
-                         <ion-button expand="full" shape="round" color="secondary" fill="outline" (click)="expandItem(activo)"><ion-icon name="arrow-dropup"></ion-icon> Cerrar</ion-button> 
-                           <ion-button expand="full" shape="round" color="danger" fill="outline" (click)="eliminar_activo(activo)"><ion-icon name="trash"></ion-icon> Eliminar</ion-button>
-                        
+
+                        <ion-button expand="full" shape="round" color="secondary" fill="outline" (click)="expandItem(activo)">
+                            <ion-icon name="arrow-dropup"></ion-icon> Cerrar
+                        </ion-button>
+                        <ion-button expand="full" shape="round" color="danger" fill="outline" (click)="eliminar_activo(activo)">
+                            <ion-icon name="trash"></ion-icon> Eliminar
+                        </ion-button>
+
                     </ion-item>
-                    
-                
+
+
                 </ion-item-group>
-                
+
 
                 <!-- <ion-label color="primary"><strong>Anotaciones : </strong>{{activo.anotacion}}</ion-label>-->
 
@@ -136,5 +162,7 @@
 
 
     </ion-list>
+
+</ion-card>
 
 </ion-content>

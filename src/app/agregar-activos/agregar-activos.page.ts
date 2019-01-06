@@ -44,7 +44,20 @@ export class AgregarActivosPage extends HammerGestureConfig{
   }
 
   ngOnInit() {
-    this.cargarActivos();
+    this.service.cargarActivos().subscribe(async (  data : any) =>
+    {
+       console.dir(data);
+       if(data==null || data==false){
+        this.sendNotification("No existen activos...");
+       }else{
+         await this.service.actualizarActivos(data)
+        this.clasificarResultado(data);
+       }
+    },
+    (error : any) =>
+    {
+      this.sendNotification("Hubo un error inesperado...");
+    });;
   }
  
   
@@ -77,30 +90,7 @@ export class AgregarActivosPage extends HammerGestureConfig{
     await alert.present();
   }
 
-  cargarActivos(){
-    let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
-    options 	: any		= { "key" : "todos_activos"},
-    url       : any      	= this.baseURI + "retrieve-data.php";
-
-    this.http
-    .post(url, JSON.stringify(options), headers)
-    .subscribe((data : any) =>
-    {
-       console.dir(data);
-       if(data==null || data==false){
-        this.sendNotification("No existen activos...");
-       }else{
-        this.sendNotification(data);
-        this.clasificarResultado(data);
-        //this.activos_cripto=data;
-       
-       }
-    },
-    (error : any) =>
-    {
-      this.sendNotification("Hubo un error inesperado...");
-    });
-  }
+ 
  
   generarImgCripto(activo){
      return this.baseURI+"img-activos/"+activo.nombre+".png";

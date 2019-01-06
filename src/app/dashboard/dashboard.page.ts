@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NavController, ToastController, MenuController, IonItemSliding } from '@ionic/angular';
+import { NavController, ToastController, MenuController, IonItemSliding, LoadingController } from '@ionic/angular';
 import 'rxjs/add/operator/map';
 import "hammerjs"; // HAMMER TIME
 import { HammerGestureConfig } from "@angular/platform-browser";
@@ -16,11 +16,9 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   data: any;
   relaciones: Array<any> = new Array;
   arrayActivos: Array<any> = new Array;
-  arrayActivosLive: Array<any> = new Array;
   public obj: any;
   public hayActivos: boolean = false;
-  public terminado: boolean = false;
-  itemExpandHeight: number = 100;
+
   totalInvertidoBase: any = 0;
   totalInvertidoActual: any = 0;
   porcentajeNum: any;
@@ -47,7 +45,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     */
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
-  constructor(public menuCtrl: MenuController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
+  constructor(public menuCtrl: MenuController,public loadingController: LoadingController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
     super();
     this.data = this.service.getDestn();
     this.menuCtrl.enable(true);
@@ -60,13 +58,65 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     console.dir("me he iniciado")
 
   }
+  ngAfterViewInit(){
+    this.loadingController.dismiss()
+  }
 
 
   ionViewWillEnter() {
+    this.presentLoading();
     this.reiniciarFinanzasUsuario();
-    this.cargarActivos();
+    this.cargarActivos().subscribe((data: any) => {
+      
+      if (data == null || data == false) {
+        this.sendNotification("No tiene activos el usuario...");
+        this.hayActivos = false;
+      } else {
+        this.hayActivos = true;
+        console.dir(data);
+        data.forEach(async relacion => {
+          await this.procesarActivo(relacion.id_activo_ajeno, relacion)
+        });
+        
+      }
+    },
+      (error: any) => {
+        this.sendNotification("Hubo un error inesperado...");
+        this.hayActivos = false;
+      });
 
   }
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Hellooo',
+      duration: 2000
+    });
+    return await loading.present();
+  }
+  doRefresh(event) {
+    console.log('Begin async operation');
+    this.service.actualizarActivos(this.arrayActivos)
+    this.cargarActivos().subscribe((data: any) => {
+      if (data == null || data == false) {
+        this.sendNotification("No tiene activos el usuario...");
+        this.hayActivos = false;
+      } else {
+
+        this.hayActivos = true;
+        console.dir(data); 
+        data.forEach(async relacion => {
+          await this.procesarActivo(relacion.id_activo_ajeno, relacion)
+        });
+        event.target.complete();
+      }
+    },
+
+      (error: any) => {
+        this.sendNotification("Hubo un error inesperado...");
+        this.hayActivos = false;
+      });
+  }
+
 
   seleccionarItem() {
     console.dir("me seleccionaste");
@@ -93,33 +143,14 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
   cargarActivos() {
     this.arrayActivos.length = 0;
+    this.reiniciarFinanzasUsuario();
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
       options: any = { "key": "activos", "id_usuario": this.data.idepsilon_usuarios },
       url: any = this.baseURI + "retrieve-data.php";
 
-    this.http
-      .post(url, JSON.stringify(options), headers)
+    return this.http.post(url, JSON.stringify(options), headers)
 
-      .subscribe((data: any) => {
-        if (data == null || data == false) {
-          this.sendNotification("No tiene activos el usuario...");
-          this.hayActivos = false;
-        } else {
-
-          this.hayActivos = true;
-          console.dir(data);
-
-          data.forEach(async relacion => {
-            await this.procesarActivo(relacion.id_activo_ajeno, relacion)
-          });
-          this.terminado = true;
-        }
-      },
-
-        (error: any) => {
-          this.sendNotification("Hubo un error inesperado...");
-          this.hayActivos = false;
-        });
+      
 
   }
   procesarActivo(id: any, relacion: any) {
@@ -136,7 +167,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
           if (activoRec.tipo == "Criptomoneda") {
             var obj: any;
-            this.recuperarPrecioCryptoCompare(activoRec.siglas, relacion.siglas_operacion)
+            this.service.recuperarPrecioCryptoCompare(activoRec.siglas, relacion.siglas_operacion)
               .subscribe(response => {
                 obj = response;
 
@@ -159,7 +190,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
                 this.service.actualizarPrecioActivo(activoRec.id, obj[activoRec.siglas][relacion.siglas_operacion]);
               });
           }else if(activoRec.tipo=="Stock"){
-            this.recuperarPrecioIEXTrading(activoRec.siglas).subscribe(response=>{
+            this.service.recuperarPrecioIEXTrading(activoRec.siglas).subscribe(response=>{
               obj = response;
               activoRec.precio = obj;
               activoRec['precio_compra'] = relacion.precio_compra;
@@ -180,6 +211,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
             })
 
           }
+
         }
       },
         (error: any) => {
@@ -188,12 +220,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
   }
 
-  public recuperarPrecioCryptoCompare(siglasActivo: string, siglasContrapartida: string) {
-   return this.http.get("https://min-api.cryptocompare.com/data/pricemulti?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
-  }
-  public recuperarPrecioIEXTrading(siglasActivo:string){
-    return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/price");
-  }
+  
   public actualizarFinanzasUsuario(precioInicial: number, precioActual: number, cantidad: number,siglas:string,tipo:string) { // metodo que usamos para actualizar la información financiera del usuario
     if(siglas=="USD" || siglas=="USDT"){
 
@@ -218,7 +245,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       }
 
     }else{
-      this.recuperarPrecioCryptoCompare(siglas,"USD").subscribe(respuesta=>{ // XRP/ETH para saber los ETH que necesitamos para comprar 1 XRP
+      this.service.recuperarPrecioCryptoCompare(siglas,"USD").subscribe(respuesta=>{ // XRP/ETH para saber los ETH que necesitamos para comprar 1 XRP
         var precioEquivaleEnDolares=respuesta[siglas]['USD'];
         this.totalInvertidoBase = (+this.totalInvertidoBase + ((+precioInicial * +precioEquivaleEnDolares) * +cantidad)).toFixed(2);
         this.totalInvertidoActual = (+this.totalInvertidoActual + ((+precioActual * +precioEquivaleEnDolares) * +cantidad)).toFixed(2);

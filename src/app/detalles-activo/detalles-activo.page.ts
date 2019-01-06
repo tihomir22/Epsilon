@@ -6,6 +6,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { AlertController, ToastController, NavController } from '@ionic/angular';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-detalles-activo',
@@ -92,6 +93,9 @@ export class DetallesActivoPage implements OnInit {
 
   public sector:any;
 
+  @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
+ 
+  barChart: any;
 
 
 
@@ -121,6 +125,7 @@ export class DetallesActivoPage implements OnInit {
     this.fecha = this.formgroup.controls['fecha'];
     this.precio = this.formgroup.controls['precio'];
     this.observaciones=this.formgroup.controls['observaciones'];
+    this.iniciarChart(this.activo.tipo);
   }
 
   ngOnInit() {
@@ -135,10 +140,173 @@ export class DetallesActivoPage implements OnInit {
         this.exchange.setValidators(this.exchangeStr);
       });
     }
+    
+
   }
   dembow2() {
     alert("sueltalo loco");
   }
+  getHistoricalData24H(siglasActivo:any,tipoActivo:String){
+    if(tipoActivo=="Criptomoneda"){
+      return this.http.get("https://min-api.cryptocompare.com/data/histoday?fsym="+siglasActivo+"&tsym=USD&limit=30&6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc")
+    }else if(tipoActivo=="Stock"){
+      return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/chart/1m")
+    }
+  }
+
+  iniciarChart(tipoGrafico:any){
+    console.dir("entro aqui las singlas son " + this.activo.siglas)
+    if(tipoGrafico=="Criptomoneda"){
+      this.getHistoricalData24H(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
+        this.generarChartCripto(respuesta);
+      })
+    }else if(tipoGrafico=="Stock"){
+      this.getHistoricalData24H(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
+        this.generarChartStock(respuesta)
+      })
+    }
+  }
+  generarChartCripto(respuesta:any){
+    console.dir(respuesta)
+
+
+    var arrayPrecios:Array<any>=this.filtrarRespuestaPrecios(respuesta['Data'])
+    var arrayLabelData:Array<any>=this.filtrarRespuestaFechasLabel(respuesta['Data'])
+    this.barChart = new Chart(this.barCanvas.nativeElement, {
+      type: 'line',
+      
+      data: {
+          labels: arrayLabelData,
+          datasets: [{
+              label: this.activo.siglas,
+              data: arrayPrecios,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: 'Grafico de '+this.activo.siglas+' en el ultimo mes'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+					
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: '$ '
+						}
+					}]
+				}
+			}
+
+  });
+  }
+  generarChartStock(respuesta:any){
+    console.dir(respuesta)
+
+
+    var arrayPrecios:Array<any>=this.filtrarRespuestaPrecios(respuesta)
+    var arrayLabelData:Array<any>=this.filtrarRespuestaFechasLabel(respuesta)
+    this.barChart = new Chart(this.barCanvas.nativeElement, {
+      type: 'line',
+      
+      data: {
+          labels: arrayLabelData,
+          datasets: [{
+              label: this.activo.siglas,
+              data: arrayPrecios,
+              backgroundColor: [
+                 '#7FDBFF'
+              ],
+              borderColor: [
+                  '#001f3f'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: 'Grafico de '+this.activo.siglas+' en los ultimos 7dias'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Dia'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Valor '
+						}
+					}]
+				}
+			}
+
+  });
+  }
+  filtrarRespuestaPrecios(arrayObjectos:any){
+    var nuevoArray:Array<any>=new Array
+    arrayObjectos.forEach(element => {
+      nuevoArray.push(element['close'])
+    });
+    return nuevoArray;
+  }
+  filtrarRespuestaFechasLabel(arrayObjectos:any){
+    var nuevoArrayFecha:Array<any>=new Array
+    arrayObjectos.forEach(element => {
+      if(this.activo.tipo=="Criptomoneda"){
+        var date = new Date(element['time'] * 1000)
+        nuevoArrayFecha.push(date.getDate())
+      }else if(this.activo.tipo=="Stock"){
+        nuevoArrayFecha.push(element['label'])
+      }
+      
+    });
+    return nuevoArrayFecha;
+  }  
   getInformacionDeStock(stockName: string) {
     return this.http.get("https://api.iextrading.com/1.0/stock/" + stockName + "/quote");
   }
