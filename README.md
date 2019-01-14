@@ -30,3 +30,5 @@
 * 0.0.8: Primera compilación a APK con exito, implementado resumen de todos los activos del usuario, añadido acordeo a los items aportando información extra , sincronización de la API, conversión a USD total en el resumen de la dashboard, implementada venta en agregar-activos, funciones menores. Corto plazo: Implementar graficos, implementar activos de venta ( que funcionen de forma distinta que a los de compra ) , implementar API de stocks , corregir errores de formulario en agregar-activos, agregar más activos en la bbdd
 
 * 0.0.8b : Implementada API para los Stocks y la compra de estos en detalles-activo junto a sus respectivos metodos y comprobaciones , se debe refactorizar el codigo y comenzar a implementar graficos, descubiertos noticias en la API de los stocks. Solucionados bugs menores, mejora de la interfaz grafica y funcionabildiad + Añadido nuevos activos (10 criptomonedas nuevas añadidas) Y BBDD alterada
+
+* 0.0.9: Implementados graficos para criptomonedas y stocks , junto a refactorización del codigo, mejoras visuales y de experencia al usuario y bugs menores
