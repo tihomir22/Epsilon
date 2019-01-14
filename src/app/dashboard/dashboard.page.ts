@@ -1,10 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NavController, ToastController, MenuController, IonItemSliding, LoadingController } from '@ionic/angular';
 import 'rxjs/add/operator/map';
 import "hammerjs"; // HAMMER TIME
 import { HammerGestureConfig } from "@angular/platform-browser";
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,8 +15,12 @@ import { HammerGestureConfig } from "@angular/platform-browser";
 export class DashboardPage extends HammerGestureConfig implements OnInit {
 
   data: any;
+  cambiado: boolean = false;
   relaciones: Array<any> = new Array;
   arrayActivos: Array<any> = new Array;
+  arrayDiasGraficoCripto: Array<any> = new Array;
+  arrayDiasGraficoStock: Array<any> = new Array;
+  arrayDiasTotal: Array<any> = new Array;
   public obj: any;
   public hayActivos: boolean = false;
 
@@ -23,7 +28,11 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   totalInvertidoActual: any = 0;
   porcentajeNum: any;
 
+  activeCurrency: any;
 
+  @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
+
+  barChart: any;
 
   buildHammer(element: HTMLElement) {
     const mc = new (<any>window).Hammer(element);
@@ -45,39 +54,45 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     */
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
-  constructor(public menuCtrl: MenuController,public loadingController: LoadingController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
+  constructor(public menuCtrl: MenuController, public loadingController: LoadingController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
     super();
     this.data = this.service.getDestn();
     this.menuCtrl.enable(true);
+    this.activeCurrency = "USD";
     // this.cargarActivos();
 
   }
 
 
   ngOnInit() {
+
+    this.presentLoading();
     console.dir("me he iniciado")
 
   }
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.loadingController.dismiss()
+
   }
 
 
+
   ionViewWillEnter() {
-    this.presentLoading();
+
     this.reiniciarFinanzasUsuario();
     this.cargarActivos().subscribe((data: any) => {
-      
+
       if (data == null || data == false) {
         this.sendNotification("No tiene activos el usuario...");
         this.hayActivos = false;
       } else {
         this.hayActivos = true;
         console.dir(data);
-        data.forEach(async relacion => {
-          await this.procesarActivo(relacion.id_activo_ajeno, relacion)
-        });
-        
+        data.forEach(relacion => {
+          this.procesarActivo(relacion.id_activo_ajeno, relacion)
+
+        })
+
       }
     },
       (error: any) => {
@@ -86,14 +101,21 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       });
 
   }
+
+
   async presentLoading() {
     const loading = await this.loadingController.create({
-      message: 'Hellooo',
+      message: 'Cargando',
       duration: 2000
     });
     return await loading.present();
   }
-  doRefresh(event) {
+
+
+  async doRefresh(event) {
+    this.arrayDiasTotal.length = 0;
+    this.presentLoading();
+
     console.log('Begin async operation');
     this.service.actualizarActivos(this.arrayActivos)
     this.cargarActivos().subscribe((data: any) => {
@@ -103,11 +125,13 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       } else {
 
         this.hayActivos = true;
-        console.dir(data); 
-        data.forEach(async relacion => {
-          await this.procesarActivo(relacion.id_activo_ajeno, relacion)
+        console.dir(data);
+        data.forEach(relacion => {
+          this.procesarActivo(relacion.id_activo_ajeno, relacion)
         });
-        event.target.complete();
+        if (event != undefined) {
+          event.target.complete();
+        }
       }
     },
 
@@ -115,6 +139,114 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
         this.sendNotification("Hubo un error inesperado...");
         this.hayActivos = false;
       });
+
+
+    setTimeout(() => {
+      this.loadingController.dismiss()
+    }, 1500);
+  }
+  cambiarOrden() {
+    if (this.cambiado == false) {
+      this.arrayDiasTotal.reverse();
+      this.cambiado = true;
+    }
+  }
+
+  devolverDiaEnString(int: number) {
+    switch (int) {
+      case 0:
+        return "Domingo"
+      case 1:
+        return "Lunes"
+      case 2:
+        return "Martes"
+      case 3:
+        return "Miercoles"
+      case 4:
+        return "Jueves"
+      case 5:
+        return "Viernes"
+      case 6:
+        return "Sabado"
+      default:
+        break;
+    }
+  }
+
+
+  generarChart() {
+
+    var arrayDias: Array<String> = new Array();
+    for (let i = 6; i >= 0; i--) { // metodo usado para calcular los labels para el grafico de los dias anteriores al actual
+      var yesterday = new Date(new Date().setDate(new Date().getDate() - i));
+      arrayDias.push(this.devolverDiaEnString(yesterday.getDay()));
+    }
+    // console.dir(arrayDias)
+
+    if (this.barChart) {
+      this.barChart.destroy();
+    }
+    //var arrayAux=this.arrayDiasTotal.reverse();
+    //console.dir("recibido " + arrayAux)
+    this.barChart = new Chart(this.barCanvas.nativeElement, {
+      type: 'line',
+
+      data: {
+        labels: arrayDias,
+        datasets: [{
+          label: 'Rendimiento total en dolares',
+          data: this.arrayDiasTotal,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          fill: false,
+          borderColor: [
+            'rgba(255,99,132,1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }],
+        options: {
+          legend: {
+            display: false
+          },
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Rendimiento total'
+          },
+          tooltips: {
+            mode: 'index',
+            intersect: false,
+
+          },
+          hover: {
+            mode: 'dataset',
+            intersect: true
+          },
+          scales: {
+            xAxes: [{
+              display: false,
+
+            }],
+            yAxes: [{
+              display: false,
+            }]
+          }
+
+        }
+
+      }
+    });
   }
 
 
@@ -150,9 +282,11 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
     return this.http.post(url, JSON.stringify(options), headers)
 
-      
+
 
   }
+
+
   procesarActivo(id: any, relacion: any) {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
       options: any = { "key": "recuperar_activo", "id_activo": id },
@@ -164,53 +298,42 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
         if (activoRec == null || activoRec == false) {
           this.sendNotification("No se encuentra el activo");
         } else {
-
+          var dias_chart: Array<any> = new Array();
+          activoRec['array_dias_chart'] = dias_chart;
           if (activoRec.tipo == "Criptomoneda") {
             var obj: any;
             this.service.recuperarPrecioCryptoCompare(activoRec.siglas, relacion.siglas_operacion)
               .subscribe(response => {
                 obj = response;
-
                 activoRec.precio = obj[activoRec.siglas][relacion.siglas_operacion];
-                activoRec['precio_compra'] = relacion.precio_compra;
-                activoRec['id_unico'] = relacion.id;
-                activoRec['PAR_FULL'] = activoRec.siglas + "/" + relacion.siglas_operacion;
-                activoRec['id_relacion'] = relacion.id;
-                activoRec['expanded'] = false;
-                activoRec['exchange'] = relacion.exchange;
-                activoRec['fecha_operacion'] = relacion.fecha_operacion;
-                activoRec['tipoRelacion'] = relacion.tipo;
-                activoRec['cantidad'] = relacion.cantidad;
-                activoRec['contrapartida'] = relacion.siglas_operacion;
-
-
+                this.iniciarValoresActivo(activoRec, relacion)
                 this.arrayActivos.push(activoRec);
-                this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad,relacion.siglas_operacion,relacion.tipo);
+                this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
                 this.calcularPorcentajeActivo(activoRec);
                 this.service.actualizarPrecioActivo(activoRec.id, obj[activoRec.siglas][relacion.siglas_operacion]);
+                //funcion para generar un array con los ultimos datos historicos de un activo
+                this.añadirActivoAGrafico(activoRec)
+
               });
-          }else if(activoRec.tipo=="Stock"){
-            this.service.recuperarPrecioIEXTrading(activoRec.siglas).subscribe(response=>{
+
+
+          } else if (activoRec.tipo == "Stock") {
+            this.service.recuperarPrecioIEXTrading(activoRec.siglas).subscribe(response => {
               obj = response;
               activoRec.precio = obj;
-              activoRec['precio_compra'] = relacion.precio_compra;
-              activoRec['id_unico'] = relacion.id;
-              activoRec['PAR_FULL'] = activoRec.siglas + "/" + relacion.siglas_operacion;
-              activoRec['id_relacion'] = relacion.id;
-              activoRec['expanded'] = false;
-              activoRec['exchange'] = relacion.exchange;
-              activoRec['fecha_operacion'] = relacion.fecha_operacion;
-              activoRec['tipoRelacion'] = relacion.tipo;
-              activoRec['cantidad'] = relacion.cantidad;
-              activoRec['contrapartida'] = relacion.siglas_operacion;
-
+              this.iniciarValoresActivo(activoRec, relacion)
               this.arrayActivos.push(activoRec);
-              this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad,relacion.siglas_operacion,relacion.tipo);
+              this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
               this.calcularPorcentajeActivo(activoRec);
               this.service.actualizarPrecioActivo(activoRec.id, obj);
+              //funcion para generar un array con los ultimos datos historicos de un activo
+              this.añadirActivoAGrafico(activoRec)
+
             })
 
           }
+
+
 
         }
       },
@@ -220,16 +343,110 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
   }
 
-  
-  public actualizarFinanzasUsuario(precioInicial: number, precioActual: number, cantidad: number,siglas:string,tipo:string) { // metodo que usamos para actualizar la información financiera del usuario
-    if(siglas=="USD" || siglas=="USDT"){
+  añadirActivoAGrafico(activoRec) {
+    this.service.getHistoricalDataSemanal(activoRec.siglas, activoRec.tipo).subscribe(respuesta => {
 
-      if(tipo.toLocaleLowerCase()=="vender"){
-        var calculoNegativo=(+precioInicial - +precioActual);
-        if(calculoNegativo>0){ // la operacion de venta esta obteniendo beneficios
-          precioActual=(+precioInicial + +calculoNegativo);
-        }else{
-          precioActual=(+precioInicial - +calculoNegativo);
+      activoRec['historic_daily'] = respuesta;
+      console.dir(activoRec['historic_daily'])
+      this.procesarArrayDeDiasChart7(activoRec);
+
+      if (this.arrayDiasTotal.length == 0) {
+        this.arrayDiasTotal = new Array(0, 0, 0, 0, 0, 0, 0);
+        console.dir("entro en inicio array total " + this.arrayDiasTotal)
+      }
+
+      if (activoRec.tipo == "Criptomoneda") {
+        if (this.arrayDiasGraficoCripto.length == 0) {
+          this.arrayDiasGraficoCripto = new Array(0, 0, 0, 0, 0, 0, 0);
+          console.dir("entro en inicio array cripto " + this.arrayDiasGraficoCripto)
+        }
+
+        for (let i = 0; i < this.arrayDiasGraficoCripto.length; i++) {
+          if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
+            console.dir("detectada venta");
+            this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+          } else {
+            this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+          }
+          console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i] + "cantidad " + activoRec['cantidad'])
+        }
+
+      } else if (activoRec.tipo == "Stock") {
+        if (this.arrayDiasGraficoStock.length == 0) {
+          this.arrayDiasGraficoStock = new Array(0, 0, 0, 0, 0, 0, 0);
+          console.dir("entro en inicio array stock " + this.arrayDiasGraficoStock)
+        }
+        for (let i = 0; i < this.arrayDiasGraficoStock.length; i++) {
+          if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
+            console.dir("detectada venta");
+            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+            this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+          } else {
+            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+            this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+          }
+          console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i])
+        }
+
+      }
+      this.generarChart()
+
+    });
+
+  }
+
+  calcularPrecioActivoGrafico(activoRec, precioVivo) {
+    var resultado = 0;
+    var calculoNegativo = (+activoRec['precio_compra'] - +precioVivo);
+    if (calculoNegativo > 0) { // la operacion de venta esta obteniendo beneficios
+      resultado = (+activoRec['precio_compra'] + +calculoNegativo);
+    } else {
+      resultado = (+activoRec['precio_compra'] - +calculoNegativo);
+    }
+    return resultado;
+  }
+
+
+  iniciarValoresActivo(activoRec: any, relacion: any) {
+    activoRec['precio_compra'] = relacion.precio_compra;
+    activoRec['id_unico'] = relacion.id;
+    activoRec['PAR_FULL'] = activoRec.siglas + "/" + relacion.siglas_operacion;
+    activoRec['id_relacion'] = relacion.id;
+    activoRec['expanded'] = false;
+    activoRec['exchange'] = relacion.exchange;
+    activoRec['fecha_operacion'] = relacion.fecha_operacion;
+    activoRec['tipoRelacion'] = relacion.tipo;
+    activoRec['cantidad'] = relacion.cantidad;
+    activoRec['contrapartida'] = relacion.siglas_operacion;
+  }
+
+  public procesarArrayDeDiasChart7(activo: any) {
+    if (activo.tipo == "Criptomoneda") {
+      var aux: Array<any> = activo['historic_daily']['Data'].map(a => a.close);
+    } else if (activo.tipo == "Stock") {
+      var aux: Array<any> = activo['historic_daily'].map(a => a.close);
+    }
+    console.dir(aux)
+    aux.length = 7
+    for (let i = 0; i < aux.length; i++) {
+      activo.array_dias_chart.push(aux[i])
+    }
+
+
+  }
+
+
+  public actualizarFinanzasUsuario(precioInicial: number, precioActual: number, cantidad: number, siglas: string, tipo: string) { // metodo que usamos para actualizar la información financiera del usuario
+    if (siglas == "USD" || siglas == "USDT") {
+
+      if (tipo.toLocaleLowerCase() == "vender") {
+        var calculoNegativo = (+precioInicial - +precioActual);
+        if (calculoNegativo > 0) { // la operacion de venta esta obteniendo beneficios
+          precioActual = (+precioInicial + +calculoNegativo);
+        } else {
+          precioActual = (+precioInicial - +calculoNegativo);
         }
       }
       this.totalInvertidoBase = (+this.totalInvertidoBase + (+precioInicial * +cantidad)).toFixed(2);
@@ -238,41 +455,74 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       var resta = this.totalInvertidoBase - this.totalInvertidoActual;
       if (resta > 0) {
         this.porcentajeNum = "-" + (resta * 100 / this.totalInvertidoBase).toFixed(2) + "%";
-      
+
       } else {
         var rentaNum = (resta * 100 / this.totalInvertidoBase).toFixed(2);
         this.porcentajeNum = "+" + (rentaNum.substr(1, rentaNum.length));
       }
 
-    }else{
-      this.service.recuperarPrecioCryptoCompare(siglas,"USD").subscribe(respuesta=>{ // XRP/ETH para saber los ETH que necesitamos para comprar 1 XRP
-        var precioEquivaleEnDolares=respuesta[siglas]['USD'];
-        this.totalInvertidoBase = (+this.totalInvertidoBase + ((+precioInicial * +precioEquivaleEnDolares) * +cantidad)).toFixed(2);
-        this.totalInvertidoActual = (+this.totalInvertidoActual + ((+precioActual * +precioEquivaleEnDolares) * +cantidad)).toFixed(2);
-        var resta = this.totalInvertidoBase - this.totalInvertidoActual;
-        if (resta > 0) {
-          this.porcentajeNum = "-" + (resta * 100 / this.totalInvertidoBase).toFixed(2) + "%";
-        } else {
-          var rentaNum = (resta * 100 / this.totalInvertidoBase).toFixed(2);
-          this.porcentajeNum = "+" + (rentaNum.substr(1, rentaNum.length));
-        }  
-      })
+    } else { // Para traducir el precio de un par de criptomoneda a dolares
+      this.traducirPrecio(siglas, precioInicial, precioActual, cantidad)
     }
-      
-    
-    
+
+
+
   }
+  public traducirPrecio(siglas, precioInicial, precioActual, cantidad) {
+    this.service.recuperarPrecioCryptoCompare(siglas, "USD").subscribe(respuesta => { // XRP/ETH para saber los ETH que necesitamos para comprar 1 XRP
+      var precioEquivaleEnDolares = respuesta[siglas]['USD'];
+      this.totalInvertidoBase = (+this.totalInvertidoBase + ((+precioInicial * +precioEquivaleEnDolares) * +cantidad)).toFixed(2);
+      this.totalInvertidoActual = (+this.totalInvertidoActual + ((+precioActual * +precioEquivaleEnDolares) * +cantidad)).toFixed(2);
+      var resta = this.totalInvertidoBase - this.totalInvertidoActual;
+      if (resta > 0) {
+        this.porcentajeNum = "-" + (resta * 100 / this.totalInvertidoBase).toFixed(2) + "%";
+      } else {
+        var rentaNum = (resta * 100 / this.totalInvertidoBase).toFixed(2);
+        this.porcentajeNum = "+" + (rentaNum.substr(1, rentaNum.length));
+      }
+    })
+  }
+
+  public traducirPrecioUsuario(siglasDeseadas,simbolo) {
+    const base = this.totalInvertidoBase;
+    const actual = this.totalInvertidoActual;
+
+    this.service.getPrecioForexPar(this.activeCurrency, siglasDeseadas).subscribe(respuesta => {
+      if (this.activeCurrency.toLowerCase() == siglasDeseadas.toLowerCase()) {
+        //this.reiniciarFinanzasUsuario();
+        var precio: number = 1;
+        console.dir("entro " + siglasDeseadas)
+      } else {
+        var precio: number = respuesta[0]['price'];
+      }
+      this.totalInvertidoBase = base * precio;
+      this.totalInvertidoActual = actual * precio;
+      console.dir(base + " " + actual)
+      var resta = base - actual;
+      if (resta > 0) {
+        this.porcentajeNum = "-" + (resta * 100 / base).toFixed(2) + "%";
+
+      } else {
+        var rentaNum = (resta * 100 / base).toFixed(2);
+        this.porcentajeNum = "+" + (rentaNum.substr(1, rentaNum.length));
+      }
+
+      this.activeCurrency = siglasDeseadas;
+
+    });
+  }
+
 
   public calcularPorcentajeActivo(item: any) {
     var precioActual = item.precio;
     var precioCompra = item.precio_compra;
 
-    if(item.tipoRelacion.toLocaleLowerCase()=="vender"){
-      var calculoNegativo=(+precioCompra - +precioActual);
-      if(calculoNegativo>0){ // la operacion de venta esta obteniendo beneficios
-        precioActual=(+precioCompra + +calculoNegativo);
-      }else{
-        precioActual=(+precioCompra - +calculoNegativo);
+    if (item.tipoRelacion.toLocaleLowerCase() == "vender") {
+      var calculoNegativo = (+precioCompra - +precioActual);
+      if (calculoNegativo > 0) { // la operacion de venta esta obteniendo beneficios
+        precioActual = (+precioCompra + +calculoNegativo);
+      } else {
+        precioActual = (+precioCompra - +calculoNegativo);
       }
     }
     var resta = precioCompra - precioActual;
@@ -305,9 +555,14 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     const index = this.arrayActivos.indexOf(activo);
     this.arrayActivos.splice(index, 1);
     this.service.eliminarRelacion(activo.id_relacion);
+    this.arrayDiasTotal.length = 0;
     if (this.arrayActivos.length == 0) {
       this.hayActivos = false;
+      this.reiniciarFinanzasUsuario();
     }
+    this.generarChart();
+    this.doRefresh(undefined);
+
   }
 
   agregarNuevosActivos() {
@@ -335,6 +590,9 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
   generarImgStock(activo) {
     return this.baseURI + "img-activos-stocks/" + activo.nombre + ".png";
+  }
+  generarImgForex(pais: string) {
+    return this.baseURI + "img-forex/" + pais + ".png";
   }
 
 }

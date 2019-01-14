@@ -146,22 +146,16 @@ export class DetallesActivoPage implements OnInit {
   dembow2() {
     alert("sueltalo loco");
   }
-  getHistoricalData24H(siglasActivo:any,tipoActivo:String){
-    if(tipoActivo=="Criptomoneda"){
-      return this.http.get("https://min-api.cryptocompare.com/data/histoday?fsym="+siglasActivo+"&tsym=USD&limit=30&6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc")
-    }else if(tipoActivo=="Stock"){
-      return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/chart/1m")
-    }
-  }
+ 
 
   iniciarChart(tipoGrafico:any){
     console.dir("entro aqui las singlas son " + this.activo.siglas)
     if(tipoGrafico=="Criptomoneda"){
-      this.getHistoricalData24H(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
+      this.service.getHistoricalDataMensual(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
         this.generarChartCripto(respuesta);
       })
     }else if(tipoGrafico=="Stock"){
-      this.getHistoricalData24H(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
+      this.service.getHistoricalDataMensual(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
         this.generarChartStock(respuesta)
       })
     }

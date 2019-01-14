@@ -9,7 +9,7 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content padding color="primary">
+<ion-content  color="primary">
 
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
@@ -20,6 +20,9 @@
             <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title>
 
         </ion-card-header>
+        <ion-card *ngIf="hayActivos">
+            <canvas #barCanvas></canvas>
+          </ion-card>
         <ion-card-content>
 
             <ion-row>
@@ -35,10 +38,10 @@
             </ion-row>
             <ion-row>
                 <ion-col size="4">
-                    <ion-label>{{totalInvertidoBase}}</ion-label>
+                    <ion-label>{{totalInvertidoBase.toLocaleString()}}</ion-label>
                 </ion-col>
                 <ion-col size="4">
-                    <ion-label>{{totalInvertidoActual}}</ion-label>
+                    <ion-label>{{totalInvertidoActual.toLocaleString()}}</ion-label>
                 </ion-col>
                 <ion-col size="4">
                     <ion-label [color]="tenyirLabel(porcentajeNum)">{{porcentajeNum}}</ion-label>
@@ -49,17 +52,53 @@
         </ion-card-content>
         <ion-card color="light">
             <ion-segment scrollable color="success">
-                <ion-segment-button value="USD" checked>
+                <ion-segment-button value="USD" checked (click)="traducirPrecioUsuario('USD','$')">
+                    <ion-chip color="success">
+                    <ion-avatar>
+                        <img [src]="generarImgForex('united-states')">
+                    </ion-avatar>
                     <ion-label>USD</ion-label>
+                </ion-chip>
                 </ion-segment-button>
-                <ion-segment-button value="EUR">
-                    <ion-label>EUR</ion-label>
+                <ion-segment-button value="EUR" (click)="traducirPrecioUsuario('EUR','€')">
+                    <ion-chip color="success">
+                        <ion-avatar>
+                            <img [src]="generarImgForex('european-union')">
+                        </ion-avatar>
+                        <ion-label>EUR</ion-label>
+                    </ion-chip>
                 </ion-segment-button>
-                <ion-segment-button value="GBP">
-                    <ion-label>GBP</ion-label>
+                <ion-segment-button value="GBP" (click)="traducirPrecioUsuario('GBP','£')">
+                    <ion-chip color="success">
+                        <ion-avatar>
+                            <img [src]="generarImgForex('united-kingdom')">
+                        </ion-avatar>
+                        <ion-label>GBP</ion-label>
+                    </ion-chip>
                 </ion-segment-button>
-                <ion-segment-button value="JPY">
-                    <ion-label>JPY</ion-label>
+                <ion-segment-button value="JPY" (click)="traducirPrecioUsuario('JPY','¥')">
+                    <ion-chip color="success">
+                        <ion-avatar>
+                            <img [src]="generarImgForex('japan')">
+                        </ion-avatar>
+                        <ion-label>JPY</ion-label>
+                    </ion-chip>
+                </ion-segment-button>
+                <ion-segment-button value="AUD" (click)="traducirPrecioUsuario('AUD','$ AUD')">
+                    <ion-chip color="success">
+                        <ion-avatar>
+                            <img [src]="generarImgForex('australia')">
+                        </ion-avatar>
+                        <ion-label>AUD</ion-label>
+                    </ion-chip>
+                </ion-segment-button>
+                <ion-segment-button value="NZD" (click)="traducirPrecioUsuario('NZD','$ NZD')">
+                    <ion-chip color="success">
+                        <ion-avatar>
+                            <img [src]="generarImgForex('new-zealand')">
+                        </ion-avatar>
+                        <ion-label>NZD</ion-label>
+                    </ion-chip>
                 </ion-segment-button>
             </ion-segment>
         </ion-card>

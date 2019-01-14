@@ -38,6 +38,28 @@ export class ServiceLoginDashboardService {
     return this.http.post(url, JSON.stringify(options), headers)
    
   }
+  getHistoricalDataMensual(siglasActivo:any,tipoActivo:String){
+    if(tipoActivo=="Criptomoneda"){
+      return this.http.get("https://min-api.cryptocompare.com/data/histoday?fsym="+siglasActivo+"&tsym=USD&limit=30&6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc")
+    }else if(tipoActivo=="Stock"){
+      return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/chart/1m")
+    }
+  }
+  getHistoricalDataSemanal(siglasActivo:any,tipoActivo:String){
+    if(tipoActivo=="Criptomoneda"){
+      return this.http.get("https://min-api.cryptocompare.com/data/histoday?fsym="+siglasActivo+"&tsym=USD&limit=7&6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc")
+    }else if(tipoActivo=="Stock"){
+      return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/chart/1m")
+    }
+  }
+  getHistoricalDataDiaria(siglasActivo:any,tipoActivo:String){
+    if(tipoActivo=="Criptomoneda"){
+      return this.http.get("https://min-api.cryptocompare.com/data/histohour?fsym="+siglasActivo+"&tsym=USD&limit=24&6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc")
+    }else if(tipoActivo=="Stock"){
+      return this.http.get("https://api.iextrading.com/1.0/stock/"+siglasActivo+"/chart/1d")
+    }
+  }
+  
   actualizarActivos(array:any){
 
     array.forEach(element => {
@@ -59,6 +81,9 @@ export class ServiceLoginDashboardService {
      
     
     
+  }
+  public getPrecioForexPar(siglasIzq,siglasDere){
+    return this.http.get("https://forex.1forge.com/1.0.3/quotes?pairs="+siglasIzq.toUpperCase()+""+siglasDere.toUpperCase()+"&api_key=sqiS3IAJBRMm8jRIpEAOQmjOvZRfDHhL");
   }
 
   public setArrayActivos(array:any){
