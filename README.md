@@ -32,3 +32,5 @@
 * 0.0.8b : Implementada API para los Stocks y la compra de estos en detalles-activo junto a sus respectivos metodos y comprobaciones , se debe refactorizar el codigo y comenzar a implementar graficos, descubiertos noticias en la API de los stocks. Solucionados bugs menores, mejora de la interfaz grafica y funcionabildiad + Añadido nuevos activos (10 criptomonedas nuevas añadidas) Y BBDD alterada
 
 * 0.0.9: Implementados graficos para criptomonedas y stocks , junto a refactorización del codigo, mejoras visuales y de experencia al usuario y bugs menores
+
+* ALPHA 0.1.0 : Implementación de grafico general del usuario en la dashboard, totalmente funcional,junto a calculo del equivalente en diferentes divisas y tambien preparados datos para graficos especificos. Codigo refactorizado. Bugs menores solucionados
