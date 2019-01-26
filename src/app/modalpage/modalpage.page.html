@@ -1,0 +1,136 @@
+<ion-header >
+  <ion-toolbar color="primary">
+    <ion-buttons slot="primary">
+      <ion-button color="light" (click)="cerrarModal()">
+        <ion-label ><ion-icon slot="start" name="close" style="font-size:20px;"></ion-icon></ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Seleccionar avatar</ion-title>
+ 
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+    <ion-slides pager="false" scrollbar="true" [options]="slideOpts" *ngIf="images.length==0">
+        <ion-slide >
+          <ion-card class="diag" padding>
+              <ion-row>
+                  <ion-col col-4></ion-col>
+                  <ion-col col-4>
+                      <img src="../../assets/res_drawable/camera.png" >
+                  </ion-col>
+                  <ion-col col-4></ion-col>
+                </ion-row>
+              
+                <ion-card-header>
+                    <ion-card-subtitle>Usa la camara</ion-card-subtitle>
+                    <ion-card-title>
+                        Elige sacarte fotos en el momento y usalas como foto de perfil!
+                    </ion-card-title>
+                  </ion-card-header>
+          </ion-card>
+        </ion-slide>
+        
+        <ion-slide >
+            <ion-card  class="diag" padding>
+                <ion-row>
+                    <ion-col col-4></ion-col>
+                    <ion-col col-4>
+                        <img src="../../assets/res_drawable/gallery.png" >
+                    </ion-col>
+                    <ion-col col-4></ion-col>
+                  </ion-row>
+                <ion-card-header>
+                    <ion-card-subtitle>Usa la galeria de fotos</ion-card-subtitle>
+                    <ion-card-title>
+                        Aunque tambien, puedes elegirlas desde tu galeria de fotos favorita.
+                    </ion-card-title>
+                  </ion-card-header>
+            </ion-card>
+        </ion-slide>
+
+        <ion-slide >
+            <ion-card class="diag"  padding>
+                <ion-row>
+                    <ion-col col-4></ion-col>
+                    <ion-col col-4>
+                        <img src="../../assets/res_drawable/crop.png" >
+                    </ion-col>
+                    <ion-col col-4></ion-col>
+                  </ion-row>
+   
+                <ion-card-header>
+                    <ion-card-subtitle>Redimensiona las fotos</ion-card-subtitle>
+                    <ion-card-title>
+                        Si no te gusta una foto en concreto, puedes retocarla haciendo click sobre ella o su nombre.
+                    </ion-card-title>
+                  </ion-card-header>
+            </ion-card>
+        </ion-slide>
+
+        <ion-slide >
+            <ion-card class="diag" padding>
+                <ion-row>
+                    <ion-col col-4></ion-col>
+                    <ion-col col-4>
+                        <img src="../../assets/res_drawable/man.png" >
+                    </ion-col>
+                    <ion-col col-4></ion-col>
+                  </ion-row>
+                <ion-card-header>
+                    <ion-card-subtitle>Una vez elegida tu foto favorita,</ion-card-subtitle>
+                    <ion-card-title>
+                        aprieta sobre el boton de
+                         <span><ion-icon slot="start" name="cloud-upload" color="primary"></ion-icon></span> para seleccionar como foto de perfil.
+                    </ion-card-title>
+                  </ion-card-header>
+              </ion-card>
+        </ion-slide>
+
+        <ion-slide class="diag">
+       
+            <ion-card  class="diag" padding>
+                <ion-row>
+                    <ion-col col-4></ion-col>
+                    <ion-col col-4>
+                        <img src="../../assets/res_drawable/magician.png" >
+                    </ion-col>
+                    <ion-col col-4></ion-col>
+                  </ion-row>
+                  <ion-card-header>
+                    <ion-card-subtitle>A qué estas esperando?.</ion-card-subtitle>
+                    <ion-card-title><ion-button (click)="selectImage()">
+                        Subir una foto
+                      </ion-button></ion-card-title>
+                  </ion-card-header>
+            </ion-card>
+
+        </ion-slide>
+      </ion-slides>
+
+<ion-list>
+    <ion-item *ngFor="let img of images; index as pos" text-wrap >
+      <ion-thumbnail slot="start" (click)="redimensionar(img)">
+        <ion-img [src]="img.path"></ion-img>
+      </ion-thumbnail>
+      <ion-label (click)="redimensionar(img)">
+        {{ img.name }}
+      </ion-label>
+      <ion-button slot="end" fill="clear" (click)="startUpload(img)">
+        <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
+ 
+<ion-footer>
+  <ion-toolbar color="primary">
+    <ion-button fill="clear" expand="full" color="light" (click)="selectImage()">
+      <ion-icon slot="start" name="camera"></ion-icon>
+      Select Image</ion-button>
+  </ion-toolbar>
+</ion-footer>

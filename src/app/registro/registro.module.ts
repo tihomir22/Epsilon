@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { RegistroPage } from './registro.page';
 
+
+
 const routes: Routes = [
   {
     path: '',
@@ -19,6 +21,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+ 
     RouterModule.forChild(routes),
     ReactiveFormsModule
   ],

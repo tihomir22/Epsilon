@@ -11,15 +11,14 @@ const routes: Routes = [
     path: 'home',
     loadChildren: './home/home.module#HomePageModule'
   },
-  {
-    path: 'list',
-    loadChildren: './list/list.module#ListPageModule'
-  },
+ 
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'registro', loadChildren: './registro/registro.module#RegistroPageModule' },
   { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardPageModule' },
   { path: 'agregar-activos', loadChildren: './agregar-activos/agregar-activos.module#AgregarActivosPageModule' },
-  { path: 'detalles-activo', loadChildren: './detalles-activo/detalles-activo.module#DetallesActivoPageModule' }
+  { path: 'detalles-activo', loadChildren: './detalles-activo/detalles-activo.module#DetallesActivoPageModule' },
+  { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },
+  { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' }
 ];
 
 @NgModule({

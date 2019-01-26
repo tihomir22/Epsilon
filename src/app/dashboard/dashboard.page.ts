@@ -27,6 +27,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   totalInvertidoBase: any = 0;
   totalInvertidoActual: any = 0;
   porcentajeNum: any;
+  imagenUsuario:any;
 
   activeCurrency: any;
 
@@ -59,6 +60,9 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.data = this.service.getDestn();
     this.menuCtrl.enable(true);
     this.activeCurrency = "USD";
+    console.dir("dembow")
+    console.dir(this.data['foto_usuario'])
+    this.imagenUsuario=this.data['foto_usuario'];
     // this.cargarActivos();
 
   }
@@ -95,11 +99,12 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
       }
     },
-      (error: any) => {
+      err => {
         this.sendNotification("Hubo un error inesperado...");
         this.hayActivos = false;
-      });
+      },
 
+    )
   }
 
 
@@ -339,8 +344,11 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       },
         (error: any) => {
           this.sendNotification("Hubo un error inesperado...");
-        });
-
+        },
+        () => {
+          console.dir("Nos hemos terminado de cargar weeeyy!!")
+        },
+      )
   }
 
   añadirActivoAGrafico(activoRec) {
@@ -483,7 +491,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     })
   }
 
-  public traducirPrecioUsuario(siglasDeseadas,simbolo) {
+  public traducirPrecioUsuario(siglasDeseadas, simbolo) {
     const base = this.totalInvertidoBase;
     const actual = this.totalInvertidoActual;
 

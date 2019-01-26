@@ -13,6 +13,7 @@ import { DashboardPage } from './dashboard/dashboard.page';
 export class ServiceLoginDashboardService {
 
   private userInfo: any;
+  private imagenUsuario:any;
   private activo:any;
   private tipoAdquisicion:string='';
   private arrayActivosServ:Array<any>=new Array;
@@ -37,6 +38,21 @@ export class ServiceLoginDashboardService {
 
     return this.http.post(url, JSON.stringify(options), headers)
    
+  }
+
+  recuperarRutaImgUsuario(idUsuario:number){
+    let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),
+    options 	: any		= { "key" : "recuperar_ruta_imagen","id_usuario":idUsuario},
+    url       : any      	= this.baseURI + "retrieve-data.php";
+
+    return this.http.post(url, JSON.stringify(options), headers)
+
+  }
+  setImagenUsuario(imagenPath:any){
+    this.imagenUsuario=imagenPath;
+  }
+  getImagenUsuario(){
+    return this.imagenUsuario;
   }
   getHistoricalDataMensual(siglasActivo:any,tipoActivo:String){
     if(tipoActivo=="Criptomoneda"){

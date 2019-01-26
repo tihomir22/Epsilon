@@ -11,19 +11,33 @@
 
 <ion-content  color="primary">
 
+      
+                
+    
+
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
-            <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title>
+            <ion-row>
+                <ion-col size="10"> <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title></ion-col>
+                <ion-col size="2">
+                        <ion-fab-button>
+                                <ion-img [src]="imagenUsuario"></ion-img>
+                        </ion-fab-button>
+                </ion-col>
+            </ion-row>
+           
+            
 
         </ion-card-header>
         <ion-card *ngIf="hayActivos">
             <canvas #barCanvas></canvas>
           </ion-card>
         <ion-card-content>
+                    
 
             <ion-row>
                 <ion-col size="4">
