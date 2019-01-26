@@ -34,3 +34,5 @@
 * 0.0.9: Implementados graficos para criptomonedas y stocks , junto a refactorización del codigo, mejoras visuales y de experencia al usuario y bugs menores
 
 * ALPHA 0.1.0 : Implementación de grafico general del usuario en la dashboard, totalmente funcional,junto a calculo del equivalente en diferentes divisas y tambien preparados datos para graficos especificos. Codigo refactorizado. Bugs menores solucionados
+
+* ALPHA 0.1.1 : Implementada funcion de subir imagenes en local , moverlas y subirlas en la nube por php, tambien funcion de subir imagenes desde camera y tambien redimensionarlas. Implementado avatar en registro y guardado de este en la bbdd. Preparados para implementar el chat
