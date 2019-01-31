@@ -20,8 +20,12 @@ import { Crop } from '@ionic-native/crop/ngx/';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
+
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { IonicStorageModule } from '@ionic/storage';
+
+import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
+const config: SocketIoConfig = { url: 'http://localhost:3001', options: {} };
 
 
 @NgModule({
@@ -32,11 +36,12 @@ import { IonicStorageModule } from '@ionic/storage';
     IonicModule.forRoot(),
     ReactiveFormsModule,
     AppRoutingModule,
+
     FormsModule,
     HttpClientModule,
     HttpModule,
-    IonicStorageModule.forRoot()
-
+    IonicStorageModule.forRoot(),
+    SocketIoModule.forRoot(config)
 
 
 

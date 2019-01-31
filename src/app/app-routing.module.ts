@@ -18,7 +18,9 @@ const routes: Routes = [
   { path: 'agregar-activos', loadChildren: './agregar-activos/agregar-activos.module#AgregarActivosPageModule' },
   { path: 'detalles-activo', loadChildren: './detalles-activo/detalles-activo.module#DetallesActivoPageModule' },
   { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },
-  { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' }
+  { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },  { path: 'chat-room', loadChildren: './chat-room/chat-room.module#ChatRoomPageModule' },
+  { path: 'chat-room-live', loadChildren: './chat-room-live/chat-room-live.module#ChatRoomLivePageModule' }
+
 ];
 
 @NgModule({

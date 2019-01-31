@@ -83,6 +83,7 @@ export class RegistroPage {
 
 
   constructor(public navCtrl: NavController, public service: ServiceLoginDashboardService, public http: HttpClient, public formbuilder: FormBuilder, public toastCtrl: ToastController, public modalController: ModalController) {
+ 
 
     this.formgroup = formbuilder.group({
       name: ['', Validators.compose([Validators.required, Validators.maxLength(25)])],

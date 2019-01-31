@@ -22,6 +22,11 @@ export class AppComponent {
       icon: 'add'
     },
     {
+      title: 'Chat',
+      url: '/chat-room',
+      icon: 'add'
+    },
+    {
       title: 'Salir',
       url: '/login',
       icon: 'log-out'

@@ -21,14 +21,15 @@
     <ion-card color="secondary">
       <ion-row>
         <ion-col size="2">
-          <ion-avatar >
+          <ion-avatar>
             <img [src]="generarImg()" (click)="mostrarImagen()" style="width:64px;height:64px;margin-top: 5px;border:2px solid white;" />
           </ion-avatar>
         </ion-col>
 
         <ion-col size="10" style="width:100%;">
           <ion-card-header>
-            <ion-card-subtitle>Foto de perfil del usuario <ion-label color="primary">{{usuarioString}}</ion-label></ion-card-subtitle>
+            <ion-card-subtitle>Foto de perfil del usuario <ion-label color="primary">{{usuarioString}}</ion-label>
+            </ion-card-subtitle>
             <ion-card-title style="font-size:15px;">
               <ion-label>Haga click para seleccionar una imagen</ion-label>
             </ion-card-title>
@@ -54,6 +55,7 @@
     </ion-label>
 
     <!-- EMAIL -->
+
     <ion-item>
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" formControlName="email" color="primary" [(ngModel)]="emailString"></ion-input>
