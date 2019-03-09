@@ -36,3 +36,5 @@
 * ALPHA 0.1.0 : Implementación de grafico general del usuario en la dashboard, totalmente funcional,junto a calculo del equivalente en diferentes divisas y tambien preparados datos para graficos especificos. Codigo refactorizado. Bugs menores solucionados
 
 * ALPHA 0.1.1 : Implementada funcion de subir imagenes en local , moverlas y subirlas en la nube por php, tambien funcion de subir imagenes desde camera y tambien redimensionarlas. Implementado avatar en registro y guardado de este en la bbdd. Preparados para implementar el chat
+
+* ALPHA 0.2.0 : Aplazada funcion de chat, añadidas nuevas funciones y componentes, nueva pagina añadida de noticias , se muestran noticias de todos los tipos de activos, stocks y criptos, distribuidas en noticias calientes y noticias normales, el usuario puede agregarlas como favoritas y filtrar por estas. Siguientes progresos : terminar filtro en noticias y empezar a trabajar con el perfil del usuario.
