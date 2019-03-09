@@ -24,8 +24,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 
-import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
-const config: SocketIoConfig = { url: 'http://localhost:3001', options: {} };
+
 
 
 @NgModule({
@@ -41,7 +40,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001', options: {} };
     HttpClientModule,
     HttpModule,
     IonicStorageModule.forRoot(),
-    SocketIoModule.forRoot(config)
+
 
 
 

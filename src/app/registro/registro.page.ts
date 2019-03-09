@@ -15,6 +15,8 @@ import { ServiceLoginDashboardService } from '../service-login-dashboard.service
   styleUrls: ['./registro.page.scss'],
 })
 export class RegistroPage {
+  codigoPais: string = "+34";
+
 
   passwordType: string = 'password';
   passwordShown: boolean = false;
@@ -26,12 +28,14 @@ export class RegistroPage {
 
   formgroup: FormGroup;
 
-  generarImagen: any = '';
+  generarImagen: any = 'http://dembow.gearhostpreview.com/fotosusuarios/5dygkkwm33f01.jpg';
 
   name: AbstractControl;
   email: AbstractControl;
   pass: AbstractControl;
   pass2: AbstractControl;
+  tel: AbstractControl;
+  codigo: AbstractControl;
 
   /**
    * @name usuarioString
@@ -48,6 +52,14 @@ export class RegistroPage {
    * @description     string de email en el form
    */
   public emailString: any;
+
+  /**
+   * @name telString
+   * @type {Any}
+   * @public
+   * @description     string de telString en el form
+   */
+  public telString: any = "";
 
   /**
     * @name passString
@@ -83,10 +95,16 @@ export class RegistroPage {
 
 
   constructor(public navCtrl: NavController, public service: ServiceLoginDashboardService, public http: HttpClient, public formbuilder: FormBuilder, public toastCtrl: ToastController, public modalController: ModalController) {
- 
+
 
     this.formgroup = formbuilder.group({
       name: ['', Validators.compose([Validators.required, Validators.maxLength(25)])],
+      tel: ['', Validators.compose([
+        Validators.maxLength(25),
+        Validators.required,
+        Validators.pattern('^[0-9]+$')
+      ])],
+      codigo: ['', Validators.compose([Validators.required])],
       email: ['', Validators.compose([
         Validators.maxLength(100),
         Validators.required,
@@ -114,12 +132,14 @@ export class RegistroPage {
 
     this.name = this.formgroup.controls['name'];
     this.email = this.formgroup.controls['email'];
+    this.tel = this.formgroup.controls['tel'];
+    this.codigo = this.formgroup.controls['codigo'];
 
     this.pass = this.formgroup.controls['pass'];
     this.pass2 = this.formgroup.controls['pass2'];
 
 
-   
+
   }
 
   ngOnInit() {
@@ -131,7 +151,7 @@ export class RegistroPage {
     this.generarImg();
   }
 
-  
+
   checkValue(value: any) {
     if (value.target.value == "masculino") {
       this.sexoString = "masculino";
@@ -141,9 +161,9 @@ export class RegistroPage {
   }
 
   generarImg() {
-    if (this.generarImagen == '' || this.generarImagen ==null) {
+    if (this.generarImagen == '' || this.generarImagen == null || this.generarImagen == undefined) {
       //this.service.recuperarRutaImgUsuario(this.service.getDestn)
-     // console.dir(this.service.getDestn())
+      // console.dir(this.service.getDestn())
       return 'http://dembow.gearhostpreview.com/fotosusuarios/5dygkkwm33f01.jpg';
     } else {
       return this.generarImagen;
@@ -156,9 +176,9 @@ export class RegistroPage {
       component: ModalpagePage,
 
     });
-    modal.onDidDismiss().then((result=>{
-      
-      this.generarImagen=this.service.getImagenUsuario()
+    modal.onDidDismiss().then((result => {
+
+      this.generarImagen = this.service.getImagenUsuario()
       this.generarImg()
       console.dir(this.generarImagen)
     }));
@@ -168,10 +188,16 @@ export class RegistroPage {
 
   createEntry(): void {
     if (this.formgroup.status == "VALID") {
-      var rutaReal=this.generarImagen.substr(this.generarImagen.lastIndexOf('/') + 1)
-      rutaReal=this.baseURI+"fotosusuarios/"+rutaReal;
+
+      console.dir(this.codigoPais + "|" + this.telString)
+
+      if (this.generarImagen == undefined) {
+        this.generarImagen = "http://dembow.gearhostpreview.com/fotosusuarios/5dygkkwm33f01.jpg";
+      }
+      var rutaReal = this.generarImagen.substr(this.generarImagen.lastIndexOf('/') + 1)
+      rutaReal = this.baseURI + "fotosusuarios/" + rutaReal;
       let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-        options: any = { "key": "create", "usuario": this.usuarioString, "email": this.emailString, "pass": this.passString, "sexo": this.sexoString , "rutaImagen" : rutaReal },
+        options: any = { "key": "create", "usuario": this.usuarioString, "email": this.emailString, "pass": this.passString, "sexo": this.sexoString, "rutaImagen": rutaReal, "telefono": this.codigoPais + "" + this.telString },
         url: any = this.baseURI + "manage-dataIONIC.php";
 
       this.http.post(url, JSON.stringify(options), headers)

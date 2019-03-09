@@ -9,6 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content padding>
   <form (ngSubmit)="createEntry()" [formGroup]="formgroup">
     <!-- NOMBRE -->
@@ -70,6 +71,46 @@
     <ion-label *ngIf="email.hasError('maxLength') && email.touched" style="color:red;">
       <ion-icon slot="start" name="at"></ion-icon> No puede tener más de 100 caracteres
     </ion-label>
+
+    <!-- TEL -->
+    <ion-row>
+      <ion-col size="3">
+        <ion-item>
+          <ion-label position="floating">Codigo</ion-label>
+          <ion-select multiple="true" placeholder="Seleccionar" formControlName="codigo" [(ngModel)]="codigoPais">
+            <ion-select-option value="+34">+34 ESP</ion-select-option>
+            <ion-select-option value="+359">+359 BG</ion-select-option>
+            <ion-select-option value="+1">+1 USA</ion-select-option>
+            <ion-select-option value="+44">+44 UK</ion-select-option>
+            <ion-select-option value="+52">+52 MX</ion-select-option>
+            <ion-select-option value="+91">+91 IND</ion-select-option>
+            <ion-select-option value="+86">+86 CHN</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col size="9">
+        <ion-item class="padding-left:-2px;">
+          <ion-label position="stacked">Numero de telefono</ion-label>
+          <ion-input class="form-control" type="tel" formControlName="tel" color="primary" [(ngModel)]="telString"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-label *ngIf="codigo.hasError('required') && codigo.touched" style="color:red;">
+      <ion-icon slot="start" name="alert"></ion-icon> Debes elegir un codigo
+    </ion-label>
+    
+
+    <ion-label *ngIf="tel.hasError('required') && tel.touched" style="color:red;">
+      <ion-icon slot="start" name="alert"></ion-icon> Telefono es requerido
+    </ion-label>
+    <ion-label *ngIf="tel.hasError('maxLength') && tel.touched" style="color:red;">
+      <ion-icon slot="start" name="alert"></ion-icon> No puede tener más de 25 caracteres
+    </ion-label>
+    <ion-label *ngIf="tel.hasError('pattern') && tel.touched" style="color:red;">
+      <ion-icon slot="start" name="at"></ion-icon> Lo introducido no es un telefono<br>
+    </ion-label>
+
 
     <!-- PASS 1  -->
     <ion-item>
@@ -136,6 +177,8 @@
         </ion-row>
       </ion-grid>
 
+
     </div>
   </form>
+
 </ion-content>

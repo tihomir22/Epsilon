@@ -22,9 +22,9 @@ export class AppComponent {
       icon: 'add'
     },
     {
-      title: 'Chat',
-      url: '/chat-room',
-      icon: 'add'
+      title: 'Noticias',
+      url: '/noticias',
+      icon: 'paper'
     },
     {
       title: 'Salir',

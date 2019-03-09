@@ -141,7 +141,7 @@
 
         </ion-list-header>
 
-        <ion-item-sliding *ngFor="let activo of arrayActivos;" [attr.id]="'sliding' + activo.id_unico">
+        <ion-item-sliding *ngFor="let activo of service.getArrayActivos()" [attr.id]="'sliding' + activo.id_unico">
             <ion-item style="text-align:center;" (press)="seleccionarItem()" (click)="expandItem(activo)">
                 <ion-icon color="success" *ngIf="activo.rentabilidad.charAt(0)=='+'" name="arrow-dropup"></ion-icon>
                 <ion-icon color="danger" *ngIf="activo.rentabilidad.charAt(0)=='-'" name="arrow-dropdown"></ion-icon>

@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { IonicModule } from '@ionic/angular';
 
-import { ChatRoomLivePage } from '../chat-room-live/chat-room-live.page';
+import { NoticiasPage } from './noticias.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ChatRoomLivePage
+    component: NoticiasPage
   }
 ];
 
@@ -22,6 +21,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ChatRoomLivePage]
+  declarations: [NoticiasPage]
 })
-export class ChatRoomLivePageModule {}
+export class NoticiasPageModule {}

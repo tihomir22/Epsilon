@@ -17,7 +17,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   data: any;
   cambiado: boolean = false;
   relaciones: Array<any> = new Array;
-  arrayActivos: Array<any> = new Array;
+  //arrayActivos: Array<any> = new Array;
   arrayDiasGraficoCripto: Array<any> = new Array;
   arrayDiasGraficoStock: Array<any> = new Array;
   arrayDiasTotal: Array<any> = new Array;
@@ -27,7 +27,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   totalInvertidoBase: any = 0;
   totalInvertidoActual: any = 0;
   porcentajeNum: any;
-  imagenUsuario:any;
+  imagenUsuario: any;
 
   activeCurrency: any;
 
@@ -62,7 +62,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.activeCurrency = "USD";
     console.dir("dembow")
     console.dir(this.data['foto_usuario'])
-    this.imagenUsuario=this.data['foto_usuario'];
+    this.imagenUsuario = this.data['foto_usuario'];
     // this.cargarActivos();
 
   }
@@ -72,6 +72,8 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
     this.presentLoading();
     console.dir("me he iniciado")
+
+   // setTimeout(() => console.log(this.service.getArrayActivos()), 3000);
 
   }
   ngAfterViewInit() {
@@ -122,7 +124,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.presentLoading();
 
     console.log('Begin async operation');
-    this.service.actualizarActivos(this.arrayActivos)
+    this.service.actualizarActivos(this.service.getArrayActivos())
     this.cargarActivos().subscribe((data: any) => {
       if (data == null || data == false) {
         this.sendNotification("No tiene activos el usuario...");
@@ -279,7 +281,9 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   cargarActivos() {
-    this.arrayActivos.length = 0;
+//    this.arrayActivos.length = 0;
+
+    this.service.getArrayActivos().length=0;
     this.reiniciarFinanzasUsuario();
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
       options: any = { "key": "activos", "id_usuario": this.data.idepsilon_usuarios },
@@ -312,7 +316,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
                 obj = response;
                 activoRec.precio = obj[activoRec.siglas][relacion.siglas_operacion];
                 this.iniciarValoresActivo(activoRec, relacion)
-                this.arrayActivos.push(activoRec);
+                this.service.getArrayActivos().push(activoRec);
                 this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
                 this.calcularPorcentajeActivo(activoRec);
                 this.service.actualizarPrecioActivo(activoRec.id, obj[activoRec.siglas][relacion.siglas_operacion]);
@@ -327,7 +331,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
               obj = response;
               activoRec.precio = obj;
               this.iniciarValoresActivo(activoRec, relacion)
-              this.arrayActivos.push(activoRec);
+              this.service.getArrayActivos().push(activoRec);
               this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
               this.calcularPorcentajeActivo(activoRec);
               this.service.actualizarPrecioActivo(activoRec.id, obj);
@@ -560,11 +564,11 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     }
   }
   eliminar_activo(activo: any) {
-    const index = this.arrayActivos.indexOf(activo);
-    this.arrayActivos.splice(index, 1);
+    const index = this.service.getArrayActivos().indexOf(activo);
+    this.service.getArrayActivos().splice(index, 1);
     this.service.eliminarRelacion(activo.id_relacion);
     this.arrayDiasTotal.length = 0;
-    if (this.arrayActivos.length == 0) {
+    if (this.service.getArrayActivos().length == 0) {
       this.hayActivos = false;
       this.reiniciarFinanzasUsuario();
     }
