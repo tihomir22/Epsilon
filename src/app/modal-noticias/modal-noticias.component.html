@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button color="light" (click)="cerrarModal()">
+        <ion-label>
+          <ion-icon slot="start" name="arrow-back" style="font-size:25px;"></ion-icon>
+        </ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Tus noticias favoritas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card *ngFor="let noticiaFav of array">
+    <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="compartirArticulo(noticiaFav)">
+      <ion-fab-button color="secondary">
+        <ion-icon name="share"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-img [src]="noticiaFav.imageurl" (click)="abrirArticulo(noticiaFav.url)"></ion-img>
+    <ion-card-header>
+      <ion-card-subtitle>{{noticiaFav.source}}</ion-card-subtitle>
+      <ion-card-title>{{noticiaFav.title}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      {{noticiaFav.body}}
+    </ion-card-content>
+  </ion-card>
+</ion-content>

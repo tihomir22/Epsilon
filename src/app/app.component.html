@@ -9,10 +9,20 @@
       </ion-toolbar>
     </ion-header>
 
-
+ 
 
     <ion-content>
       <ion-list>
+        <ion-card [routerLink]="[ '/perfil' ]">
+          <ion-card-header>
+            <img [src]="rutaImg" alt="" srcset="" id="imagen">
+            <ion-card-subtitle id="subtitulo">DEMBOW</ion-card-subtitle>
+            <ion-card-title id="titulo">Awesome Title</ion-card-title>
+          </ion-card-header>
+          <ion-card-content id="email">
+            Awesome content
+          </ion-card-content>
+        </ion-card>
         <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
           <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="dembow(p)">
             <ion-icon slot="start" [name]="p.icon"></ion-icon>
@@ -24,6 +34,6 @@
       </ion-list>
     </ion-content>
   </ion-menu>
-  <ion-router-outlet id="content1" main></ion-router-outlet>
+  <ion-router-outlet id="content1" main (cargarImagen)="avisar"></ion-router-outlet>
 
 </ion-app>

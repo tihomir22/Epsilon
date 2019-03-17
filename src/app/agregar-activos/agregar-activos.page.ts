@@ -5,6 +5,7 @@ import { ToastController, NavController, LoadingController, AlertController } fr
 import "rxjs/add/operator/debounceTime";
 import "hammerjs"; // HAMMER TIME
 import { HammerGestureConfig } from "@angular/platform-browser";
+import { UsuarioInterface } from '../perfil/class/UsuarioInterface';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class AgregarActivosPage extends HammerGestureConfig {
 
     return mc;
   }
-  data: Array<any> = new Array;
+  data: UsuarioInterface;
 
   searchTerm: string;
 

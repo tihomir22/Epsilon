@@ -9,12 +9,7 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content  color="primary">
-
-      
-                
-    
-
+<ion-content color="primary">
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
@@ -22,22 +17,24 @@
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
             <ion-row>
-                <ion-col size="10"> <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title></ion-col>
+                <ion-col size="10">
+                    <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title>
+                </ion-col>
                 <ion-col size="2">
-                        <ion-fab-button>
-                                <ion-img [src]="imagenUsuario"></ion-img>
-                        </ion-fab-button>
+                    <ion-fab-button [routerLink]="[ '/perfil' ]">
+                        <ion-img [src]="imagenUsuario"></ion-img>
+                    </ion-fab-button>
                 </ion-col>
             </ion-row>
-           
-            
+
+
 
         </ion-card-header>
         <ion-card *ngIf="hayActivos">
             <canvas #barCanvas></canvas>
-          </ion-card>
+        </ion-card>
         <ion-card-content>
-                    
+
 
             <ion-row>
                 <ion-col size="4">
@@ -68,11 +65,11 @@
             <ion-segment scrollable color="success">
                 <ion-segment-button value="USD" checked (click)="traducirPrecioUsuario('USD','$')">
                     <ion-chip color="success">
-                    <ion-avatar>
-                        <img [src]="generarImgForex('united-states')">
-                    </ion-avatar>
-                    <ion-label>USD</ion-label>
-                </ion-chip>
+                        <ion-avatar>
+                            <img [src]="generarImgForex('united-states')">
+                        </ion-avatar>
+                        <ion-label>USD</ion-label>
+                    </ion-chip>
                 </ion-segment-button>
                 <ion-segment-button value="EUR" (click)="traducirPrecioUsuario('EUR','€')">
                     <ion-chip color="success">
@@ -132,90 +129,94 @@
             <p>Empieza a agregarlos desde el boton de la derecha</p>
         </ion-card-content>
     </ion-card>
-<ion-card>
-    
-
-    <ion-list *ngIf="hayActivos" style="padding:0px;">
-        <ion-list-header color="medium">
-            <ion-label>Seguimiento de activos</ion-label>
-
-        </ion-list-header>
-
-        <ion-item-sliding *ngFor="let activo of service.getArrayActivos()" [attr.id]="'sliding' + activo.id_unico">
-            <ion-item style="text-align:center;" (press)="seleccionarItem()" (click)="expandItem(activo)">
-                <ion-icon color="success" *ngIf="activo.rentabilidad.charAt(0)=='+'" name="arrow-dropup"></ion-icon>
-                <ion-icon color="danger" *ngIf="activo.rentabilidad.charAt(0)=='-'" name="arrow-dropdown"></ion-icon>
-                <ion-avatar item-start *ngIf="activo.tipo=='Criptomoneda'">
-                    <img [src]="generarImgCripto(activo)" style="border-radius:0%;">
-                </ion-avatar>
-                <ion-avatar item-start *ngIf="activo.tipo=='Stock'">
-                    <img [src]="generarImgStock(activo)" style="border-radius:0%;">
-                </ion-avatar>
-
-                <ion-label style="font-size:14px;">{{activo.PAR_FULL}}</ion-label>
-                <ion-label>{{activo.precio_compra}}</ion-label>
-                <ion-label>{{activo.precio}}</ion-label>
-                <ion-label [color]="tenyirLabel(activo.rentabilidad)">{{activo.rentabilidad}}</ion-label>
-            </ion-item>
-            <ion-item-options side="start">
-                <ion-item-option (click)="abrir_acordeon(item)" color="warning">
-                    <ion-icon slot="start" name="eye" style="font-size:20px;"></ion-icon>
-                </ion-item-option>
-            </ion-item-options>
-            <ion-item-options side="end">
-                <ion-item-option (click)="eliminar_activo(activo)" color="danger">
-                    <ion-icon slot="start" name="trash" style="font-size:20px;"></ion-icon>
-                </ion-item-option>
-            </ion-item-options>
-            <div class="extendable" [attr.id]="'dembow' + activo.id_unico" style="display:none;border:1px solid white;">
-                <ion-item-group>
-                    <ion-item color="dark">
-                        <ion-label color="primary"><strong> Precio inicial : </strong>{{activo.precio_compra}}
-                            {{activo.contrapartida}}</ion-label>
-                    </ion-item>
-                    <ion-item color="dark">
-                        <ion-label color="primary"><strong> Precio Actual : </strong>{{activo.precio}}
-                            {{activo.contrapartida}}</ion-label>
-                    </ion-item>
-                    <ion-item color="dark">
-                        <ion-label color="primary"><strong>Cantidad : </strong>{{activo.cantidad}} {{activo.siglas}}
-                        </ion-label>
-                    </ion-item>
-                    <ion-item color="dark">
-                        <ion-label color="primary"><strong>Exchange : </strong>{{activo.exchange}}</ion-label>
-                    </ion-item>
-                    <ion-item color="dark">
-                        <ion-label color="primary"><strong>Tipo : </strong>{{activo.tipoRelacion}}</ion-label>
-                    </ion-item>
-                    <ion-item color="dark">
-                        <ion-label color="primary"><strong>Fecha : </strong>{{activo.fecha_operacion}}</ion-label>
-                    </ion-item>
-                    <ion-item color="dark">
-
-                        <ion-button expand="full" shape="round" color="secondary" fill="outline" (click)="expandItem(activo)">
-                            <ion-icon name="arrow-dropup"></ion-icon> Cerrar
-                        </ion-button>
-                        <ion-button expand="full" shape="round" color="danger" fill="outline" (click)="eliminar_activo(activo)">
-                            <ion-icon name="trash"></ion-icon> Eliminar
-                        </ion-button>
-
-                    </ion-item>
+    <ion-card>
 
 
-                </ion-item-group>
+        <ion-list *ngIf="hayActivos" style="padding:0px;">
+            <ion-list-header color="medium">
+                <ion-label>Seguimiento de activos</ion-label>
+
+            </ion-list-header>
+
+            <ion-item-sliding *ngFor="let activo of service.getArrayActivos()" [attr.id]="'sliding' + activo.id_unico">
+                <ion-item style="text-align:center;" (press)="seleccionarItem()" (click)="expandItem(activo)">
+                    <ion-icon color="success" *ngIf="activo.rentabilidad.charAt(0)=='+'" name="arrow-dropup"></ion-icon>
+                    <ion-icon color="danger" *ngIf="activo.rentabilidad.charAt(0)=='-'" name="arrow-dropdown">
+                    </ion-icon>
+                    <ion-avatar item-start *ngIf="activo.tipo=='Criptomoneda'">
+                        <img [src]="generarImgCripto(activo)" style="border-radius:0%;">
+                    </ion-avatar>
+                    <ion-avatar item-start *ngIf="activo.tipo=='Stock'">
+                        <img [src]="generarImgStock(activo)" style="border-radius:0%;">
+                    </ion-avatar>
+
+                    <ion-label style="font-size:14px;">{{activo.PAR_FULL}}</ion-label>
+                    <ion-label>{{activo.precio_compra}}</ion-label>
+                    <ion-label>{{activo.precio}}</ion-label>
+                    <ion-label [color]="tenyirLabel(activo.rentabilidad)">{{activo.rentabilidad}}</ion-label>
+                </ion-item>
+                <ion-item-options side="start">
+                    <ion-item-option (click)="abrir_acordeon(item)" color="warning">
+                        <ion-icon slot="start" name="eye" style="font-size:20px;"></ion-icon>
+                    </ion-item-option>
+                </ion-item-options>
+                <ion-item-options side="end">
+                    <ion-item-option (click)="eliminar_activo(activo)" color="danger">
+                        <ion-icon slot="start" name="trash" style="font-size:20px;"></ion-icon>
+                    </ion-item-option>
+                </ion-item-options>
+                <div class="extendable" [attr.id]="'dembow' + activo.id_unico"
+                    style="display:none;border:1px solid white;">
+                    <ion-item-group>
+                        <ion-item color="dark">
+                            <ion-label color="primary"><strong> Precio inicial : </strong>{{activo.precio_compra}}
+                                {{activo.contrapartida}}</ion-label>
+                        </ion-item>
+                        <ion-item color="dark">
+                            <ion-label color="primary"><strong> Precio Actual : </strong>{{activo.precio}}
+                                {{activo.contrapartida}}</ion-label>
+                        </ion-item>
+                        <ion-item color="dark">
+                            <ion-label color="primary"><strong>Cantidad : </strong>{{activo.cantidad}} {{activo.siglas}}
+                            </ion-label>
+                        </ion-item>
+                        <ion-item color="dark">
+                            <ion-label color="primary"><strong>Exchange : </strong>{{activo.exchange}}</ion-label>
+                        </ion-item>
+                        <ion-item color="dark">
+                            <ion-label color="primary"><strong>Tipo : </strong>{{activo.tipoRelacion}}</ion-label>
+                        </ion-item>
+                        <ion-item color="dark">
+                            <ion-label color="primary"><strong>Fecha : </strong>{{activo.fecha_operacion}}</ion-label>
+                        </ion-item>
+                        <ion-item color="dark">
+
+                            <ion-button expand="full" shape="round" color="secondary" fill="outline"
+                                (click)="expandItem(activo)">
+                                <ion-icon name="arrow-dropup"></ion-icon> Cerrar
+                            </ion-button>
+                            <ion-button expand="full" shape="round" color="danger" fill="outline"
+                                (click)="eliminar_activo(activo)">
+                                <ion-icon name="trash"></ion-icon> Eliminar
+                            </ion-button>
+
+                        </ion-item>
 
 
-                <!-- <ion-label color="primary"><strong>Anotaciones : </strong>{{activo.anotacion}}</ion-label>-->
+                    </ion-item-group>
+
+
+                    <!-- <ion-label color="primary"><strong>Anotaciones : </strong>{{activo.anotacion}}</ion-label>-->
 
 
 
-            </div>
+                </div>
 
-        </ion-item-sliding>
+            </ion-item-sliding>
 
 
-    </ion-list>
+        </ion-list>
 
-</ion-card>
+    </ion-card>
 
 </ion-content>

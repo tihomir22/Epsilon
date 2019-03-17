@@ -1,11 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NavController, ToastController, MenuController, IonItemSliding, LoadingController } from '@ionic/angular';
+import { NavController, ToastController, MenuController, LoadingController } from '@ionic/angular';
 import 'rxjs/add/operator/map';
 import "hammerjs"; // HAMMER TIME
 import { HammerGestureConfig } from "@angular/platform-browser";
 import { Chart } from 'chart.js';
+import { Observable, from, of } from 'rxjs';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,12 +19,17 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   data: any;
   cambiado: boolean = false;
   relaciones: Array<any> = new Array;
-  //arrayActivos: Array<any> = new Array;
+  permitirCarga: boolean = true;
+  contadorEmpezado: boolean = false;
+
+  private arrayActivos: Array<any>;
   arrayDiasGraficoCripto: Array<any> = new Array;
   arrayDiasGraficoStock: Array<any> = new Array;
   arrayDiasTotal: Array<any> = new Array;
+
   public obj: any;
   public hayActivos: boolean = false;
+  private contActivos: number = 0;
 
   totalInvertidoBase: any = 0;
   totalInvertidoActual: any = 0;
@@ -30,6 +37,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   imagenUsuario: any;
 
   activeCurrency: any;
+
 
   @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
 
@@ -69,53 +77,70 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   ngOnInit() {
-
     this.presentLoading();
-    console.dir("me he iniciado")
-
-   // setTimeout(() => console.log(this.service.getArrayActivos()), 3000);
-
+    AppComponent.avisar(this.data);
   }
   ngAfterViewInit() {
-    this.loadingController.dismiss()
 
   }
 
 
 
   ionViewWillEnter() {
-
-    this.reiniciarFinanzasUsuario();
-    this.cargarActivos().subscribe((data: any) => {
-
-      if (data == null || data == false) {
-        this.sendNotification("No tiene activos el usuario...");
-        this.hayActivos = false;
-      } else {
-        this.hayActivos = true;
-        console.dir(data);
-        data.forEach(relacion => {
-          this.procesarActivo(relacion.id_activo_ajeno, relacion)
-
-        })
-
-      }
-    },
-      err => {
-        this.sendNotification("Hubo un error inesperado...");
-        this.hayActivos = false;
+    if (this.permitirCarga) {
+      this.contActivos = 0;
+      this.permitirActualizacionTotal();
+      this.reiniciarFinanzasUsuario();
+      this.cargarActivos().subscribe((data: any) => {
+        if (data == null || data == false) {
+          this.sendNotification("No tiene activos el usuario...");
+          this.hayActivos = false;
+        } else {
+          this.hayActivos = true;
+          console.dir(data);
+          this.service.setArrayActivoCompletos(data);
+          let observable = of(data);
+          observable.subscribe((data: Array<any>) => {
+            this.arrayActivos = data;
+            this.procesarActivos(data)
+          }, (error) => {
+            console.log(error)
+          }, () => {
+            console.log("TERMINADO DE VERDAD EH")
+          })
+        }
       },
+        err => {
+          this.sendNotification("Hubo un error inesperado...");
+          this.hayActivos = false;
+        },
 
-    )
+      )
+    } else {
+      console.log("no se cargan de nuevo");
+
+
+    }
+
+
+  }
+  async permitirActualizacionTotal() {
+    this.permitirCarga = false;
+    setTimeout(
+      function () {
+        this.permitirCarga = true;
+      }, 3000000);
   }
 
 
   async presentLoading() {
     const loading = await this.loadingController.create({
       message: 'Cargando',
-      duration: 2000
     });
     return await loading.present();
+  }
+  public stopLoading() {
+    this.loadingController.dismiss();
   }
 
 
@@ -133,9 +158,8 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
         this.hayActivos = true;
         console.dir(data);
-        data.forEach(relacion => {
-          this.procesarActivo(relacion.id_activo_ajeno, relacion)
-        });
+        this.service.setArrayActivoCompletos(data);
+        this.procesarActivos(data)
         if (event != undefined) {
           event.target.complete();
         }
@@ -143,7 +167,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     },
 
       (error: any) => {
-        this.sendNotification("Hubo un error inesperado...");
+        this.sendNotification("Hubo un error inesperado..." + error);
         this.hayActivos = false;
       });
 
@@ -152,6 +176,129 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       this.loadingController.dismiss()
     }, 1500);
   }
+  procesarActivos(arrayActivos: any) {
+    arrayActivos.forEach(relacion => {
+      this.procesarActivoAnalconda(relacion, relacion['activo']);
+    });
+    console.log("finaliza el for")
+
+
+  }
+
+  //se realiza la carga de las operaciones del usuario aparte de añadir el activo como una propiedad
+  cargarActivos(): Observable<any> {
+    this.service.getArrayActivos().length = 0;
+    this.reiniciarFinanzasUsuario();
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "analconda", "id_usuario": this.data.idepsilon_usuarios },
+      url: any = this.baseURI + "retrieve-data.php";
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
+
+
+  procesarActivoAnalconda(relacion: any, activoRec: any) {
+    console.log(relacion, activoRec)
+    var dias_chart: Array<any> = new Array();
+    activoRec['array_dias_chart'] = dias_chart;
+    if (activoRec.tipo == "Criptomoneda") {
+      var obj: any;
+      obj = JSON.parse(activoRec['precio_live']);
+      activoRec.precio = obj[activoRec.siglas][relacion.siglas_operacion];
+      this.iniciarValoresActivo(activoRec, relacion)
+      this.service.getArrayActivos().push(activoRec);
+      this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
+      this.calcularPorcentajeActivo(activoRec);
+      this.service.actualizarPrecioActivo(activoRec.id, obj[activoRec.siglas][relacion.siglas_operacion]);
+      //funcion para generar un array con los ultimos datos historicos de un activo
+      this.service.getHistoricalDataSemanal(activoRec.siglas, activoRec.tipo).subscribe((respuesta) => {
+        this.añadirActivoAGrafico(activoRec, respuesta)
+      }, (error) => {
+        console.log(error)
+      }, () => {
+        this.generarChart();
+      })
+
+
+    } else if (activoRec.tipo == "Stock") {
+
+      obj = +activoRec['precio_live'];
+      activoRec.precio = obj;
+      this.iniciarValoresActivo(activoRec, relacion)
+      this.service.getArrayActivos().push(activoRec);
+      this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
+      this.calcularPorcentajeActivo(activoRec);
+      this.service.actualizarPrecioActivo(activoRec.id, obj);
+      //funcion para generar un array con los ultimos datos historicos de un activo
+      this.service.getHistoricalDataSemanal(activoRec.siglas, activoRec.tipo).subscribe((respuesta) => {
+        this.añadirActivoAGrafico(activoRec, respuesta)
+      }, (error) => {
+        console.log(error)
+      }, () => {
+        this.generarChart();
+      })
+
+
+
+
+    }
+
+  }
+
+
+  añadirActivoAGrafico(activoRec, respuesta) {
+
+    activoRec['historic_daily'] = respuesta;
+    console.dir(activoRec['historic_daily'])
+    this.procesarArrayDeDiasChart7(activoRec);
+
+    if (this.arrayDiasTotal.length == 0) {
+      this.arrayDiasTotal = new Array(0, 0, 0, 0, 0, 0, 0);
+      console.dir("entro en inicio array total " + this.arrayDiasTotal)
+    }
+
+    if (activoRec.tipo == "Criptomoneda") {
+      if (this.arrayDiasGraficoCripto.length == 0) {
+        this.arrayDiasGraficoCripto = new Array(0, 0, 0, 0, 0, 0, 0);
+        console.dir("entro en inicio array cripto " + this.arrayDiasGraficoCripto)
+      }
+
+      for (let i = 0; i < this.arrayDiasGraficoCripto.length; i++) {
+        if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
+          console.dir("detectada venta");
+          this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+          this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+        } else {
+          this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+          this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+        }
+        console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i] + "cantidad " + activoRec['cantidad'])
+      }
+
+    } else if (activoRec.tipo == "Stock") {
+      if (this.arrayDiasGraficoStock.length == 0) {
+        this.arrayDiasGraficoStock = new Array(0, 0, 0, 0, 0, 0, 0);
+        console.dir("entro en inicio array stock " + this.arrayDiasGraficoStock)
+      }
+      for (let i = 0; i < this.arrayDiasGraficoStock.length; i++) {
+        if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
+          console.dir("detectada venta");
+          this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+          this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
+        } else {
+          this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+          this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
+        }
+        console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i])
+      }
+
+    }
+    //this.generarChart()
+
+
+
+  }
+
   cambiarOrden() {
     if (this.cambiado == false) {
       this.arrayDiasTotal.reverse();
@@ -189,7 +336,15 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       arrayDias.push(this.devolverDiaEnString(yesterday.getDay()));
     }
     // console.dir(arrayDias)
+    this.contActivos++;
+    console.log(this.contActivos)
+    console.log(this.arrayActivos.length)
+    if (this.contActivos == this.arrayActivos.length) {
+      setTimeout(() => {
+        this.stopLoading();
+      }, 1000);
 
+    }
     if (this.barChart) {
       this.barChart.destroy();
     }
@@ -280,134 +435,12 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
 
 
-  cargarActivos() {
-//    this.arrayActivos.length = 0;
-
-    this.service.getArrayActivos().length=0;
-    this.reiniciarFinanzasUsuario();
-    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "activos", "id_usuario": this.data.idepsilon_usuarios },
-      url: any = this.baseURI + "retrieve-data.php";
-
-    return this.http.post(url, JSON.stringify(options), headers)
 
 
 
-  }
-
-
-  procesarActivo(id: any, relacion: any) {
-    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "recuperar_activo", "id_activo": id },
-      url: any = this.baseURI + "retrieve-data.php";
-    console.dir(id);
-    this.http
-      .post(url, JSON.stringify(options), headers)
-      .subscribe((activoRec: any) => {
-        if (activoRec == null || activoRec == false) {
-          this.sendNotification("No se encuentra el activo");
-        } else {
-          var dias_chart: Array<any> = new Array();
-          activoRec['array_dias_chart'] = dias_chart;
-          if (activoRec.tipo == "Criptomoneda") {
-            var obj: any;
-            this.service.recuperarPrecioCryptoCompare(activoRec.siglas, relacion.siglas_operacion)
-              .subscribe(response => {
-                obj = response;
-                activoRec.precio = obj[activoRec.siglas][relacion.siglas_operacion];
-                this.iniciarValoresActivo(activoRec, relacion)
-                this.service.getArrayActivos().push(activoRec);
-                this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
-                this.calcularPorcentajeActivo(activoRec);
-                this.service.actualizarPrecioActivo(activoRec.id, obj[activoRec.siglas][relacion.siglas_operacion]);
-                //funcion para generar un array con los ultimos datos historicos de un activo
-                this.añadirActivoAGrafico(activoRec)
-
-              });
-
-
-          } else if (activoRec.tipo == "Stock") {
-            this.service.recuperarPrecioIEXTrading(activoRec.siglas).subscribe(response => {
-              obj = response;
-              activoRec.precio = obj;
-              this.iniciarValoresActivo(activoRec, relacion)
-              this.service.getArrayActivos().push(activoRec);
-              this.actualizarFinanzasUsuario(relacion.precio_compra, activoRec.precio, relacion.cantidad, relacion.siglas_operacion, relacion.tipo);
-              this.calcularPorcentajeActivo(activoRec);
-              this.service.actualizarPrecioActivo(activoRec.id, obj);
-              //funcion para generar un array con los ultimos datos historicos de un activo
-              this.añadirActivoAGrafico(activoRec)
-
-            })
-
-          }
 
 
 
-        }
-      },
-        (error: any) => {
-          this.sendNotification("Hubo un error inesperado...");
-        },
-        () => {
-          console.dir("Nos hemos terminado de cargar weeeyy!!")
-        },
-      )
-  }
-
-  añadirActivoAGrafico(activoRec) {
-    this.service.getHistoricalDataSemanal(activoRec.siglas, activoRec.tipo).subscribe(respuesta => {
-
-      activoRec['historic_daily'] = respuesta;
-      console.dir(activoRec['historic_daily'])
-      this.procesarArrayDeDiasChart7(activoRec);
-
-      if (this.arrayDiasTotal.length == 0) {
-        this.arrayDiasTotal = new Array(0, 0, 0, 0, 0, 0, 0);
-        console.dir("entro en inicio array total " + this.arrayDiasTotal)
-      }
-
-      if (activoRec.tipo == "Criptomoneda") {
-        if (this.arrayDiasGraficoCripto.length == 0) {
-          this.arrayDiasGraficoCripto = new Array(0, 0, 0, 0, 0, 0, 0);
-          console.dir("entro en inicio array cripto " + this.arrayDiasGraficoCripto)
-        }
-
-        for (let i = 0; i < this.arrayDiasGraficoCripto.length; i++) {
-          if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
-            console.dir("detectada venta");
-            this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
-            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
-          } else {
-            this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
-            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
-          }
-          console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i] + "cantidad " + activoRec['cantidad'])
-        }
-
-      } else if (activoRec.tipo == "Stock") {
-        if (this.arrayDiasGraficoStock.length == 0) {
-          this.arrayDiasGraficoStock = new Array(0, 0, 0, 0, 0, 0, 0);
-          console.dir("entro en inicio array stock " + this.arrayDiasGraficoStock)
-        }
-        for (let i = 0; i < this.arrayDiasGraficoStock.length; i++) {
-          if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
-            console.dir("detectada venta");
-            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
-            this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
-          } else {
-            this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
-            this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
-          }
-          console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i])
-        }
-
-      }
-      this.generarChart()
-
-    });
-
-  }
 
   calcularPrecioActivoGrafico(activoRec, precioVivo) {
     var resultado = 0;

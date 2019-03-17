@@ -14,34 +14,47 @@
     <ion-row justify-content-center>
       <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
         <div text-center>
-          <h2 style="color:white;">Login Form</h2>
+          <ion-row>
+            <ion-col size="4"></ion-col>
+            <ion-col size="4">
+              <ion-img [src]="'../../assets/res_drawable/logoepsilonoluminado.png'"></ion-img>
+            </ion-col>
+            <ion-col size="4"></ion-col>
+
+          </ion-row>
+
         </div>
-        
         <div padding>
           <form (ngSubmit)="login()" [formGroup]="formgroup">
             <br>
-          <ion-item>
-            <ion-input type="text" placeholder="Username" formControlName="usuario" [(ngModel)]="userString"></ion-input>
-          </ion-item>
-          <ion-label *ngIf="usuario.hasError('required') && usuario.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Usuario es requerido<br></ion-label>
-<br>
-          <ion-item>
-            <ion-input type="password" placeholder="Password" formControlName="pass" [(ngModel)]="passString"></ion-input>
-          </ion-item>
-          <ion-label *ngIf="pass.hasError('required') && pass.touched" style="color:red;" ><ion-icon slot="start" name="alert"></ion-icon> Contraseña es requerida<br></ion-label>
-       <br>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="6">
+            <ion-item>
+              <ion-input type="text" placeholder="Username" formControlName="usuario" [(ngModel)]="userString">
+              </ion-input>
+            </ion-item>
+            <ion-label *ngIf="usuario.hasError('required') && usuario.touched" style="color:red;">
+              <ion-icon slot="start" name="alert"></ion-icon> Usuario es requerido<br>
+            </ion-label>
+            <br>
+            <ion-item>
+              <ion-input type="password" placeholder="Password" formControlName="pass" [(ngModel)]="passString">
+              </ion-input>
+            </ion-item>
+            <ion-label *ngIf="pass.hasError('required') && pass.touched" style="color:red;">
+              <ion-icon slot="start" name="alert"></ion-icon> Contraseña es requerida<br>
+            </ion-label>
+            <br>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="6">
                   <ion-button size="large" expand="block" type="submit">Login</ion-button>
-              </ion-col>
-              <ion-col size="6">
-                  <ion-button size="large" expand="block" color="secondary" (click)="abrirRegistro()">Registro</ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </form>
-          
+                </ion-col>
+                <ion-col size="6">
+                  <ion-button size="large" expand="block" color="secondary" (click)="abrirRegistro()">Registro
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </form>
         </div>
       </ion-col>
     </ion-row>

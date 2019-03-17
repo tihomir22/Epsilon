@@ -12,24 +12,28 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpModule } from '@angular/http';
 import { AgregarActivosPage } from './agregar-activos/agregar-activos.page';
-import { ExpandableComponent } from '../app/expandable/expandable.component';
 import { ModalpagePage } from '../app/modalpage/modalpage.page';
 
 import { Camera } from '@ionic-native/camera/ngx/';
 import { Crop } from '@ionic-native/crop/ngx/';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { IonicStorageModule } from '@ionic/storage';
+import { ModalNoticiasComponent } from './modal-noticias/modal-noticias.component';
+import { fromEventPattern } from 'rxjs';
+
+
 
 
 
 
 @NgModule({
-  declarations: [AppComponent, ExpandableComponent, ModalpagePage,],
-  entryComponents: [ModalpagePage],
+  declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent],
+  entryComponents: [ModalpagePage, ModalNoticiasComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -53,7 +57,8 @@ import { IonicStorageModule } from '@ionic/storage';
     Camera,
     Crop,
     WebView,
-    
+    SocialSharing,
+
     File,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, {
       provide: HAMMER_GESTURE_CONFIG,

@@ -59,6 +59,8 @@ export class LoginPage implements OnInit {
         this.sendNotification('Los datos son incorrectos');
       });
 
+    }else{
+      console.log("error de aceso??")
     }
 
   }

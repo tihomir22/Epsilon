@@ -66,5 +66,15 @@ export class NoticiasSSService {
     return this.http.post(url, JSON.stringify(options), headers)
   }
 
+  public recuperarNoticiaFavoritaServidor() {
+    console.log(this.servicio.getDestn());
+
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "recuperar_noticias_favorita_usuario","id_usuario": this.servicio.getDestn()['idepsilon_usuarios'] },
+      url: any = this.baseURI + "retrieve-data.php";
+
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
 
 }

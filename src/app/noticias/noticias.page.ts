@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NoticiasSSService } from '../noticias-ss.service';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, ToastController, ModalController } from '@ionic/angular';
 import 'rxjs/add/operator/map';
 import { map, filter } from 'rxjs/operators';
 import { from, of } from 'rxjs';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TouchSequence } from 'selenium-webdriver';
 import { Noticia } from './clases/noticiaClass';
+import {ModalNoticiasComponent} from '../modal-noticias/modal-noticias.component';
 
 
 
@@ -34,7 +35,7 @@ export class NoticiasPage implements OnInit {
 
   cargarStockTerminada: boolean = false;
   cargarCriptoTerminada: boolean = false;
-  constructor(public servicio: NoticiasSSService, public loadingController: LoadingController, private iab: InAppBrowser) { }
+  constructor(public servicio: NoticiasSSService, public loadingController: LoadingController, private iab: InAppBrowser, private toast: ToastController,private modalController:ModalController) { }
 
   ngOnInit() {
     console.log(this.servicio.getArrayActivosUsuario());
@@ -59,8 +60,27 @@ export class NoticiasPage implements OnInit {
     let notician = new Noticia(noticia);
     console.log(notician.toString())
 
-    this.servicio.subirNoticiaFavoritaServidor(notician).subscribe((data) => { console.log(data) }, (error) => { console.log(error) }, () => { console.log("he terminado") })
+    this.servicio.subirNoticiaFavoritaServidor(notician).subscribe((data) => { this.presentToast("Noticia añadida a favoritos!") }, (error) => { console.log(error) }, () => { console.log("he terminado") })
   }
+
+
+
+  async presentToast(mensaje: string) {
+    const toast = await this.toast.create({
+      message: mensaje,
+      duration: 2000
+    });
+    toast.present();
+  }
+
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: ModalNoticiasComponent,
+      componentProps: { value: 123 }
+    });
+    return await modal.present();
+  }
+
 
 
   public inicioCargaNoticias() {

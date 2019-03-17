@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Perfil
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-card>
+    <ion-avatar class="avatar animado">
+      <img [src]="usuario.foto_usuario">
+    </ion-avatar><br>
+    <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="activarPermitirGuardado()">
+      <ion-fab-button>
+        <ion-icon name="create"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-list-header color="primary">
+
+
+      <ion-label>{{usuario.usuario}}</ion-label>
+    </ion-list-header>
+    <ion-list>
+      <ion-item>
+
+        <ion-icon name="mail"></ion-icon>
+
+        <ion-label *ngIf="!permitirGuardado">{{usuario.email}}</ion-label>
+        <ion-input *ngIf="permitirGuardado" type="email" placeholder="{{usuario.email}}" [(ngModel)]="email"
+          value="{{usuario.email}}">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+
+        <ion-icon name="people"></ion-icon>
+
+        <ion-label *ngIf="!permitirGuardado">{{usuario.sexo}}</ion-label>
+
+        <ion-select placeholder="Ten cuidado con las hormonas" *ngIf="permitirGuardado" [(ngModel)]="sexo"
+          value="{{usuario.sexo}}">
+          <ion-select-option value="femenino">Femenino</ion-select-option>
+          <ion-select-option value="masculino">Masculino</ion-select-option>
+        </ion-select>
+
+
+      </ion-item>
+      <ion-item>
+
+        <ion-icon name="phone-portrait"></ion-icon>
+
+        <ion-label *ngIf="!permitirGuardado">{{usuario.telefono}}</ion-label>
+        <ion-input *ngIf="permitirGuardado" type="text" placeholder="{{usuario.telefono}}" [(ngModel)]="telefono"
+          value="{{usuario.telefono}}">
+        </ion-input>
+      </ion-item>
+    </ion-list>
+
+
+  </ion-card>
+
+  <app-grafico-a></app-grafico-a>
+
+
+
+
+</ion-content>
+
+
+<ion-footer *ngIf="permitirGuardado">
+  <ion-toolbar color="primary">
+    <ion-button fill="clear" expand="full" color="light" (click)="guardarCambios()">
+      <ion-icon slot="start" name="save"></ion-icon>
+      Guardar
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

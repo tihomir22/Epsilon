@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'detalles-activo', loadChildren: './detalles-activo/detalles-activo.module#DetallesActivoPageModule' },
   { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },
   { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },  { path: 'noticias', loadChildren: './noticias/noticias.module#NoticiasPageModule' },
+  { path: 'perfil', loadChildren: './perfil/perfil.module#PerfilPageModule' },
 
 
 
