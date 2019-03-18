@@ -63,7 +63,21 @@
 
   </ion-card>
 
-  <app-grafico-a></app-grafico-a>
+
+  <ion-card>
+    <ion-list-header color="primary">
+      <ion-label>
+        <ion-icon slot="start" name="analytics"></ion-icon> Graficos
+      </ion-label> 
+       <ion-icon name="remove" style="padding:20px;font-size:20px;"></ion-icon>
+    </ion-list-header>
+    <app-grafico-a *ngIf="mostrarPrimerChart"></app-grafico-a>
+    <ion-select placeholder="Select Pizza" (ionChange)="cambiarSelect($event)">
+      <ion-select-option value="fracciones" selected>Fraccion de activos en dolares</ion-select-option>
+      <ion-select-option value="porcentajes">Tipo de activos en porcentajes</ion-select-option>
+    </ion-select>
+  </ion-card>
+
 
 
 

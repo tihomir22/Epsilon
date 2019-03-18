@@ -53,6 +53,7 @@ export class AppComponent {
     this.initializeApp();
 
   }
+ 
   static avisar(data: any) {
     console.log("recibido", data['foto_usuario'])
     AppComponent.rutaImg = data['foto_usuario'];

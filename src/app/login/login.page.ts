@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, ToastController, MenuController } from '@ionic/angular';
+import { NavController, ToastController, MenuController, Platform } from '@ionic/angular';
 import {FormBuilder,FormGroup,AbstractControl,Validators,FormControl} from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
 
 
 
-  constructor(public menuCtrl:MenuController,public navCtrl:NavController,public http:HttpClient,public formbuilder:FormBuilder,public toastCtrl:ToastController,public service:ServiceLoginDashboardService) { 
+  constructor(public menuCtrl:MenuController,private platform:Platform,public navCtrl:NavController,public http:HttpClient,public formbuilder:FormBuilder,public toastCtrl:ToastController,public service:ServiceLoginDashboardService) { 
     this.formgroup=formbuilder.group({
       usuario:['',Validators.required],
       pass:['',Validators.required]
@@ -39,7 +39,9 @@ export class LoginPage implements OnInit {
     this.pass=this.formgroup.controls['pass'];
     this.menuCtrl.enable(false);
   }
-
+  quePlataforma(){
+    this.sendNotification("estoy en " + this.platform.platforms())
+  }
   login(){
     if(this.formgroup.status=="VALID"){
       let headers 	: any		= new HttpHeaders({ 'Content-Type': 'application/json' }),

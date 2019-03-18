@@ -9,6 +9,7 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./perfil.page.scss'],
 })
 export class PerfilPage implements OnInit {
+  public mostrarPrimerChart: boolean = true;
   usuario: UsuarioClass;
   public email: string;
   public sexo: string;
@@ -22,12 +23,12 @@ export class PerfilPage implements OnInit {
     this.email = this.usuario.email;
     this.telefono = this.usuario.telefono;
   }
-  activarPermitirGuardado() {
+  public activarPermitirGuardado() {
     if (this.permitirGuardado == false) {
       this.permitirGuardado = true;
     }
   }
-  guardarCambios() {
+  public guardarCambios() {
     this.permitirGuardado = false;
     this.usuario.sexo = this.sexo;
     this.usuario.email = this.email;
@@ -45,6 +46,21 @@ export class PerfilPage implements OnInit {
       duration: 2000
     });
     toast.present();
+  }
+  public cambiarSelect(data: any) {
+    let recibido: string = data['detail']['value'];
+    console.log(recibido)
+    switch (recibido) {
+      case "fracciones":
+        this.mostrarPrimerChart = true;
+        break;
+      case "porcentajes":
+        this.mostrarPrimerChart = false;
+        break;
+
+      default:
+        break;
+    }
   }
 
 

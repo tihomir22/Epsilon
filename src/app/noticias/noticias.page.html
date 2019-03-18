@@ -24,7 +24,7 @@
         <ion-label position="inline" style="text-align:center;">Noticias de ultima hora relacionadas con sus activos
           actuales.</ion-label>
       </ion-card-subtitle><br>
-      <ion-segment (ionChange)="segmentChanged($event)">
+      <ion-segment >
 
         <ion-chip *ngFor="let strCripto of arraySiglasCripto">
           <ion-icon name="close" (click)="onClick()"></ion-icon>
@@ -89,7 +89,7 @@
 
 
 
-  <ion-segment (ionChange)="cambiarSegmentVar($event)">
+  <ion-segment (ionChange)="cambiarSegmentVar()">
     <ion-segment-button checked>
       <ion-label>
         <ion-icon name="logo-bitcoin" class="iconosGrandes"></ion-icon><br> Cripto
