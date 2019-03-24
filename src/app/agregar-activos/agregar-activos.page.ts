@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
-import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
+import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { ToastController, NavController, LoadingController, AlertController } from '@ionic/angular';
 import "rxjs/add/operator/debounceTime";

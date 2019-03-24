@@ -4,8 +4,8 @@ import { FormBuilder, FormGroup, AbstractControl, Validators, FormControl } from
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ModalpagePage } from '../modalpage/modalpage.page';
-import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
+import { ModalpagePage } from '../modales/modalpage/modalpage.page';
+import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 
 
 

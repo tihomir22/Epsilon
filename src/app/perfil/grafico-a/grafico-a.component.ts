@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
-import { ServiceLoginDashboardService } from 'src/app/service-login-dashboard.service';
+import { ServiceLoginDashboardService } from '../../servicios/service-login-dashboard.service';
 
 @Component({
   selector: 'app-grafico-a',

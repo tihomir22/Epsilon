@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NoticiasSSService } from '../noticias-ss.service';
+import { NoticiasSSService } from '../servicios/noticias-ss.service';
 import { LoadingController, ToastController, ModalController } from '@ionic/angular';
 import 'rxjs/add/operator/map';
 import { map, filter } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { from, of } from 'rxjs';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TouchSequence } from 'selenium-webdriver';
 import { Noticia } from './clases/noticiaClass';
-import {ModalNoticiasComponent} from '../modal-noticias/modal-noticias.component';
+import {ModalNoticiasComponent} from '../modales/modal-noticias/modal-noticias.component';
 
 
 

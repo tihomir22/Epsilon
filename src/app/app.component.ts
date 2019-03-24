@@ -3,7 +3,7 @@ import { Component, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { Platform, MenuController, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { ServiceLoginDashboardService } from './service-login-dashboard.service';
+import { ServiceLoginDashboardService } from './servicios/service-login-dashboard.service';
 
 @Component({
   selector: 'app-root',

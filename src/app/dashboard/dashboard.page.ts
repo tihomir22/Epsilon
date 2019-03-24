@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
+import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NavController, ToastController, MenuController, LoadingController } from '@ionic/angular';
 import 'rxjs/add/operator/map';

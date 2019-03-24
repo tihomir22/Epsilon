@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { PerfilPage } from './perfil.page';
 import { GraficoAComponent } from './grafico-a/grafico-a.component';
+import { GraficoBComponent } from './grafico-b/grafico-b.component';
+import { ConexionesComponent } from './conexiones/conexiones.component';
 
 const routes: Routes = [
   {
@@ -22,6 +24,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [PerfilPage, GraficoAComponent]
+  declarations: [PerfilPage, GraficoAComponent, GraficoBComponent, ConexionesComponent]
 })
 export class PerfilPageModule {}

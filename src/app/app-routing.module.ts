@@ -17,8 +17,8 @@ const routes: Routes = [
   { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardPageModule' },
   { path: 'agregar-activos', loadChildren: './agregar-activos/agregar-activos.module#AgregarActivosPageModule' },
   { path: 'detalles-activo', loadChildren: './detalles-activo/detalles-activo.module#DetallesActivoPageModule' },
-  { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },
-  { path: 'modalpage', loadChildren: './modalpage/modalpage.module#ModalpagePageModule' },  { path: 'noticias', loadChildren: './noticias/noticias.module#NoticiasPageModule' },
+  { path: 'modalpage', loadChildren: './modales/modalpage/modalpage.module#ModalpagePageModule' },
+  { path: 'noticias', loadChildren: './noticias/noticias.module#NoticiasPageModule' },
   { path: 'perfil', loadChildren: './perfil/perfil.module#PerfilPageModule' },
 
 

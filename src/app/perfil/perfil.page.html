@@ -13,54 +13,56 @@
 
   <ion-card>
     <ion-avatar class="avatar animado">
-      <img [src]="usuario.foto_usuario">
+      <ion-img [src]="usuario.foto_usuario">
+      </ion-img>
+
     </ion-avatar><br>
+
+
     <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="activarPermitirGuardado()">
       <ion-fab-button>
         <ion-icon name="create"></ion-icon>
       </ion-fab-button>
     </ion-fab>
     <ion-list-header color="primary">
-
-
-      <ion-label>{{usuario.usuario}}</ion-label>
+      <ion-label>
+        <ion-icon slot="start" name="people"></ion-icon> Datos personales
+      </ion-label>
+      <ion-icon [name]="nombreIconoPerfil" style="padding:20px;font-size:20px;" (click)="minimizar('contenedorPerfil')">
+      </ion-icon>
     </ion-list-header>
-    <ion-list>
-      <ion-item>
 
-        <ion-icon name="mail"></ion-icon>
-
-        <ion-label *ngIf="!permitirGuardado">{{usuario.email}}</ion-label>
-        <ion-input *ngIf="permitirGuardado" type="email" placeholder="{{usuario.email}}" [(ngModel)]="email"
-          value="{{usuario.email}}">
-        </ion-input>
-      </ion-item>
-      <ion-item>
-
-        <ion-icon name="people"></ion-icon>
-
-        <ion-label *ngIf="!permitirGuardado">{{usuario.sexo}}</ion-label>
-
-        <ion-select placeholder="Ten cuidado con las hormonas" *ngIf="permitirGuardado" [(ngModel)]="sexo"
-          value="{{usuario.sexo}}">
-          <ion-select-option value="femenino">Femenino</ion-select-option>
-          <ion-select-option value="masculino">Masculino</ion-select-option>
-        </ion-select>
-
-
-      </ion-item>
-      <ion-item>
-
-        <ion-icon name="phone-portrait"></ion-icon>
-
-        <ion-label *ngIf="!permitirGuardado">{{usuario.telefono}}</ion-label>
-        <ion-input *ngIf="permitirGuardado" type="text" placeholder="{{usuario.telefono}}" [(ngModel)]="telefono"
-          value="{{usuario.telefono}}">
-        </ion-input>
-      </ion-item>
-    </ion-list>
-
-
+    <div id="contenedorPerfil">
+      <ion-list>
+        <ion-item>
+          <ion-icon name="happy"></ion-icon>
+          <ion-label>{{usuario.usuario}}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="mail"></ion-icon>
+          <ion-label *ngIf="!permitirGuardado">{{usuario.email}}</ion-label>
+          <ion-input *ngIf="permitirGuardado" type="email" placeholder="{{usuario.email}}" [(ngModel)]="email"
+            value="{{usuario.email}}">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="people"></ion-icon>
+          <ion-label *ngIf="!permitirGuardado">{{usuario.sexo}}</ion-label>
+          <ion-select placeholder="Ten cuidado con las hormonas" *ngIf="permitirGuardado" [(ngModel)]="sexo"
+            value="{{usuario.sexo}}">
+            <ion-select-option value="femenino">Femenino</ion-select-option>
+            <ion-select-option value="masculino">Masculino</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="phone-portrait"></ion-icon>
+          <ion-label *ngIf="!permitirGuardado">{{usuario.telefono}}</ion-label>
+          <ion-input *ngIf="permitirGuardado" type="text" placeholder="{{usuario.telefono}}" [(ngModel)]="telefono"
+            value="{{usuario.telefono}}">
+          </ion-input>
+        </ion-item>
+      </ion-list>
+    </div>
   </ion-card>
 
 
@@ -68,18 +70,36 @@
     <ion-list-header color="primary">
       <ion-label>
         <ion-icon slot="start" name="analytics"></ion-icon> Graficos
-      </ion-label> 
-       <ion-icon name="remove" style="padding:20px;font-size:20px;"></ion-icon>
+      </ion-label>
+      <ion-icon [name]="nombreIconoContenedorA" style="padding:20px;font-size:20px;" (click)="minimizar('contenedorA')">
+      </ion-icon>
     </ion-list-header>
-    <app-grafico-a *ngIf="mostrarPrimerChart"></app-grafico-a>
-    <ion-select placeholder="Select Pizza" (ionChange)="cambiarSelect($event)">
-      <ion-select-option value="fracciones" selected>Fraccion de activos en dolares</ion-select-option>
-      <ion-select-option value="porcentajes">Tipo de activos en porcentajes</ion-select-option>
-    </ion-select>
+
+    <div id="contenedorA">
+      <app-grafico-a *ngIf="mostrarPrimerChart"></app-grafico-a>
+      <app-grafico-b *ngIf="!mostrarPrimerChart"></app-grafico-b>
+      <ion-item>
+        <ion-label>Selecciona el tipo de grafico deseado</ion-label>
+        <ion-select placeholder="Selecciona tipo de grafico" (ionChange)="cambiarSelect($event)" class="selector">
+          <ion-select-option value="fracciones" selected>Fraccion de activos en dolares</ion-select-option>
+          <ion-select-option value="porcentajes">Tipo de activos en porcentajes</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
   </ion-card>
 
-
-
+  <ion-card style="text-align:center;">
+    <ion-list-header color="primary">
+      <ion-label>
+        <ion-icon slot="start" name="code-working"></ion-icon> APIS
+      </ion-label>
+      <ion-icon [name]="nombreIconoConexiones" style="padding:20px;font-size:20px;" (click)="minimizar('contenedorB')">
+      </ion-icon>
+    </ion-list-header>
+    <div id="contenedorB">
+      <app-conexiones></app-conexiones>
+    </div>
+  </ion-card>
 
 
 </ion-content>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
+import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { UsuarioClass } from './class/UsuarioClass';
 import { ToastController } from '@ionic/angular';
 
@@ -10,6 +10,15 @@ import { ToastController } from '@ionic/angular';
 })
 export class PerfilPage implements OnInit {
   public mostrarPrimerChart: boolean = true;
+  //si esta true es abierto, false cerrado
+  public contenedorAEstado: boolean = true;
+  public contenedorPerfilEstado: boolean = true;
+  public contenedorBEstado: boolean = true;
+
+  public nombreIconoContenedorA: string = 'remove';
+  public nombreIconoPerfil: string = 'remove';
+  public nombreIconoConexiones: string = 'remove';
+
   usuario: UsuarioClass;
   public email: string;
   public sexo: string;
@@ -46,6 +55,52 @@ export class PerfilPage implements OnInit {
       duration: 2000
     });
     toast.present();
+  }
+  public minimizar(idElemento: string) {
+    console.log(idElemento)
+    switch (idElemento) {
+      case 'contenedorA':
+        //si esta visible...
+        if (this.contenedorAEstado == true) {
+          document.getElementById(idElemento).style.height = "0px";
+          this.nombreIconoContenedorA = "add";
+          this.contenedorAEstado = false;
+        } else {
+          document.getElementById(idElemento).style.height = "100%";
+          this.nombreIconoContenedorA = "remove";
+          this.contenedorAEstado = true;
+        }
+        break;
+      case 'contenedorPerfil':
+        //si esta visible...
+        if (this.contenedorPerfilEstado == true) {
+          document.getElementById(idElemento).style.height = "0px";
+          this.nombreIconoPerfil = "add";
+          this.contenedorPerfilEstado = false;
+        } else {
+          document.getElementById(idElemento).style.height = "100%";
+          this.nombreIconoPerfil = "remove";
+          this.contenedorPerfilEstado = true;
+        }
+        break;
+
+      case 'contenedorB':
+        //si esta visible...
+        if (this.contenedorBEstado == true) {
+          document.getElementById(idElemento).style.height = "0px";
+          this.nombreIconoConexiones = "add";
+          this.contenedorBEstado = false;
+        } else {
+          document.getElementById(idElemento).style.height = "100%";
+          this.nombreIconoConexiones = "remove";
+          this.contenedorBEstado = true;
+        }
+        break;
+
+      default:
+        break;
+    }
+
   }
   public cambiarSelect(data: any) {
     let recibido: string = data['detail']['value'];

@@ -5,8 +5,8 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { stringify } from '@angular/core/src/util';
 import { Subject } from 'rxjs';
 import { ToastController } from '@ionic/angular';
-import { DashboardPage } from './dashboard/dashboard.page';
-import { UsuarioInterface } from './perfil/class/UsuarioInterface';
+import { DashboardPage } from '../dashboard/dashboard.page';
+import { UsuarioInterface } from '../perfil/class/UsuarioInterface';
 
 @Injectable({
   providedIn: 'root'

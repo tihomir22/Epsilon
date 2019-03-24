@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
-import { NavParams, ModalController, Platform, ToastController, ActionSheetController, LoadingController } from '@ionic/angular';
-import { ViewController } from '@ionic/core';
+import { ModalController, Platform, ToastController, ActionSheetController, LoadingController } from '@ionic/angular';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { Crop } from '@ionic-native/crop/ngx';
@@ -11,9 +10,7 @@ import { Storage } from '@ionic/storage';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
-import { CodegenComponentFactoryResolver } from '@angular/core/src/linker/component_factory_resolver';
-import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
-import { RegistroPage } from '../registro/registro.page';
+import { ServiceLoginDashboardService } from '../../servicios/service-login-dashboard.service';
 
 
 

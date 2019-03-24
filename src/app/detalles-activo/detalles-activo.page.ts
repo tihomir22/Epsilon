@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ServiceLoginDashboardService } from '../service-login-dashboard.service';
+import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';

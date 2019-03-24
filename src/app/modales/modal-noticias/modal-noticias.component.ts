@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
-import { NoticiasSSService } from '../noticias-ss.service';
+import { NoticiasSSService } from '../../servicios/noticias-ss.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { Noticia } from '../noticias/clases/noticiaClass';
+import { Noticia } from '../../noticias/clases/noticiaClass';
 
 @Component({
   selector: 'app-modal-noticias',
