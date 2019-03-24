@@ -8,7 +8,8 @@
 
 
 ![](https://i.imgur.com/dRIPw3a.png)
-
+*Ultima compilacion exitosa
+https://www.dropbox.com/s/s96d1vw8kifjksu/app-debug.apk?dl=0
 
 
 <!-- Markdown link & img dfn's -->
@@ -39,3 +40,5 @@
 
 * ALPHA 0.2.0 : Aplazada funcion de chat, añadidas nuevas funciones y componentes, nueva pagina añadida de noticias , se muestran noticias de todos los tipos de activos, stocks y criptos, distribuidas en noticias calientes y noticias normales, el usuario puede agregarlas como favoritas y filtrar por estas. Siguientes progresos : terminar filtro en noticias y empezar a trabajar con el perfil del usuario.
 * ALPHA 0.3.0 : Implementada ANALCONDA ( login modificado, ahora carga mucho más rapido y tiene un diseño más acorde | mayor eficiencia en la conexion con el servidor remoto en el dashboard, sincronización con la carga del grafico realizada | sidemenu modificado | creado perfil de usuario junto con caracteristica de modificación de datos del usuario y avatar | implementado primer grafico en el perfil | mejorada del backend y optimización general )
+
+* ALPHA 0.3.1 : ANALCONDA V2 => Implementado segundo grafico en perfil, nuevo componente agregado de apis, conexion con api de Binance establecida por medio de PHP , ahora un usuario puede importar sus balances, creadas nuevas tablas y actualizado diseño de entidades UML
