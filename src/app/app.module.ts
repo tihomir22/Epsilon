@@ -27,25 +27,27 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { ModalNoticiasComponent } from './modales/modal-noticias/modal-noticias.component';
 import { GestionApiComponent } from './modales/gestion-api/gestion-api.component';
-
-
-
+import { VistaRapidaApiComponent } from './modales/vista-rapida-api/vista-rapida-api.component';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { PopoverOpcionesComponent } from './perfil/popover-opciones/popover-opciones.component';
+import { PlantillaAPIPageModule } from './plantilla-api/plantilla-api.module';
+import { SeleccionApiComponent } from './modales/seleccion-api/seleccion-api.component';
 
 
 
 @NgModule({
-  declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent],
-  entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent],
+  declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent],
+  entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
     ReactiveFormsModule,
     AppRoutingModule,
-
     FormsModule,
     HttpClientModule,
     HttpModule,
     IonicStorageModule.forRoot(),
+    PlantillaAPIPageModule
   ],
   providers: [
     StatusBar,
@@ -56,6 +58,7 @@ import { GestionApiComponent } from './modales/gestion-api/gestion-api.component
     WebView,
     SocialSharing,
     QRScanner,
+    ScreenOrientation,
 
     File,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, {
@@ -63,6 +66,7 @@ import { GestionApiComponent } from './modales/gestion-api/gestion-api.component
       useClass: AgregarActivosPage
     },
   ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }

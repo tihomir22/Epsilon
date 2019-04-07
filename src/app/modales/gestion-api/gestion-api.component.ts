@@ -5,6 +5,7 @@ import { exchangeClass } from './modelos/exchangeClass';
 import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { ActivoBalance } from './modelos/ActivoBalance';
+import { Observable, timer } from 'rxjs';
 
 
 @Component({
@@ -16,8 +17,10 @@ export class GestionApiComponent implements OnInit {
   public arrayCriptoExchange: Array<exchangeClass> = new Array<exchangeClass>();
   public exchangeSeleccionado: boolean = false;
   public confirmarConexion: boolean = false;
+  public mostrarMensajeErrorCarga: boolean = false;
   public tipoExchangeSeleccionado: string = "";
   public nombreExchangeSeleciconado: string = '';
+  private idExchange: number;
   public paso1: string;
   public paso2: string;
   public paso3: string;
@@ -30,6 +33,7 @@ export class GestionApiComponent implements OnInit {
   formgroup: FormGroup;
   apikey: AbstractControl;
   privatekey: AbstractControl;
+  nombreApiForm: AbstractControl;
 
 
   private arrayRes: Array<any> = new Array;
@@ -40,12 +44,14 @@ export class GestionApiComponent implements OnInit {
   constructor(public modal: ModalController, private servicio: ApisService, public formbuilder: FormBuilder, private qrScanner: QRScanner, private toastCtrl: ToastController) {
     this.formgroup = formbuilder.group({
       apikey: ['', Validators.compose([Validators.required, Validators.minLength(60), Validators.maxLength(70)])],
-      privatekey: ['', Validators.compose([Validators.required, Validators.minLength(60), Validators.maxLength(70)])]
+      privatekey: ['', Validators.compose([Validators.required, Validators.minLength(60), Validators.maxLength(70)])],
+      nombreApiForm: ['', Validators.compose([Validators.required])]
     })
 
 
     this.apikey = this.formgroup.controls['apikey'];
     this.privatekey = this.formgroup.controls['privatekey'];
+    this.nombreApiForm = this.formgroup.controls['nombreApiForm'];
 
 
 
@@ -53,10 +59,12 @@ export class GestionApiComponent implements OnInit {
 
   ngOnInit() {
     this.recuperarExchangesCripto();
+
   }
 
   cerrarModal() {
     this.modal.dismiss();
+    this.presentarToast("Nueva conexion guardada con exito!")
   }
   public recuperarExchangesCripto(): void {
     this.servicio.getTodosLosExchanges().subscribe((data: exchangeClass[]) => {
@@ -68,6 +76,7 @@ export class GestionApiComponent implements OnInit {
   public seleccionarExchangeCripto(exchange: exchangeClass): void {
     this.exchangeSeleccionado = true;
     this.nombreExchangeSeleciconado = exchange.nombre;
+    this.idExchange = exchange.id;
     this.tipoExchangeSeleccionado = "cripto";
     this.generarPasosTuto(exchange);
 
@@ -88,11 +97,8 @@ export class GestionApiComponent implements OnInit {
           this.presentarToast("Esas keys ya las introduciste antes!")
         } else {
           console.log("es nuevo el registro!!! se puede agregar!")
-          this.servicio.guardarClaveAPI(this.apikeyString, this.privatekeyString, this.nombreApi).subscribe((data) => {
-            console.log(data)
-            this.confirmarConexion = true;
-            this.enviarKeysYRecibirBalanceActivos();
-          })
+          this.confirmarConexion = true;
+          this.enviarKeysYRecibirBalanceActivos();
         }
 
       })
@@ -111,8 +117,9 @@ export class GestionApiComponent implements OnInit {
         "INVALID_CONSTANT_NAME": 42
       }
     }
-    this.servicio.obtenerBalanceBinance(json).subscribe((data) => {
+    let observable = this.servicio.obtenerBalanceBinance(json).subscribe((data) => {
       console.log(data)
+      this.arrayRes = new Array<any>();
       this.arrayRes.push(data);
       this.arrayRes = this.arrayRes[0];
 
@@ -123,18 +130,50 @@ export class GestionApiComponent implements OnInit {
             console.log("añadiendo", key)
             let activo: ActivoBalance = this.arrayRes[key]
             activo.nombre = key;
-            activo.imgURL="http://dembow.gearhostpreview.com/img-activos/IOTA.png";
+            this.generarImgCripto(activo.nombre).subscribe((data) => {
+              console.log(data)
+              if (data[0] != undefined) {
+                activo.imgURL = "http://dembow.gearhostpreview.com/img-activos/" + data[0].nombre + ".png"
+              } else {
+                activo.imgURL = "http://dembow.gearhostpreview.com/logoepsilonoluminado.png"
+              }
+            })
             this.arrayFinal.push(activo);
           }
 
         }
       }
     }, (error) => {
-      this.presentarToast(error)
+      //this.presentarToast(error)
+      observable.unsubscribe();
+      //this.mostrarMensajeErrorCarga = true;
+      console.log(error)
     }, () => {
       this.terminaCargaBalanceExchange = true;
     })
+    //si tarda demasiado la respuesta es porque ha fallado o la conexion es demasiado lenta, por eso se mostrará un boton para volver atras
+    timer(10000).subscribe((data) => {
+      if (!this.terminaCargaBalanceExchange) {
+        console.log("tiempo expirado")
+        observable.unsubscribe();
+        this.mostrarMensajeErrorCarga = true;
+      }
+    })
   }
+
+  generarImgCripto(nombreCripto: string): Observable<any> {
+    let devolucion =
+      this.servicio.recuperarImagenesAPartirDeSiglas(nombreCripto)
+
+    return devolucion;
+  }
+
+  volverAIntroduccionApis() {
+    this.mostrarMensajeErrorCarga = false;
+    this.confirmarConexion = false;
+    this.exchangeSeleccionado = true;
+  }
+
   async presentarToast(mensaje: string) {
     const toast = await this.toastCtrl.create({
       message: mensaje,
@@ -186,6 +225,28 @@ export class GestionApiComponent implements OnInit {
         }
       })
       .catch((e: any) => console.log('Error is', e));
+  }
+
+
+
+  public confirmarImportacionExchange(): void {
+    this.servicio.guardarClaveAPI(this.apikeyString, this.privatekeyString, this.nombreApi, this.idExchange).subscribe((data) => {
+      console.log(data)
+    }, (error) => {
+      console.log(error)
+    }, () => {
+      this.cerrarModal();
+      timer(1000).subscribe((data) => {
+        this.reiniciarBooleans();
+      })
+
+    })
+  }
+  public reiniciarBooleans() {
+    this.exchangeSeleccionado = false;
+    this.confirmarConexion = false;
+    this.mostrarMensajeErrorCarga = false;
+    this.terminaCargaBalanceExchange = false;
   }
 
 

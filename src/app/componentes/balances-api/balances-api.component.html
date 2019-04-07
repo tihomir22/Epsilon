@@ -1,0 +1,32 @@
+<ion-card *ngIf="_arrayFinal.length > 0">
+  <ion-list-header color="tertiary">
+    <ion-label>Balances de la API asociada</ion-label>
+  </ion-list-header>
+  <ion-list>
+    <ion-item *ngFor="let balance of _arrayFinal">
+      <ion-avatar>
+        <img [src]="balance.imgURL">
+      </ion-avatar>
+      <ion-label> {{balance.nombre }}
+        <br> {{balance.available | number :'1.1-5'}}</ion-label>
+      <ion-label>
+        <p color="medium">Valor BTC</p> {{balance.btcValue | number :'1.1-5'}}
+      </ion-label>
+      <ion-label>
+        <p color="medium">Valor TOTAL </p> {{balance.btcTotal | number :'1.1-5'}}
+      </ion-label>
+      <ion-label>
+        <p color="medium">En ordenes</p> {{balance.onOrder | number :'1.1-5'}}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-card>
+<ion-card *ngIf="_arrayFinal.length == 0">
+  <ion-card-header>
+    <ion-card-subtitle>No se han podido cargar los balances porque no tienes fondos!</ion-card-subtitle>
+    <ion-card-title>No tienes fondos!</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    Accede a tu exchange favorito y compra fondos para poder listarlos desde la APP.
+  </ion-card-content>
+</ion-card>

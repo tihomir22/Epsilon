@@ -1,6 +1,5 @@
+
 <ion-app>
-
-
   <ion-menu contentId="content1" side="start">
     <ion-header>
       <ion-toolbar>
@@ -23,14 +22,36 @@
             Awesome content
           </ion-card-content>
         </ion-card>
-        <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-          <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="dembow(p)">
-            <ion-icon slot="start" [name]="p.icon"></ion-icon>
-            <ion-label>
-              {{p.title}}
-            </ion-label>
+
+        <div *ngFor="let p of appPages">
+          <ion-menu-toggle auto-hide="false" *ngIf="p.children==undefined">
+            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="dembow(p)">
+              <ion-icon slot="start" [name]="p.icon"></ion-icon>
+              <ion-label>
+                {{p.title}}
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-item button *ngIf="p.children?.length>0" (click)="p.open = !p.open" [class.active-parent]="p.open"
+            detail="false">
+            <ion-icon slot="start" name="cloudy" *ngIf="!p.open"></ion-icon>
+            <ion-icon slot="start" name="arrow-down" *ngIf="p.open"></ion-icon>
+            <ion-label>{{p.title}}</ion-label>
           </ion-item>
-        </ion-menu-toggle>
+
+          <ion-list *ngIf="p.open">
+              <ion-menu-toggle >
+                  <ion-item class="sub-item" *ngFor="let sub of p.children" [routerDirection]="'root'" (click)="navegar($event,sub)">
+                    <ion-icon slot="start" [name]="sub.icon"></ion-icon>
+                    <ion-label>
+                      {{sub.title}}
+                    </ion-label>
+                  </ion-item>
+                </ion-menu-toggle>
+          </ion-list>
+
+        </div>
+
       </ion-list>
     </ion-content>
   </ion-menu>

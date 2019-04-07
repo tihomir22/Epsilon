@@ -55,6 +55,10 @@
         <ion-col size="9">
           <form [formGroup]="formgroup" (ngSubmit)="onSubmit()">
             <ion-item>
+              <ion-input formControlName="nombreApiForm" type="text" [(ngModel)]="nombreApi" placeholder="Nombre a la API">
+              </ion-input>
+            </ion-item>
+            <ion-item>
               <ion-input formControlName="apikey" type="text" [(ngModel)]="apikeyString" placeholder="API Key">
               </ion-input>
             </ion-item>
@@ -78,7 +82,16 @@
         <ion-label>Activos importados de {{nombreExchangeSeleciconado}}</ion-label>
       </ion-list-header>
       <ion-list>
-        <ion-spinner name="crescent" *ngIf="!terminaCargaBalanceExchange"></ion-spinner>
+
+        <div *ngIf="mostrarMensajeErrorCarga" padding>
+          <ion-card-title>La conexion a la API de {{nombreExchangeSeleciconado}} ha fallado</ion-card-title>
+          <ion-card-subtitle>Desea volver a intentarlo?</ion-card-subtitle>
+          <ion-button (click)="volverAIntroduccionApis()">
+            Volver atras
+          </ion-button>
+        </div>
+
+        <ion-spinner name="crescent" *ngIf="!terminaCargaBalanceExchange && !mostrarMensajeErrorCarga"></ion-spinner>
         <div *ngIf="terminaCargaBalanceExchange">
           <ion-item>
             <ion-label>#</ion-label>
@@ -106,9 +119,10 @@
 </ion-content>
 
 <ion-footer *ngIf="confirmarConexion">
-  <ion-toolbar color="primary">
-    <ion-button fill="clear" expand="full" color="light" (click)="confirmarImportacionExchange()">
-      <ion-icon slot="start" name="save"></ion-icon>
+  <ion-toolbar color="success">
+    <ion-button fill="clear" expand="full" color="light" (click)="confirmarImportacionExchange()"
+      [disabled]="!terminaCargaBalanceExchange">
+      <ion-icon slot="start" name="checkmark"></ion-icon>
       Confirmar
     </ion-button>
   </ion-toolbar>

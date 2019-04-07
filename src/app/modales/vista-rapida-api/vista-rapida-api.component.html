@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="primary">
+      <ion-button color="light" (click)="cerrarModal()">
+        <ion-label>
+          <ion-icon slot="start" name="close" style="font-size:20px;"></ion-icon>
+        </ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Información sobre API</ion-title>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content padding>
+  <!--Exchange -->
+  <ion-card *ngIf="exchange!=null">
+    <ion-card-header>
+
+      <ion-row>
+        <ion-col size="10"><br>
+          <ion-card-subtitle>
+            {{exchange.localizacion}}
+          </ion-card-subtitle>
+          <ion-card-title>{{exchange.nombre}}</ion-card-title>
+        </ion-col>
+        <ion-col size="2">
+          <ion-avatar>
+            <img [src]="exchange.imagen_icono">
+          </ion-avatar>
+        </ion-col>
+      </ion-row>
+
+    </ion-card-header>
+    <ion-card-content>
+      {{exchange.descripcion}}
+      <hr>
+      <ion-label color="primary">En {{exchange.nombre}} tienes un total de {{arrayFinal.length}} activos</ion-label>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!cargandoDatos">
+    <div>
+      <ion-list-header color="secondary">
+        <ion-label>
+          <ion-icon slot="start" name="analytics"></ion-icon> Datos conexion
+        </ion-label>
+        <ion-icon name="data" style="font-size:20px;">
+        </ion-icon>
+      </ion-list-header>
+      <ion-item>
+        <ion-label position="floating" color="medium">Nombre de API</ion-label>
+        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.nombre" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating" color="medium">API Key</ion-label>
+        <ion-input type="password" (input)="enModificacion()" [(ngModel)]="api.apiKey" *ngIf="mostrarTexto"></ion-input>
+        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.apiKey" *ngIf="!mostrarTexto"></ion-input>
+        <ion-icon slot="end" name="eye" (click)="mostrarTexto=!mostrarTexto"></ion-icon>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating" color="medium">Private Key</ion-label>
+        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.privateKey" *ngIf="!mostrarTexto2"></ion-input>
+        <ion-input type="password" (input)="enModificacion()" [(ngModel)]="api.privateKey" *ngIf="mostrarTexto2"></ion-input>
+        <ion-icon slot="end" name="eye" (click)="mostrarTexto2=!mostrarTexto2"></ion-icon>
+      </ion-item>
+    </div>
+    <ion-button expand="full" [disabled]="!huboModificaciones" style="margin:0px;padding:0px;" color="secondary"
+      (click)="enviarCambiosApi()">
+      Guardar cambios
+    </ion-button>
+  </ion-card>
+
+
+  <ion-card *ngIf="cargandoDatos">
+    <div class="ion-padding custom-skeleton">
+      <ion-item *ngFor="let item of [1,2,3]">
+        <ion-label>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>
+
+    </div>
+    <ion-button expand="full" [disabled]="!huboModificaciones" style="margin:0px;padding:0px;" color="secondary"
+      (click)="enviarCambiosApi()">
+      <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+    </ion-button>
+  </ion-card>
+  <!--Balance-->
+  <app-balances-api [arrayFinal]="arrayFinal"></app-balances-api>
+</ion-content>

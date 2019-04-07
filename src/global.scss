@@ -10,4 +10,28 @@
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
 
+.active{
+    --ion-text-color:var(--ion-color-primary);
+    ion-icon{
+        --ion-text-color-rgb:var(--ion-color-primary)
+    }
+}
+
+.active-parent{
+    font-weight: 500;
+}
+
+.sub-item{
+    padding-left:20px;
+    font-size: small;
+}
+.alert-wrapper.sc-ion-alert-md{
+    min-width: 90%;
+    widows: 90%;
+}
+.dembow{
+    min-width: 90%;
+    widows: 90%;
+}
+
 

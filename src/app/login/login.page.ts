@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, AbstractControl, Validators, FormControl } from
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
+import { ApisService } from '../servicios/apis.service';
+import { apiInterfaz } from '../modales/vista-rapida-api/models/apiInterfaz';
 
 
 @Component({
@@ -29,7 +31,14 @@ export class LoginPage implements OnInit {
 
 
 
-  constructor(public menuCtrl: MenuController, private platform: Platform, public navCtrl: NavController, public http: HttpClient, public formbuilder: FormBuilder, public toastCtrl: ToastController, public service: ServiceLoginDashboardService) {
+  constructor(public menuCtrl: MenuController,
+    private platform: Platform,
+    public navCtrl: NavController,
+    public http: HttpClient,
+    public formbuilder: FormBuilder,
+    public toastCtrl: ToastController,
+    public service: ServiceLoginDashboardService,
+    private apiservice: ApisService) {
     this.formgroup = formbuilder.group({
       usuario: ['', Validators.required],
       pass: ['', Validators.required]
@@ -51,6 +60,12 @@ export class LoginPage implements OnInit {
         .subscribe((data: any) => {
           console.dir(data);
           this.service.setDestn(data);
+          this.apiservice.recuperarClavesAPIbyIDUSER(data.idepsilon_usuarios).subscribe((data: Array<apiInterfaz>) => {
+            this.apiservice.listaApisIniciales = data;
+            console.log(data)
+          }, (error) => {
+            console.log(error)
+          }, () => { })
           this.navCtrl.navigateForward("/dashboard");
         },
           (error: any) => {
@@ -72,7 +87,7 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.menuCtrl.enable(false);
-    
+
   }
 
   abrirRegistro() {

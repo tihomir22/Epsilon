@@ -1,4 +1,5 @@
 export interface ExchangeInterface{
+    id:number;
     nombre:string;
     descripcion:string;
     localizacion:string;

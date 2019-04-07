@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Selecciona una API
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let api of _arrayApis" (click)="seleccionarApi(api)">
+      <ion-thumbnail style="margin-right:10px;">
+        <img [src]="api.foto_exchange">
+      </ion-thumbnail>
+      <ion-label><ion-label color="medium">Nombre Api</ion-label>{{api.nombre}}<br>
+        <ion-label color="medium">Nombre Exchange</ion-label>{{api.nombre_exchange}}<br>
+        <ion-label color="medium">Clave API Publica</ion-label>{{api.apiKey}}</ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

@@ -1,11 +1,57 @@
+<div *ngIf="arrayClavesApi.length==0">
+  <div *ngIf="!modalAbierto">
+    <ion-card-header>
+      <ion-card-title color="primary">Todavia sin conexiones!</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      No tienes ninguna conexión a exchanges realizada. Empieza realizando tu primera conexion haciendo click en el
+      siguiente boton. <br>
+      <ion-button (click)="presentModal()" color="success">
+        Empezar!
+      </ion-button>
+    </ion-card-content>
+  </div>
+  <div *ngIf="modalAbierto">
+    <ion-spinner name="bubbles" color="primary"></ion-spinner>
+  </div>
+</div>
 
-  <ion-card-header>
-    <ion-card-title color="primary">Todavia sin conexiones!</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    No tienes ninguna conexión a exchanges realizada. Empieza realizando tu primera conexion haciendo click en el
-    siguiente boton. <br>
-    <ion-button (click)="presentModal()" color="success">
-      Empezar!
-    </ion-button>
-  </ion-card-content>
+<div *ngIf="arrayClavesApi.length>0">
+  <ion-chip color="primary" style="width:100%;">
+
+    <ion-label>
+      <ion-icon slot="start" name="information" style="font-size:20px;margin-bottom: -5px;"></ion-icon>
+      Arrastra un item para ver más opciones o haga click sobre el
+    </ion-label>
+
+  </ion-chip>
+  <ion-list>
+
+
+    <ion-item-sliding *ngFor="let api of arrayClavesApi; let i=index" (click)="abrirDetallesApi($event,api)">
+      <ion-item>
+        <ion-avatar>
+          <img [src]="recuperarImagenExchange(api.id_exchange_api)">
+        </ion-avatar>
+        <ion-label padding>Conexion con <strong>{{api.nombre}}</strong> </ion-label>
+
+        <ion-label color="success" style="text-align:right;margin-left: -20px;">
+          <ion-icon slot="end" name="checkmark"></ion-icon> En linea
+        </ion-label>
+      </ion-item>
+      <ion-item-options side="start">
+        <ion-item-option (click)="ver($event,api)" color="primary">
+          <ion-icon slot="start" name="eye"></ion-icon>
+        </ion-item-option>
+        <ion-item-option (click)="eliminar($event,api,i)" color="danger">
+          <ion-icon slot="start" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+
+    </ion-item-sliding>
+
+
+
+  </ion-list>
+</div>

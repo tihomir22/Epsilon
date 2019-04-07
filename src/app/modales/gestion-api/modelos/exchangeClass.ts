@@ -1,6 +1,7 @@
 import { ExchangeInterface } from "./exchangeInterface";
 
 export class exchangeClass implements ExchangeInterface{
+    public id: number;
     public nombre: string;    
     public descripcion: string;
     public localizacion: string;

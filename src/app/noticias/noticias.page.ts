@@ -111,6 +111,9 @@ export class NoticiasPage implements OnInit {
       this.arrayNoticiasCripto.forEach(element => {
         element['fechaBuena'] = this.trasformarEpocADate((element['published_on'] * 1000)).toLocaleString();
         element['categorias'] = element['categories'].split("|");
+        if(element['categorias'].length>5){
+          element['categorias'].length=5;
+        }
       });
       console.log(this.arrayNoticiasCripto);
       //this.generarNoticiasCalientes();
@@ -184,6 +187,9 @@ export class NoticiasPage implements OnInit {
       elemento['categorias'] = elemento['related'];
       //elemento['categorias']=elemento['categorias'].replace(/,/g,"|");
       elemento['categorias'] = elemento['categorias'].split(",");
+      if(elemento['categorias'].length>5){
+        elemento['categorias'].length=5;
+      }
       delete elemento['related'];
       elemento['imageurl'] = "https://storage.googleapis.com/iex/api/logos/" + elemento['siglas'] + ".png";
       delete elemento['image'];

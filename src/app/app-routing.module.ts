@@ -19,7 +19,9 @@ const routes: Routes = [
   { path: 'detalles-activo', loadChildren: './detalles-activo/detalles-activo.module#DetallesActivoPageModule' },
   { path: 'modalpage', loadChildren: './modales/modalpage/modalpage.module#ModalpagePageModule' },
   { path: 'noticias', loadChildren: './noticias/noticias.module#NoticiasPageModule' },
-  { path: 'perfil', loadChildren: './perfil/perfil.module#PerfilPageModule' },
+  { path: 'perfil', loadChildren: './perfil/perfil.module#PerfilPageModule' },  { path: 'plantilla-api', loadChildren: './plantilla-api/plantilla-api.module#PlantillaAPIPageModule' },
+  { path: 'ajustes', loadChildren: './ajustes/ajustes.module#AjustesPageModule' },
+
 
 
 

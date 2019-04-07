@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{datosQueryParams}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <!--<h1>{{datosQueryParams}}</h1>-->
+  <div *ngIf="mostrarBalance">
+    <app-bar-chart [arrayFinal]="arrayFinal"></app-bar-chart>
+    <app-balances-api [arrayFinal]="arrayFinal"></app-balances-api>
+  </div>
+</ion-content>

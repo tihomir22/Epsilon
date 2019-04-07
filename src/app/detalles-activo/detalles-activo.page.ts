@@ -7,6 +7,7 @@ import { AlertController, ToastController, NavController } from '@ionic/angular'
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Chart } from 'chart.js';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 @Component({
   selector: 'app-detalles-activo',
@@ -25,7 +26,7 @@ export class DetallesActivoPage implements OnInit {
   par: AbstractControl;
   fecha: AbstractControl;
   precio: AbstractControl;
-  observaciones:AbstractControl;
+  observaciones: AbstractControl;
 
   /**
    * @name cantidad
@@ -65,7 +66,7 @@ export class DetallesActivoPage implements OnInit {
    * @public
    * @description     string de usuario en el form
    */
-  public parStr: any="USD";
+  public parStr: any = "USD";
 
   /**
    * @name fechaStr
@@ -91,10 +92,10 @@ export class DetallesActivoPage implements OnInit {
    */
   public precioDouble: any;
 
-  public sector:any;
+  public sector: any;
 
   @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
- 
+
   barChart: any;
 
 
@@ -104,7 +105,14 @@ export class DetallesActivoPage implements OnInit {
 
 
 
-  constructor(private service: ServiceLoginDashboardService, public formbuilder: FormBuilder, private sanitizer: DomSanitizer, public alertCtrl: AlertController, public tostadita: ToastController, public http: HttpClient, public router: Router) {
+  constructor(private service: ServiceLoginDashboardService,
+    public formbuilder: FormBuilder,
+    private sanitizer: DomSanitizer,
+    public alertCtrl: AlertController,
+    public tostadita: ToastController,
+    public http: HttpClient,
+    public router: Router,
+    private screenOrientation: ScreenOrientation) {
     this.activo = service.getActivo();
     this.tipo = service.getTipoAdquisicion();
     this.usuario = service.getDestn();
@@ -115,7 +123,7 @@ export class DetallesActivoPage implements OnInit {
       par: ['', Validators.compose([Validators.required, Validators.maxLength(50)])],
       fecha: ['', Validators.compose([Validators.required])],
       precio: ['', Validators.compose([Validators.required, Validators.maxLength(50)])],
-      observaciones: ['',Validators.maxLength(255)]
+      observaciones: ['', Validators.maxLength(255)]
     })
 
 
@@ -124,7 +132,7 @@ export class DetallesActivoPage implements OnInit {
     this.par = this.formgroup.controls['par'];
     this.fecha = this.formgroup.controls['fecha'];
     this.precio = this.formgroup.controls['precio'];
-    this.observaciones=this.formgroup.controls['observaciones'];
+    this.observaciones = this.formgroup.controls['observaciones'];
     this.iniciarChart(this.activo.tipo);
   }
 
@@ -132,181 +140,177 @@ export class DetallesActivoPage implements OnInit {
     if (this.activo.tipo == "Stock") {
       this.getInformacionDeStock(this.activo.siglas).subscribe(respuesta => {
         console.dir(respuesta);
-        var obj:any;
-        obj=respuesta;
-        this.exchangeStr=obj.primaryExchange;
-        this.sector=obj.sector;
+        var obj: any;
+        obj = respuesta;
+        this.exchangeStr = obj.primaryExchange;
+        this.sector = obj.sector;
         this.par.setValue("USD");
         this.exchange.setValidators(this.exchangeStr);
       });
     }
-    
+
 
   }
   dembow2() {
     alert("sueltalo loco");
   }
- 
 
-  iniciarChart(tipoGrafico:any){
+
+  iniciarChart(tipoGrafico: any) {
     console.dir("entro aqui las singlas son " + this.activo.siglas)
-    if(tipoGrafico=="Criptomoneda"){
-      this.service.getHistoricalDataMensual(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
+    if (tipoGrafico == "Criptomoneda") {
+      this.service.getHistoricalDataMensual(this.activo.siglas, tipoGrafico).subscribe(respuesta => {
         this.generarChartCripto(respuesta);
       })
-    }else if(tipoGrafico=="Stock"){
-      this.service.getHistoricalDataMensual(this.activo.siglas,tipoGrafico).subscribe(respuesta=>{
+    } else if (tipoGrafico == "Stock") {
+      this.service.getHistoricalDataMensual(this.activo.siglas, tipoGrafico).subscribe(respuesta => {
         this.generarChartStock(respuesta)
       })
     }
   }
-  generarChartCripto(respuesta:any){
+  generarChartCripto(respuesta: any) {
     console.dir(respuesta)
 
 
-    var arrayPrecios:Array<any>=this.filtrarRespuestaPrecios(respuesta['Data'])
-    var arrayLabelData:Array<any>=this.filtrarRespuestaFechasLabel(respuesta['Data'])
+    var arrayPrecios: Array<any> = this.filtrarRespuestaPrecios(respuesta['Data'])
+    var arrayLabelData: Array<any> = this.filtrarRespuestaFechasLabel(respuesta['Data'])
     this.barChart = new Chart(this.barCanvas.nativeElement, {
       type: 'line',
-      
+
       data: {
-          labels: arrayLabelData,
-          datasets: [{
-              label: this.activo.siglas,
-              data: arrayPrecios,
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-              ],
-              borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-              ],
-              borderWidth: 1
-          }]
+        labels: arrayLabelData,
+        datasets: [{
+          label: this.activo.siglas,
+          data: arrayPrecios,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255,99,132,1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
       },
       options: {
-				responsive: true,
-				title: {
-					display: true,
-					text: 'Grafico de '+this.activo.siglas+' en el ultimo mes'
-				},
-				tooltips: {
-					mode: 'index',
-					intersect: false,
-				},
-				hover: {
-					mode: 'nearest',
-					intersect: true
-				},
-				scales: {
-					xAxes: [{
-						display: true,
-					
-					}],
-					yAxes: [{
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: '$ '
-						}
-					}]
-				}
-			}
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Grafico de ' + this.activo.siglas + ' en el ultimo mes*'
+        },
+        hover: {
+          mode: 'nearest',
+          intersect: true
+        }, scales: {
+          xAxes: [
+            {
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 10
+              }
+            }
+          ]
+        }
 
-  });
+
+      }
+
+    });
   }
-  generarChartStock(respuesta:any){
+  generarChartStock(respuesta: any) {
     console.dir(respuesta)
 
 
-    var arrayPrecios:Array<any>=this.filtrarRespuestaPrecios(respuesta)
-    var arrayLabelData:Array<any>=this.filtrarRespuestaFechasLabel(respuesta)
+    var arrayPrecios: Array<any> = this.filtrarRespuestaPrecios(respuesta)
+    var arrayLabelData: Array<any> = this.filtrarRespuestaFechasLabel(respuesta)
     this.barChart = new Chart(this.barCanvas.nativeElement, {
       type: 'line',
-      
+
       data: {
-          labels: arrayLabelData,
-          datasets: [{
-              label: this.activo.siglas,
-              data: arrayPrecios,
-              backgroundColor: [
-                 '#7FDBFF'
-              ],
-              borderColor: [
-                  '#001f3f'
-              ],
-              borderWidth: 1
-          }]
+        labels: arrayLabelData,
+        datasets: [{
+          label: this.activo.siglas,
+          data: arrayPrecios,
+          backgroundColor: [
+            '#7FDBFF'
+          ],
+          borderColor: [
+            '#001f3f'
+          ],
+          borderWidth: 1
+        }]
       },
       options: {
-				responsive: true,
-				title: {
-					display: true,
-					text: 'Grafico de '+this.activo.siglas+' en los ultimos 7dias'
-				},
-				tooltips: {
-					mode: 'index',
-					intersect: false,
-				},
-				hover: {
-					mode: 'nearest',
-					intersect: true
-				},
-				scales: {
-					xAxes: [{
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: 'Dia'
-						}
-					}],
-					yAxes: [{
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: 'Valor '
-						}
-					}]
-				}
-			}
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Grafico de ' + this.activo.siglas + ' en los ultimos 7dias'
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+        },
+        hover: {
+          mode: 'nearest',
+          intersect: true
+        },
+        legend: {
+          display: false
+        },
+        scales: {
+          xAxes: [{
+            display: false,
+            scaleLabel: {
+              display: false,
+              labelString: 'Dia'
+            }
+          }],
+          yAxes: [{
+            display: false,
+            scaleLabel: {
+              display: false,
+              labelString: 'Valor '
+            }
+          }]
+        }
+      }
 
-  });
+    });
   }
-  filtrarRespuestaPrecios(arrayObjectos:any){
-    var nuevoArray:Array<any>=new Array
+  filtrarRespuestaPrecios(arrayObjectos: any) {
+    var nuevoArray: Array<any> = new Array
     arrayObjectos.forEach(element => {
       nuevoArray.push(element['close'])
     });
     return nuevoArray;
   }
-  filtrarRespuestaFechasLabel(arrayObjectos:any){
-    var nuevoArrayFecha:Array<any>=new Array
+  filtrarRespuestaFechasLabel(arrayObjectos: any) {
+    var nuevoArrayFecha: Array<any> = new Array
     arrayObjectos.forEach(element => {
-      if(this.activo.tipo=="Criptomoneda"){
+      if (this.activo.tipo == "Criptomoneda") {
         var date = new Date(element['time'] * 1000)
         nuevoArrayFecha.push(date.getDate())
-      }else if(this.activo.tipo=="Stock"){
+      } else if (this.activo.tipo == "Stock") {
         nuevoArrayFecha.push(element['label'])
       }
-      
+
     });
     return nuevoArrayFecha;
-  }  
+  }
   getInformacionDeStock(stockName: string) {
     return this.http.get("https://api.iextrading.com/1.0/stock/" + stockName + "/quote");
   }
 
   dembow() {
-    alert("dembow locooooo")
     if (this.formgroup.invalid) {
 
       this.tostadita.create({
@@ -318,7 +322,7 @@ export class DetallesActivoPage implements OnInit {
       this.idUsuario = this.usuario.idepsilon_usuarios;
       this.activoId = this.activo.id;
       let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-        options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": this.idUsuario, "id_activo_ajeno": this.activo.id, "tipo": this.tipo, "precio_compra": this.precioDouble, "fecha_operacion": this.fechaStr, "exchange": this.exchangeStr, "siglas_operacion": this.parStr, "cantidad": this.cantidad ,"observaciones":this.observacionesStr},
+        options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": this.idUsuario, "id_activo_ajeno": this.activo.id, "tipo": this.tipo, "precio_compra": this.precioDouble, "fecha_operacion": this.fechaStr, "exchange": this.exchangeStr, "siglas_operacion": this.parStr, "cantidad": this.cantidad, "observaciones": this.observacionesStr },
         url: any = this.baseURI + "manage-dataIONIC.php";
 
       this.http.post(url, JSON.stringify(options), headers)
@@ -549,6 +553,19 @@ export class DetallesActivoPage implements OnInit {
   }
   generarImgStock(activo) {
     return this.baseURI + "img-activos-stocks/" + activo.nombre + ".png";
+  }
+  public cambiarRotacion(): void {
+    console.log(this.screenOrientation.type)
+    console.log(this.screenOrientation.ORIENTATIONS.PORTRAIT)
+    if (this.screenOrientation.type == this.screenOrientation.ORIENTATIONS.PORTRAIT || this.screenOrientation.type == this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY || this.screenOrientation.type == this.screenOrientation.ORIENTATIONS.PORTRAIT_SECONDARY) {
+      console.log("cambiando a landscape")
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      this.screenOrientation.unlock();
+    } else {
+      console.log("cambiando a portrairt")
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      this.screenOrientation.unlock();
+    }
   }
 
 }
