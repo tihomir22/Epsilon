@@ -43,3 +43,5 @@
 * ALPHA 0.3.0 : Implementada ANALCONDA ( login modificado, ahora carga mucho más rapido y tiene un diseño más acorde | mayor eficiencia en la conexion con el servidor remoto en el dashboard, sincronización con la carga del grafico realizada | sidemenu modificado | creado perfil de usuario junto con caracteristica de modificación de datos del usuario y avatar | implementado primer grafico en el perfil | mejorada del backend y optimización general )
 
 * ALPHA 0.3.1 : ANALCONDA V2 => Implementado segundo grafico en perfil, nuevo componente agregado de apis, conexion con api de Binance establecida por medio de PHP , ahora un usuario puede importar sus balances, creadas nuevas tablas y actualizado diseño de entidades UML
+
+*0.4.0: Scourge of Iron V1 => Implementado tree -opciones sobre api- junto a subtree, implementada funcionabilidad de balances dinamicos de una API junto a grafico de tipo bars que muestra el tipo de balances, creada una plantilla que será usada para agregar componentes dinamicamente segun lo solicite el usuario, nueva opcion de configuraicón de la app, mejorado el diseño, refactorizado codigo y mejoras menores
