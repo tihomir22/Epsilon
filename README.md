@@ -45,3 +45,5 @@
 * ALPHA 0.3.1 : ANALCONDA V2 => Implementado segundo grafico en perfil, nuevo componente agregado de apis, conexion con api de Binance establecida por medio de PHP , ahora un usuario puede importar sus balances, creadas nuevas tablas y actualizado diseño de entidades UML
 
 * ALPHA 0.4.0 : Scourge of Iron V1 => Implementado tree -opciones sobre api- junto a subtree, implementada funcionabilidad de balances dinamicos de una API junto a grafico de tipo bars que muestra el tipo de balances, creada una plantilla que será usada para agregar componentes dinamicamente segun lo solicite el usuario, nueva opcion de configuraicón de la app, mejorado el diseño, refactorizado codigo y mejoras menores
+
+* ALPHA 0.4.1 : Scourge of Iron V2 => Modificado componente agregar-activo para que sea reutilizable y ahora se usa en dos paginas, implementado totalmente el cambio de contraseña en ajustes,implementada realizar-trasaccion-binance pagina dedicada a realizar ordenes de compra venta e interactuar con el exchange de BINANCE, se ha implementado la primera compra LIMIT ORDER [SIN PROBAR], mejorado diseño general, cambio de fuente a Barlow y bugs menores
