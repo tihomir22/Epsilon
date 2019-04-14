@@ -7,7 +7,7 @@ import { from, of } from 'rxjs';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { TouchSequence } from 'selenium-webdriver';
 import { Noticia } from './clases/noticiaClass';
-import {ModalNoticiasComponent} from '../modales/modal-noticias/modal-noticias.component';
+import { ModalNoticiasComponent } from '../modales/modal-noticias/modal-noticias.component';
 
 
 
@@ -31,20 +31,16 @@ export class NoticiasPage implements OnInit {
   contCripto: number = 0;
   contStock: number = 0;
 
+  public noHayActivo: boolean = false;
+
   segmentBool: boolean = false;
 
   cargarStockTerminada: boolean = false;
   cargarCriptoTerminada: boolean = false;
-  constructor(public servicio: NoticiasSSService, public loadingController: LoadingController, private iab: InAppBrowser, private toast: ToastController,private modalController:ModalController) { }
+  constructor(public servicio: NoticiasSSService, public loadingController: LoadingController, private iab: InAppBrowser, private toast: ToastController, private modalController: ModalController) { }
 
   ngOnInit() {
-    console.log(this.servicio.getArrayActivosUsuario());
-
-
-
     this.inicioCargaNoticias();
-
-
   }
 
   cambiarSegmentVar() {
@@ -88,16 +84,23 @@ export class NoticiasPage implements OnInit {
     this.arraySiglasCripto.length = 0;
     this.arraySiglasStock.length = 0;
     //filtrar activos cripto y activos sotkc ( separlos )
-    const source = from(this.servicio.getArrayActivosUsuario());
+    console.log(this.servicio.getArrayActivosUsuario())
+    console.log(this.servicio.getArrayActivosUsuario().length)
+    if (this.servicio.getArrayActivosUsuario().length == 0) {
+      this.loadingController.dismiss();
+      this.noHayActivo = true;
+    } else {
+      const source = from(this.servicio.getArrayActivosUsuario());
 
-    const criptos = source.pipe(filter(activo => activo.tipo === "Criptomoneda"));
-    const suscribe = criptos.subscribe(resultado => this.arraySiglasCripto.push(resultado.siglas), (error) => { console.log(error) }, () => {
-      this.cargarNoticiasCriptomonedas()
-    });
-    const stocks = source.pipe(filter(activo => activo.tipo === "Stock"));
-    const suscribestock = stocks.subscribe(resultado => this.arraySiglasStock.push(resultado.siglas), (error) => { console.log(error) }, () => {
-      this.cargarNoticiasStock();
-    });
+      const criptos = source.pipe(filter(activo => activo.tipo === "Criptomoneda"));
+      const suscribe = criptos.subscribe(resultado => this.arraySiglasCripto.push(resultado.siglas), (error) => { console.log(error) }, () => {
+        this.cargarNoticiasCriptomonedas()
+      });
+      const stocks = source.pipe(filter(activo => activo.tipo === "Stock"));
+      const suscribestock = stocks.subscribe(resultado => this.arraySiglasStock.push(resultado.siglas), (error) => { console.log(error) }, () => {
+        this.cargarNoticiasStock();
+      });
+    }
 
 
   }
@@ -111,8 +114,8 @@ export class NoticiasPage implements OnInit {
       this.arrayNoticiasCripto.forEach(element => {
         element['fechaBuena'] = this.trasformarEpocADate((element['published_on'] * 1000)).toLocaleString();
         element['categorias'] = element['categories'].split("|");
-        if(element['categorias'].length>5){
-          element['categorias'].length=5;
+        if (element['categorias'].length > 5) {
+          element['categorias'].length = 5;
         }
       });
       console.log(this.arrayNoticiasCripto);
@@ -187,8 +190,8 @@ export class NoticiasPage implements OnInit {
       elemento['categorias'] = elemento['related'];
       //elemento['categorias']=elemento['categorias'].replace(/,/g,"|");
       elemento['categorias'] = elemento['categorias'].split(",");
-      if(elemento['categorias'].length>5){
-        elemento['categorias'].length=5;
+      if (elemento['categorias'].length > 5) {
+        elemento['categorias'].length = 5;
       }
       delete elemento['related'];
       elemento['imageurl'] = "https://storage.googleapis.com/iex/api/logos/" + elemento['siglas'] + ".png";

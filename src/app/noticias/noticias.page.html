@@ -9,172 +9,184 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-fab vertical="top" horizontal="end" slot="fixed" (click)="presentModal()">
+<ion-fab vertical="top" horizontal="end" slot="fixed" (click)="presentModal()" *ngIf="!noHayActivo">
   <ion-fab-button color="danger">
     <ion-icon name="heart"></ion-icon>
   </ion-fab-button>
 </ion-fab>
 <ion-content padding>
 
+  <div *ngIf="!noHayActivo">
+    <div>
+      <ion-card-header>
+        <ion-card-subtitle>
+          <ion-icon slot="start" name="planet"></ion-icon>
+          <ion-label position="inline" style="text-align:center;">Noticias de ultima hora relacionadas con sus activos
+            actuales.</ion-label>
+        </ion-card-subtitle><br>
+        <ion-segment>
 
-  <div>
-    <ion-card-header>
-      <ion-card-subtitle>
-        <ion-icon slot="start" name="planet"></ion-icon>
-        <ion-label position="inline" style="text-align:center;">Noticias de ultima hora relacionadas con sus activos
-          actuales.</ion-label>
-      </ion-card-subtitle><br>
-      <ion-segment>
+          <ion-chip *ngFor="let strCripto of arraySiglasCripto">
+            <ion-icon name="close" (click)="onClick()"></ion-icon>
+            <ion-label>{{strCripto}}</ion-label>
+          </ion-chip>
 
-        <ion-chip *ngFor="let strCripto of arraySiglasCripto">
-          <ion-icon name="close" (click)="onClick()"></ion-icon>
-          <ion-label>{{strCripto}}</ion-label>
-        </ion-chip>
+          <ion-chip *ngFor="let strStock of arraySiglasStock">
+            <ion-icon name="close" (click)="onClick()"></ion-icon>
+            <ion-label>{{strStock}}</ion-label>
+          </ion-chip>
 
-        <ion-chip *ngFor="let strStock of arraySiglasStock">
-          <ion-icon name="close" (click)="onClick()"></ion-icon>
-          <ion-label>{{strStock}}</ion-label>
-        </ion-chip>
+        </ion-segment>
+      </ion-card-header>
 
-      </ion-segment>
-    </ion-card-header>
+      <ion-card-content>
+        <ion-card>
+          <ion-slides pager="true" [options]="slideOpts">
+            <ion-slide *ngFor="let noticiaCaliente of arrayNoticiasCalientes">
 
-    <ion-card-content>
-      <ion-card>
-        <ion-slides pager="true" [options]="slideOpts">
-          <ion-slide *ngFor="let noticiaCaliente of arrayNoticiasCalientes">
+              <ion-row (click)="abrirArticulo(noticiaCaliente.url)">
 
-            <ion-row (click)="abrirArticulo(noticiaCaliente.url)">
+                <ion-col size="12">
 
-              <ion-col size="12">
+                  <ion-row>
+                    <ion-col size="4"></ion-col>
+                    <ion-col size="4" style="width: 100% !important;height: 100% !important;">
+                      <ion-img [src]="noticiaCaliente.imageurl" style="padding:10px;"></ion-img><br>
+                    </ion-col>
+                    <ion-col size="4">
+                    </ion-col>
+                  </ion-row>
 
-                <ion-row>
-                  <ion-col size="4"></ion-col>
-                  <ion-col size="4" style="width: 100% !important;height: 100% !important;">
-                    <ion-img [src]="noticiaCaliente.imageurl" style="padding:10px;"></ion-img><br>
-                  </ion-col>
-                  <ion-col size="4">
-                  </ion-col>
-                </ion-row>
+                  <ion-card-header>
+                    <ion-card-title>{{noticiaCaliente.title}}</ion-card-title>
+                    <ion-card-subtitle>{{noticiaCaliente.body}}</ion-card-subtitle>
 
-                <ion-card-header>
-                  <ion-card-title>{{noticiaCaliente.title}}</ion-card-title>
-                  <ion-card-subtitle>{{noticiaCaliente.body}}</ion-card-subtitle>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-chip color="primary">
+                      <ion-label> Publicado el : {{noticiaCaliente.fechaBuena}}</ion-label>
+                    </ion-chip><br>
+                    <ion-chip color="secondary" *ngFor="let categoria of noticiaCaliente.categorias">
+                      <ion-label>{{categoria}}</ion-label>
+                    </ion-chip><br>
+                    <ion-chip>
+                      <ion-label>De : {{noticiaCaliente.source}}</ion-label>
+                    </ion-chip>
+                  </ion-card-content>
+                  <br>
 
-                </ion-card-header>
-                <ion-card-content>
-                  <ion-chip color="primary">
-                    <ion-label> Publicado el : {{noticiaCaliente.fechaBuena}}</ion-label>
-                  </ion-chip><br>
-                  <ion-chip color="secondary" *ngFor="let categoria of noticiaCaliente.categorias">
-                    <ion-label>{{categoria}}</ion-label>
-                  </ion-chip><br>
-                  <ion-chip>
-                    <ion-label>De : {{noticiaCaliente.source}}</ion-label>
-                  </ion-chip>
-                </ion-card-content>
-                <br>
+                </ion-col>
 
-              </ion-col>
-
-            </ion-row>
+              </ion-row>
 
 
-          </ion-slide>
+            </ion-slide>
 
-        </ion-slides>
+          </ion-slides>
+        </ion-card>
+      </ion-card-content>
+
+
+
+    </div>
+
+
+
+    <ion-segment (ionChange)="cambiarSegmentVar()">
+      <ion-segment-button checked>
+        <ion-label>
+          <ion-icon name="logo-bitcoin" class="iconosGrandes"></ion-icon><br> Cripto
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button>
+        <ion-label>
+          <ion-icon name="logo-apple" class="iconosGrandes"></ion-icon><br> Acciones
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div *ngFor="let noticiaCripto of arrayNoticiasCripto;let i=index" [hidden]="!segmentBool">
+      <ion-card padding *ngIf="i>=contCripto" class="my-animation">
+        <ion-row (click)="abrirArticulo(noticiaCripto.url)">
+          <ion-col size="3">
+            <ion-img [src]="noticiaCripto.imageurl"></ion-img>
+          </ion-col>
+          <ion-col size="9">
+            <ion-title>{{noticiaCripto.title}}</ion-title>
+            <p style="margin-left:10px;">{{noticiaCripto.body}}</p>
+            <ion-chip color="primary">
+              <ion-label> Publicado en : {{noticiaCripto.fechaBuena}}</ion-label>
+            </ion-chip>
+            <ion-chip color="secondary" *ngFor="let categoria of noticiaCripto.categorias">
+              <ion-label>{{categoria}}</ion-label>
+            </ion-chip><br>
+            <ion-chip>
+              <ion-label>De : {{noticiaCripto.source}}</ion-label>
+            </ion-chip>
+          </ion-col>
+
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="10">
+          </ion-col>
+
+          <ion-col size="2">
+            <ion-button (click)="anadirNoticiaAFavoritos(noticiaCripto)" color="danger">
+              <ion-icon slot="icon-only" name="heart"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
       </ion-card>
-    </ion-card-content>
 
+    </div>
 
+    <div *ngFor="let noticiaStock of arrayNoticiasStock;let i=index" [hidden]="segmentBool">
+      <ion-card padding *ngIf="i>=contStock" class="my-animation">
+        <ion-row (click)="abrirArticulo(noticiaStock.url)">
+          <ion-col size="3">
+            <ion-img [src]="noticiaStock.imageurl"></ion-img>
+          </ion-col>
+          <ion-col size="9">
+            <ion-title>{{noticiaStock.title}}</ion-title>
+            <p style="margin-left:10px;">{{noticiaStock.body}}</p>
+            <ion-chip color="primary">
+              <ion-label> Publicado en : {{noticiaStock.fechaBuena}}</ion-label>
+            </ion-chip>
+            <ion-chip color="secondary" *ngFor="let categoria of noticiaStock.categorias">
+              <ion-label>{{categoria}}</ion-label>
+            </ion-chip><br>
+            <ion-chip>
+              <ion-label>Desde : {{noticiaStock.source}}</ion-label>
+            </ion-chip>
+          </ion-col>
 
-  </div>
+        </ion-row>
 
+        <ion-row>
+          <ion-col size="10">
+          </ion-col>
 
-
-  <ion-segment (ionChange)="cambiarSegmentVar()">
-    <ion-segment-button checked>
-      <ion-label>
-        <ion-icon name="logo-bitcoin" class="iconosGrandes"></ion-icon><br> Cripto
-      </ion-label>
-    </ion-segment-button>
-    <ion-segment-button>
-      <ion-label>
-        <ion-icon name="logo-apple" class="iconosGrandes"></ion-icon><br> Acciones
-      </ion-label>
-    </ion-segment-button>
-  </ion-segment>
-
-  <div *ngFor="let noticiaCripto of arrayNoticiasCripto;let i=index" [hidden]="!segmentBool">
-    <ion-card padding *ngIf="i>=contCripto" class="my-animation">
-      <ion-row (click)="abrirArticulo(noticiaCripto.url)">
-        <ion-col size="3">
-          <ion-img [src]="noticiaCripto.imageurl"></ion-img>
-        </ion-col>
-        <ion-col size="9">
-          <ion-title>{{noticiaCripto.title}}</ion-title>
-          <p style="margin-left:10px;">{{noticiaCripto.body}}</p>
-          <ion-chip color="primary">
-            <ion-label> Publicado en : {{noticiaCripto.fechaBuena}}</ion-label>
-          </ion-chip>
-          <ion-chip color="secondary" *ngFor="let categoria of noticiaCripto.categorias">
-            <ion-label>{{categoria}}</ion-label>
-          </ion-chip><br>
-          <ion-chip>
-            <ion-label>De : {{noticiaCripto.source}}</ion-label>
-          </ion-chip>
-        </ion-col>
-
-      </ion-row>
-
-      <ion-row>
-        <ion-col size="10">
-        </ion-col>
-
-        <ion-col size="2">
-          <ion-button (click)="anadirNoticiaAFavoritos(noticiaCripto)" color="danger">
-            <ion-icon slot="icon-only" name="heart"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-card>
+          <ion-col size="2">
+            <ion-button (click)="anadirNoticiaAFavoritos(noticiaStock)" color="danger">
+              <ion-icon slot="icon-only" name="heart"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </div>
 
   </div>
 
-  <div *ngFor="let noticiaStock of arrayNoticiasStock;let i=index" [hidden]="segmentBool">
-    <ion-card padding *ngIf="i>=contStock" class="my-animation">
-      <ion-row (click)="abrirArticulo(noticiaStock.url)">
-        <ion-col size="3">
-          <ion-img [src]="noticiaStock.imageurl"></ion-img>
-        </ion-col>
-        <ion-col size="9">
-          <ion-title>{{noticiaStock.title}}</ion-title>
-          <p style="margin-left:10px;">{{noticiaStock.body}}</p>
-          <ion-chip color="primary">
-            <ion-label> Publicado en : {{noticiaStock.fechaBuena}}</ion-label>
-          </ion-chip>
-          <ion-chip color="secondary" *ngFor="let categoria of noticiaStock.categorias">
-            <ion-label>{{categoria}}</ion-label>
-          </ion-chip><br>
-          <ion-chip>
-            <ion-label>Desde : {{noticiaStock.source}}</ion-label>
-          </ion-chip>
-        </ion-col>
-
-      </ion-row>
-
-      <ion-row>
-        <ion-col size="10">
-        </ion-col>
-
-        <ion-col size="2">
-          <ion-button (click)="anadirNoticiaAFavoritos(noticiaStock)" color="danger">
-            <ion-icon slot="icon-only" name="heart"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
+  <div *ngIf="noHayActivo">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Las noticias son basadas en sus activos</ion-card-subtitle>
+        <ion-card-title>Noticias no disponibles</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Usted debe agregar activos para recibir noticias relacionadas con ellos!
+      </ion-card-content>
     </ion-card>
   </div>
-
-
 </ion-content>

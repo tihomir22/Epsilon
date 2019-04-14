@@ -95,9 +95,9 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
         if (data == null || data == false) {
           this.sendNotification("No tiene activos el usuario...");
           this.hayActivos = false;
+          this.stopLoading();
         } else {
           this.hayActivos = true;
-          console.dir(data);
           this.service.setArrayActivoCompletos(data);
           let observable = of(data);
           observable.subscribe((data: Array<any>) => {
@@ -106,7 +106,6 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
           }, (error) => {
             console.log(error)
           }, () => {
-            console.log("TERMINADO DE VERDAD EH")
           })
         }
       },
