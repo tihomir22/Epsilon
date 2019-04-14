@@ -1,0 +1,126 @@
+<ion-header *ngIf="_esModal">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="primary">
+      <ion-button color="light" (click)="cerrarModal()">
+        <ion-label>
+          <ion-icon slot="start" name="close" style="font-size:20px;"></ion-icon>
+        </ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Selecciona activo modal</ion-title>
+
+  </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-spinner name="crescent" *ngIf="cargando"></ion-spinner>
+  <ion-searchbar animated (ionChange)="filtrarActivos()" [(ngModel)]="searchTerm" debounce="100"></ion-searchbar>
+
+  <ion-spinner *ngIf="searching" name="crescent"></ion-spinner>
+  <div *ngIf="activos_cripto.length>0">
+    <ion-list>
+      <ion-list-header color="primary">
+        <ion-label>Criptomonedas</ion-label>
+      </ion-list-header>
+      <ion-item-sliding #slidingItem *ngFor="let activo of activos_cripto | slice : startPage:paginationLimit"
+        [disabled]="_desactivarSliding">
+        <ion-item #item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)" class="my-animation"
+          style="border-left: 2px solid #3880ff;">
+          <ion-avatar item-start style="margin:10px;">
+            <img [src]="generarImgCripto(activo)">
+          </ion-avatar>
+          <ion-label>{{activo.nombre}}</ion-label>
+          <ion-label style="text-align:right;margin-right: 5%;">{{activo.precio}}$</ion-label>
+        </ion-item>
+        <ion-item-options side="start">
+          <ion-item-option color="success" (click)="comprar(activo)">Comprar</ion-item-option>
+          <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
+        </ion-item-options>
+        <ion-item-options side="end">
+          <ion-item-option (click)="unread(item)">Favorito</ion-item-option>
+        </ion-item-options>
+
+      </ion-item-sliding>
+    </ion-list>
+    <ion-button *ngIf="paginationLimit < activos_cripto.length" (click)="showMoreItems('cripto')" class="haciaArriba">
+      Show More
+    </ion-button>
+    <ion-button *ngIf="paginationLimit > 3" (click)="showLessItems('cripto')" class="haciaArriba">
+      Show Less
+    </ion-button>
+  </div>
+
+
+  <ion-list *ngIf="activos_stock.length>0 && _mostrarStock">
+    <ion-list-header color="success">
+      <ion-label>Stocks</ion-label>
+    </ion-list-header>
+    <ion-item-sliding #slidingItem *ngFor="let activo of activos_stock | slice : startPageStocks:paginationLimitStocks"
+      [disabled]="_desactivarSliding">
+      <ion-item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)" class="my-animation"
+        style="border-left: 2px solid #10dc60;">
+        <ion-avatar item-start style="margin:10px;">
+          <img [src]="generarImgStock(activo)">
+        </ion-avatar>
+        <ion-label>{{activo.nombre}}</ion-label>
+        <ion-label style="text-align:right;margin-right: 5%;">{{activo.precio}}$</ion-label>
+      </ion-item>
+      <ion-item-options side="start">
+        <ion-item-option color="success" (click)="comprar(activo)">Comprar</ion-item-option>
+        <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
+      </ion-item-options>
+
+      <ion-item-options side="end">
+        <ion-item-option (click)="unread(item)">Favorito</ion-item-option>
+      </ion-item-options>
+
+    </ion-item-sliding>
+    <ion-button *ngIf="paginationLimitStocks < activos_stock.length" (click)="showMoreItems('stocks')"
+      class="haciaArriba" color="success">
+      Show More
+    </ion-button>
+    <ion-button *ngIf="paginationLimitStocks > 3 " (click)="showLessItems('stocks')" class="haciaArriba"
+      color="success">
+      Show Less
+    </ion-button>
+  </ion-list>
+
+  <div *ngIf="_mostrarDivisas">
+    <ion-list>
+      <ion-list-header color="dark">
+        <ion-label>Divisas</ion-label>
+      </ion-list-header>
+
+      <ion-item-sliding #slidingItem
+        *ngFor="let activo of activos_divisas | slice : startPageDivisas:paginationLimitDivisas"
+        [disabled]="_desactivarSliding">
+        <ion-item #item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)" class="my-animation"
+          style="border-left: 2px solid #111111;">
+          <ion-avatar item-start style="margin:10px;">
+            <img [src]="activo.img">
+          </ion-avatar>
+          <ion-label>{{activo.siglas}}</ion-label>
+          <ion-label color="medium" style="text-align:right;margin-right: 5%;">{{activo.desc}}</ion-label>
+        </ion-item>
+
+        <ion-item-options side="start">
+          <ion-item-option color="success" (click)="comprar(activo)">Comprar</ion-item-option>
+          <ion-item-option color="danger" (click)="vender(activo)">Vender</ion-item-option>
+        </ion-item-options>
+        <ion-item-options side="end">
+          <ion-item-option (click)="unread(item)">Favorito</ion-item-option>
+        </ion-item-options>
+
+      </ion-item-sliding>
+    </ion-list>
+    <ion-button *ngIf="paginationLimitDivisas < activos_divisas.length" (click)="showMoreItems('divisas')"
+      class="haciaArriba" color="dark">
+      Show More
+    </ion-button>
+    <ion-button *ngIf="paginationLimitDivisas > 3" (click)="showLessItems('divisas')" class="haciaArriba" color="dark">
+      Show Less
+    </ion-button>
+  </div>
+</ion-content>

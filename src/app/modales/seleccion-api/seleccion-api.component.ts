@@ -2,10 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { apiInterfaz } from '../vista-rapida-api/models/apiInterfaz';
 import { ApisService } from 'src/app/servicios/apis.service';
 import { exchangeClass } from '../gestion-api/modelos/exchangeClass';
-import { ExchangeInterface } from '../gestion-api/modelos/exchangeInterface';
 import { NavController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { Constantes } from 'src/Constantes';
+
 
 @Component({
   selector: 'app-seleccion-api',
@@ -16,11 +15,22 @@ export class SeleccionApiComponent implements OnInit {
   @Input('arrayApis')
   set arrayApis(arrayApis: Array<apiInterfaz>) {
     this._arrayApis = arrayApis;
+    if (this._arrayApis.length > 0) {
+      this.hayApis = true;
+    }
+  }
 
+  @Input('parametros')
+  set parametros(item: any) {
+    this._parametros = item;
   }
 
   public _arrayApis: Array<apiInterfaz> = [];
+  public _parametros: any;
   public todosLosExchanges: Array<exchangeClass> = [];
+  public hayApis: boolean = false;
+
+
   constructor(private servicioApi: ApisService,
     private navCtrl: NavController,
     private modalCtrl: ModalController,
@@ -57,7 +67,7 @@ export class SeleccionApiComponent implements OnInit {
   public seleccionarApi(api: apiInterfaz): void {
     this.modalCtrl.dismiss();
     this.servicioApi.setApi(api);
-    this.router.navigate(["/plantilla-api"], { queryParams: { tipo: Constantes.balance } })
+    this.router.navigate(["/plantilla-api"], { queryParams: { tipo: this._parametros.title } })
   }
 
   public recuperarInfoRelativaAlExchange(id_exchange: number): exchangeClass {
@@ -69,6 +79,13 @@ export class SeleccionApiComponent implements OnInit {
     }
     return null;
   }
+
+  public accederAPerfil(): void {
+    this.modalCtrl.dismiss();
+    this.router.navigate(["/perfil"])
+  }
+
+
   goBack() {
     this.modalCtrl.dismiss();
   }

@@ -33,6 +33,8 @@ import { PopoverOpcionesComponent } from './perfil/popover-opciones/popover-opci
 import { PlantillaAPIPageModule } from './plantilla-api/plantilla-api.module';
 import { SeleccionApiComponent } from './modales/seleccion-api/seleccion-api.component';
 
+import { SharedModule } from './shared/shared.module';
+
 
 
 @NgModule({
@@ -47,7 +49,8 @@ import { SeleccionApiComponent } from './modales/seleccion-api/seleccion-api.com
     HttpClientModule,
     HttpModule,
     IonicStorageModule.forRoot(),
-    PlantillaAPIPageModule
+    PlantillaAPIPageModule,
+    SharedModule
   ],
   providers: [
     StatusBar,

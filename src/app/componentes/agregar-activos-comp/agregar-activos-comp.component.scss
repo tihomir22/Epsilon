@@ -1,0 +1,40 @@
+
+.ios, .md {
+ 
+  
+ 
+    button {
+        align-items: baseline;
+    }
+
+
+
+}
+img{
+border-radius: 0% !important;
+}
+
+@keyframes MyAnimation {
+0% {
+  padding-left: 100px;
+}
+100% {
+  padding-left: 0px;
+} 
+}
+
+@keyframes haciaArriba {
+0% {
+  padding-top: 100px;
+}
+100% {
+  padding-top: 0px;
+} 
+}
+
+.my-animation {
+animation: MyAnimation 1s;
+}
+.haciaArriba {
+animation: haciaArriba 1s;
+}

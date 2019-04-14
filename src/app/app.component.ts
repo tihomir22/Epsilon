@@ -39,7 +39,7 @@ export class AppComponent {
         },
         {
           title: Constantes.realizarTransaccion,
-          url: "/perfil",
+          url: "/realizar-transaccion",
           icon: 'card'
         },
         {
@@ -107,7 +107,7 @@ export class AppComponent {
   public navegar(event: any, subitem: any): void {
     event.preventDefault();
     console.log("ahora checkeamos si estan las apis activas...")
-    console.log(this.apiservice.getListUserApis())
+    this.apiservice.setParametros(subitem);
     this.presentModal();
 
   }
@@ -115,7 +115,7 @@ export class AppComponent {
   async presentModal() {
     const modal = await this.modalController.create({
       component: SeleccionApiComponent,
-      componentProps: { arrayApis: this.apiservice.getListUserApis() }
+      componentProps: { arrayApis: this.apiservice.getListUserApis() ,parametros:this.apiservice.getParametros() }
     });
 
     await modal.present();

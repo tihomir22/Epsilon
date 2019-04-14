@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
+import { MailingService } from '../servicios/mailing.service';
 
 @Component({
   selector: 'app-ajustes',
@@ -11,7 +12,8 @@ export class AjustesPage implements OnInit {
 
   constructor(public alertController: AlertController,
     private infousuarioservicio: ServiceLoginDashboardService,
-    private toastController: ToastController) { }
+    private toastController: ToastController,
+    private mailingService:MailingService) { }
 
   ngOnInit() {
   }
@@ -62,7 +64,11 @@ export class AjustesPage implements OnInit {
             if (data['pass1'] == data['pass2'] && data['pass1'].length > 0 && data['pass2'].length > 0) {
               if (data['pass1'].length > 5 && data['pass1'].length < 40) {
                 if (data['pass1'].match('^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{6,}$')) {
-                  console.log("full manguito")
+                  //console.log("full manguito")
+                  let usuario=this.infousuarioservicio.getDestn();
+                  this.mailingService.cambiarContrasenyaYEnviarEmailAviso(usuario.idepsilon_usuarios,data['pass1'],usuario.email).subscribe((data)=>{
+                    this.presentToast(data,3000)
+                  })
                 } else {
                   this.presentToast("Las contraseñas no tienen un formato correcto", 3000)
                 }

@@ -13,6 +13,7 @@ export class ApisService {
   private baseURI: string = "http://dembow.gearhostpreview.com/";
   private infoUsuario: Object;
   private apiSeleccioanda: apiInterfaz;
+  private parametrosSeleccionados: any;
   public listaApisIniciales: Array<apiInterfaz> = [];
 
   constructor(private http: HttpClient, private service: ServiceLoginDashboardService) {
@@ -26,6 +27,13 @@ export class ApisService {
   }
   public getListUserApis(): Array<apiInterfaz> {
     return this.listaApisIniciales;
+  }
+
+  public setParametros(item: any) {
+    this.parametrosSeleccionados = item;
+  }
+  public getParametros() {
+    return this.parametrosSeleccionados;
   }
 
 
@@ -107,6 +115,26 @@ export class ApisService {
       options: any = { "key": "recuperar_img_a_partir_de_nombre", "nombre_imagen": siglas },
       url: any = this.baseURI + "retrieve-data.php";
 
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
+  public recuperarPrecioActivo(json: any, base: string, contraparte: string) {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "recuperar_precio", "json": json, "base": base, "contraparte": contraparte },
+      url: any = this.baseURI + "apis/Binance/index.php";
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
+  /**
+   * $quantity = 1;
+$price = 0.0005;
+$order = $api->buy("BNBBTC", $quantity, $price);
+   */
+
+  public placeLIMITorder(json: any, cantidad: number, precio: number, base: string, contraparte: string) {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "limit_order", "json": json, "base": base, "cantidad": cantidad, "precio": precio, "contraparte": contraparte },
+      url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
 

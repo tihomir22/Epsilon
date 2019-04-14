@@ -17,4 +17,9 @@
     <app-bar-chart [arrayFinal]="arrayFinal"></app-bar-chart>
     <app-balances-api [arrayFinal]="arrayFinal"></app-balances-api>
   </div>
+
+  <div *ngIf="realizarTransaccion">
+    <app-realizar-transaccion-binance></app-realizar-transaccion-binance>
+  </div>
+
 </ion-content>

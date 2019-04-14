@@ -16,10 +16,25 @@
       <ion-thumbnail style="margin-right:10px;">
         <img [src]="api.foto_exchange">
       </ion-thumbnail>
-      <ion-label><ion-label color="medium">Nombre Api</ion-label>{{api.nombre}}<br>
+      <ion-label>
+        <ion-label color="medium">Nombre Api</ion-label>{{api.nombre}}<br>
         <ion-label color="medium">Nombre Exchange</ion-label>{{api.nombre_exchange}}<br>
-        <ion-label color="medium">Clave API Publica</ion-label>{{api.apiKey}}</ion-label>
+        <ion-label color="medium">Clave API Publica</ion-label>{{api.apiKey}}
+      </ion-label>
     </ion-item>
   </ion-list>
+
+  <ion-card *ngIf="!hayApis">
+    <ion-card-header>
+      <ion-card-subtitle>No tienes apis conectadas</ion-card-subtitle>
+      <ion-card-title>Ups, hay un problema</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Accede a tu perfil para conectarte con las distintas API's y empezar a usar el poder de EPSILON.
+      <ion-button (click)="accederAPerfil()">
+        Ir a perfil
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>

@@ -14,6 +14,7 @@ export class PlantillaAPIPage implements OnInit {
   public datosQueryParams: string;
   public arrayFinal: Array<ActivoBalanceInterface> = [];
   public mostrarBalance: boolean = false;
+  public realizarTransaccion: boolean = false;
 
   constructor(private route: Router, private activaruta: ActivatedRoute, private apiService: ApisService, public loadingController: LoadingController, private navCtrl: NavController) { }
 
@@ -37,7 +38,7 @@ export class PlantillaAPIPage implements OnInit {
   public procesarParams(): void {
     this.presentLoading();
     switch (this.datosQueryParams) {
-      case Constantes.balance: 
+      case Constantes.balance:
         this.apiService.obtenerBalanceBinance(this.apiService.devolverPaquete(this.apiService.getApi().apiKey, this.apiService.getApi().privateKey)).subscribe((data: ActivoBalanceInterface[]) => {
           console.log(data)
           this.arrayFinal = data;
@@ -55,7 +56,7 @@ export class PlantillaAPIPage implements OnInit {
         break;
 
       case Constantes.realizarTransaccion:
-
+        this.realizarTransaccion = true;
         break;
     }
   }

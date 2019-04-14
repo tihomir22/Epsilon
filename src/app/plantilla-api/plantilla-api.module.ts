@@ -8,6 +8,8 @@ import { IonicModule } from '@ionic/angular';
 import { PlantillaAPIPage } from './plantilla-api.page';
 import { BalancesApiComponent } from '../componentes/balances-api/balances-api.component';
 import { BarChartComponent } from '../componentes/bar-chart/bar-chart.component';
+import { RealizarTransaccionBinanceComponent } from '../componentes/realizar-transaccion-binance/realizar-transaccion-binance.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 const routes: Routes = [
@@ -18,15 +20,16 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PlantillaAPIPage,BalancesApiComponent,BarChartComponent],
-  entryComponents:[BalancesApiComponent,BarChartComponent],
+  declarations: [PlantillaAPIPage, BalancesApiComponent, BarChartComponent, RealizarTransaccionBinanceComponent],
+  entryComponents: [BalancesApiComponent, BarChartComponent, RealizarTransaccionBinanceComponent],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    SharedModule
   ],
-  exports:[BalancesApiComponent,BarChartComponent]
- 
+  exports: [BalancesApiComponent, BarChartComponent]
+
 })
-export class PlantillaAPIPageModule {}
+export class PlantillaAPIPageModule { }

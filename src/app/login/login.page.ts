@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { ApisService } from '../servicios/apis.service';
 import { apiInterfaz } from '../modales/vista-rapida-api/models/apiInterfaz';
+import { MailingService } from '../servicios/mailing.service';
 
 
 @Component({
@@ -38,7 +39,8 @@ export class LoginPage implements OnInit {
     public formbuilder: FormBuilder,
     public toastCtrl: ToastController,
     public service: ServiceLoginDashboardService,
-    private apiservice: ApisService) {
+    private apiservice: ApisService,
+    private mailingservice: MailingService) {
     this.formgroup = formbuilder.group({
       usuario: ['', Validators.required],
       pass: ['', Validators.required]
@@ -87,7 +89,6 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.menuCtrl.enable(false);
-
   }
 
   abrirRegistro() {
