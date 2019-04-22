@@ -151,9 +151,6 @@ export class DetallesActivoPage implements OnInit {
 
 
   }
-  dembow2() {
-    alert("sueltalo loco");
-  }
 
 
   iniciarChart(tipoGrafico: any) {
@@ -321,12 +318,7 @@ export class DetallesActivoPage implements OnInit {
       console.log("No hay error se puede enviar" + this.activo.id + " " + this.usuario.idepsilon_usuarios + " " + this.parStr + " " + this.fechaStr + " " + this.exchangeStr + " " + this.cantidad);
       this.idUsuario = this.usuario.idepsilon_usuarios;
       this.activoId = this.activo.id;
-      let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-        options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": this.idUsuario, "id_activo_ajeno": this.activo.id, "tipo": this.tipo, "precio_compra": this.precioDouble, "fecha_operacion": this.fechaStr, "exchange": this.exchangeStr, "siglas_operacion": this.parStr, "cantidad": this.cantidad, "observaciones": this.observacionesStr },
-        url: any = this.baseURI + "manage-dataIONIC.php";
-
-      this.http.post(url, JSON.stringify(options), headers)
-
+      this.service.anyadirActivoAUsuario(this.idUsuario, this.activo.id, this.tipo, this.precioDouble, this.fechaStr, this.exchangeStr, this.parStr, this.cantidad, this.observacionesStr, 0)
         .subscribe((data: any) => {
           // If the request was successful notify the user
           console.log(`Felicidades se ha agregado el activo correctamente`);
@@ -335,11 +327,7 @@ export class DetallesActivoPage implements OnInit {
           //this.navCtrl.goBack();
         },
           (error: any) => {
-            if (error.status == 200) {
-              console.log('El usuario y! ');
-            } else {
-              console.log('Algo fue mal!' + JSON.stringify(options));
-            }
+            console.log(error)
           });
 
 

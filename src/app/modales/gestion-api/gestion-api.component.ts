@@ -64,7 +64,7 @@ export class GestionApiComponent implements OnInit {
 
   cerrarModal() {
     this.modal.dismiss();
-    this.presentarToast("Nueva conexion guardada con exito!")
+    //this.presentarToast("Nueva conexion guardada con exito!")
   }
   public recuperarExchangesCripto(): void {
     this.servicio.getTodosLosExchanges().subscribe((data: exchangeClass[]) => {

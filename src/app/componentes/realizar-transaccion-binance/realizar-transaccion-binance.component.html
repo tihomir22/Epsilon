@@ -6,11 +6,11 @@
     <ion-col size="12" text-center>Seleccione el par que desea comprar/vender</ion-col>
   </ion-row>
   <ion-row>
-    <ion-col size="4"></ion-col>
-    <ion-col size="4" style="text-align:center;font-size:xx-large;margin-top: 5%;" color="success">
+    <ion-col size="3"></ion-col>
+    <ion-col size="6" style="text-align:center;font-size:xx-large;margin-top: 5%;" color="success">
       {{seleccionBase.siglas}} / {{seleccionContra.siglas}}
     </ion-col>
-    <ion-col size="4"></ion-col>
+    <ion-col size="3"></ion-col>
   </ion-row>
   <ion-row>
     <ion-col size="12" style="text-align:center;font-size:x-large;margin-bottom: 5%">
@@ -29,7 +29,7 @@
         <ion-avatar style="height:24px;width:24px;margin:5px;">
           <img [src]="generarIMG(seleccionBase)" (error)="updateUrl($event)">
         </ion-avatar>
-        Par base
+        <ion-label>{{cantidadBase}}</ion-label>
       </ion-button>
     </ion-col>
 
@@ -44,7 +44,7 @@
         <ion-avatar style="height:24px;width:24px;margin:5px;">
           <img [src]="generarIMG(seleccionContra)" (error)="updateUrl($event)">
         </ion-avatar>
-        Contrapartida
+        <ion-label>{{cantidadContra}}</ion-label>
       </ion-button>
     </ion-col>
   </ion-row>
@@ -53,7 +53,7 @@
     <ion-item>
       <ion-label>Selecciona tipo operacion</ion-label>
       <ion-select value="compra" okText="Okey" cancelText="Minimizar" interface="action-sheet"
-        [(ngModel)]="tipoOperacion">
+        (ionChange)="actualizarAcompanyante();valorCantidad=0" [(ngModel)]="tipoOperacion">
         <ion-select-option value="compra">Compra</ion-select-option>
         <ion-select-option value="venta">Venta</ion-select-option>
       </ion-select>
@@ -64,39 +64,40 @@
       <ion-select value="market" okText="Okey" cancelText="Minimizar" interface="popover" [(ngModel)]="tipoOrden">
         <ion-select-option value="limit">Limit order</ion-select-option>
         <ion-select-option value="market">Market order</ion-select-option>
-        <ion-select-option value="stop_loss">Stop Loss Order </ion-select-option>
-        <ion-select-option value="iceberg">Iceberg Order</ion-select-option>
       </ion-select>
     </ion-item>
 
 
-    <div *ngIf="tipoOperacion=='venta'">
-      <ion-item style="margin-right:-85px;">
-        <ion-label>Cantidad</ion-label>
-        <ion-range min="0" max="100" step="1" [(ngModel)]="valorCantidad">
-        </ion-range>
-        % <ion-input type="number" [(ngModel)]="valorCantidad" [max]="100" [min]="0" (ionChange)="comprobarValor();">
-        </ion-input>
-      </ion-item>
-    </div>
+
+    <ion-item style="margin-right:-85px;">
+      <ion-label>Cantidad</ion-label>
+      <ion-range min="0" max="100" step="1" [(ngModel)]="valorCantidad">
+      </ion-range>
+      % <ion-input type="number" [ngModel]="valorCantidad" [max]="100" [min]="0" (ionChange)="comprobarValor();">
+      </ion-input>
+    </ion-item>
 
 
-    <div *ngIf="tipoOperacion=='compra'">
-      <ion-item>
-        <ion-label position="inline">Cantidad</ion-label>
-        <ion-input type="number" [(ngModel)]="valorCantidad" style="text-align:right;" step="0.001"></ion-input>
-      </ion-item>
-    </div>
 
     <ion-item>
+      Cantidad precisa <ion-label style="text-align:right;" *ngIf="valorCantidadPrecisa != 'No dispone de fondos'"
+        color="primary">
+        {{valorCantidadPrecisa | number:'1.8-8'}} {{acompanyanteCPrecisa}}</ion-label>
+      <ion-label style="text-align:right;" *ngIf="valorCantidadPrecisa == 'No dispone de fondos'" color="primary">
+        {{valorCantidadPrecisa}}</ion-label>
+    </ion-item>
+
+    <ion-item>
+      Cantidad resultante <ion-label text-right color="primary">{{cantidadResultante}}</ion-label>
+    </ion-item>
+    <ion-item *ngIf="tipoOrden!='market'">
       <ion-label position="inline">Precio</ion-label>
-      <ion-input type="number" [placeholder]="precioActivoSeleccionado" style="text-align:right;"
-        [disabled]="tipoOrden=='market'"></ion-input>
+      <ion-input type="number" [placeholder]="precioActivoSeleccionado" style="text-align:right;" step="0.00000000"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Agregar a portfolio</ion-label>
-      <ion-toggle color="primary"></ion-toggle>
+      <ion-toggle color="primary" [(ngModel)]="agregarAPortfolio"></ion-toggle>
     </ion-item>
 
   </ion-list>

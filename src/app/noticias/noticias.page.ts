@@ -219,6 +219,11 @@ export class NoticiasPage implements OnInit {
         flagCripto = true;
         flagStock = false;
         console.log("añado cripto")
+        if (this.contStock == this.arrayNoticiasStock.length) {
+          console.log("dembow 1");
+          flagCripto = false;
+          flagStock = true;
+        }
       }
       console.log(this.arrayNoticiasStock.length)
       if (this.arrayNoticiasStock.length > 0 && flagStock == false) {
@@ -227,7 +232,17 @@ export class NoticiasPage implements OnInit {
         flagCripto = false;
         flagStock = true;
         console.log("añado stock")
+        if (this.contCripto == this.arrayNoticiasCripto.length) {
+          console.log("dembow 2");
+          flagCripto = true;
+          flagStock = false;
+        }
       }
+      if (this.contCripto == this.arrayNoticiasCripto.length && this.contStock == this.arrayNoticiasStock.length) {
+        console.log("se ha llegado al final")
+        break;
+      }
+
     }
     this.closeLoading();
   }

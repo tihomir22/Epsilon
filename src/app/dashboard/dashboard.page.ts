@@ -1,13 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NavController, ToastController, MenuController, LoadingController } from '@ionic/angular';
+import { NavController, ToastController, MenuController, LoadingController, ModalController } from '@ionic/angular';
 import 'rxjs/add/operator/map';
 import "hammerjs"; // HAMMER TIME
 import { HammerGestureConfig } from "@angular/platform-browser";
 import { Chart } from 'chart.js';
-import { Observable, from, of } from 'rxjs';
+import { Observable, from, of, timer } from 'rxjs';
 import { AppComponent } from '../app.component';
+import { AgregarActivosCompComponent } from '../componentes/agregar-activos-comp/agregar-activos-comp.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -63,7 +64,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     */
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
-  constructor(public menuCtrl: MenuController, public loadingController: LoadingController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
+  constructor(public menuCtrl: MenuController, private modalCtrl: ModalController, public loadingController: LoadingController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
     super();
     this.data = this.service.getDestn();
     this.menuCtrl.enable(true);
@@ -89,7 +90,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   ionViewWillEnter() {
     if (this.permitirCarga) {
       this.contActivos = 0;
-      this.permitirActualizacionTotal();
+      // this.permitirActualizacionTotal();
       this.reiniciarFinanzasUsuario();
       this.cargarActivos().subscribe((data: any) => {
         if (data == null || data == false) {
@@ -153,15 +154,12 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       if (data == null || data == false) {
         this.sendNotification("No tiene activos el usuario...");
         this.hayActivos = false;
+        this.service.setArrayActivoCompletos([]);
       } else {
-
         this.hayActivos = true;
         console.dir(data);
         this.service.setArrayActivoCompletos(data);
         this.procesarActivos(data)
-        if (event != undefined) {
-          event.target.complete();
-        }
       }
     },
 
@@ -171,9 +169,12 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       });
 
 
-    setTimeout(() => {
-      this.loadingController.dismiss()
-    }, 1500);
+    timer(1000).subscribe((data) => {
+      this.loadingController.dismiss();
+    })
+    if (event != undefined) {
+      event.target.complete();
+    }
   }
   procesarActivos(arrayActivos: any) {
     arrayActivos.forEach(relacion => {
@@ -421,6 +422,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
 
   expandItem(item: any) {
+    console.log(item)
     var actual: string = document.getElementById("dembow" + item.id_unico).style.display;
     if (actual == "none") {
       document.getElementById("dembow" + item.id_unico).style.display = "block";
@@ -462,6 +464,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     activoRec['exchange'] = relacion.exchange;
     activoRec['fecha_operacion'] = relacion.fecha_operacion;
     activoRec['tipoRelacion'] = relacion.tipo;
+    activoRec['de_exchange'] = relacion.de_exchange;
     activoRec['cantidad'] = relacion.cantidad;
     activoRec['contrapartida'] = relacion.siglas_operacion;
   }
@@ -597,7 +600,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
   eliminar_activo(activo: any) {
     const index = this.service.getArrayActivos().indexOf(activo);
-    this.service.getArrayActivos().splice(index, 1);
+    this.service.setArrayActivos(this.service.getArrayActivos().splice(index, 1))
     this.service.eliminarRelacion(activo.id_relacion);
     this.arrayDiasTotal.length = 0;
     if (this.service.getArrayActivos().length == 0) {
@@ -611,7 +614,10 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
   agregarNuevosActivos() {
     this.navCtrl.navigateForward("/agregar-activos");
+    // this.presentModal();
   }
+
+
 
   async sendNotification(message: string) {
     let toast = await this.toastCtrl.create({

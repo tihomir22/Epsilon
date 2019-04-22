@@ -118,7 +118,7 @@
 
     <ion-card *ngIf="!hayActivos" color="secondary">
         <ion-card-header>
-            <ion-card-title>Todavia no tienes ningun activo!</ion-card-title>
+            <ion-card-title text-center>Todavia no tienes ningun activo!</ion-card-title>
         </ion-card-header>
         <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
             <ion-fab-button>
@@ -126,7 +126,15 @@
             </ion-fab-button>
         </ion-fab>
         <ion-card-content>
-            <p>Empieza a agregarlos desde el boton de la derecha</p>
+            <ion-row>
+                <ion-col size="5"></ion-col>
+                <ion-col size="2">
+                    <img src="../../assets/icons/sad.png" alt="" srcset="">
+                </ion-col>
+                <ion-col size="5"></ion-col>
+            </ion-row>
+
+            <p text-center>Empieza a agregarlos desde el boton de la derecha</p>
         </ion-card-content>
     </ion-card>
     <ion-card>
@@ -199,16 +207,21 @@
                                 (click)="eliminar_activo(activo)">
                                 <ion-icon name="trash"></ion-icon> Eliminar
                             </ion-button>
+                            <ion-button expand="full" shape="round" color="warning" fill="outline"
+                                *ngIf="activo.de_exchange==1" (click)="abrirOperacionesExchange()">
+                                <ion-icon slot="start" name="analytics" style="margin:5px;"></ion-icon>
+                                Operaciones
+                                <ion-select interface="action-sheet" placeholder="">
+                                    <ion-select-option value="peperoni">Peperoni</ion-select-option>
+                                    <ion-select-option value="hawaii">Hawaii</ion-select-option>
+                                </ion-select>
+
+                            </ion-button>
 
                         </ion-item>
 
 
                     </ion-item-group>
-
-
-                    <!-- <ion-label color="primary"><strong>Anotaciones : </strong>{{activo.anotacion}}</ion-label>-->
-
-
 
                 </div>
 

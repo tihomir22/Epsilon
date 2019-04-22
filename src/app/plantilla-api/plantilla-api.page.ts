@@ -15,6 +15,7 @@ export class PlantillaAPIPage implements OnInit {
   public arrayFinal: Array<ActivoBalanceInterface> = [];
   public mostrarBalance: boolean = false;
   public realizarTransaccion: boolean = false;
+  public listadoTransacciones: boolean = false;
 
   constructor(private route: Router, private activaruta: ActivatedRoute, private apiService: ApisService, public loadingController: LoadingController, private navCtrl: NavController) { }
 
@@ -52,7 +53,8 @@ export class PlantillaAPIPage implements OnInit {
         break;
 
       case Constantes.listadoTransaccion:
-
+        this.listadoTransacciones = true;
+        console.log("checkeamos")
         break;
 
       case Constantes.realizarTransaccion:

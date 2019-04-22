@@ -15,6 +15,7 @@ export class GraficoAComponent implements OnInit {
   //arrays relacionados con la fraccion del activo
   public arrayPrecioTotal: Array<number> = new Array;
   public arrayLabels: Array<string> = new Array;
+  public hayDatos: boolean = true;
 
   constructor(private service: ServiceLoginDashboardService) { }
 
@@ -38,36 +39,40 @@ export class GraficoAComponent implements OnInit {
     }
   }
   generarChart() {
-    console.log("entramos");
+    if (this.arrayPrecioTotal.length == 0 || this.arrayLabels.length == 0) {
+      this.hayDatos = false;
+    } else {
+      this.hayDatos = true;
+      this.doughnutChart = new Chart(this.doughnutCanvas.nativeElement, {
 
-    this.doughnutChart = new Chart(this.doughnutCanvas.nativeElement, {
+        type: 'doughnut',
+        data: {
+          labels: this.arrayLabels,
+          datasets: [{
+            label: '# of Votes',
+            data: this.arrayPrecioTotal,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            hoverBackgroundColor: [
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56",
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56"
+            ]
+          }]
+        }
 
-      type: 'doughnut',
-      data: {
-        labels: this.arrayLabels,
-        datasets: [{
-          label: '# of Votes',
-          data: this.arrayPrecioTotal,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
-          ],
-          hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ]
-        }]
-      }
+      });
+    }
 
-    });
 
   }
 

@@ -3,5 +3,8 @@
   <ion-card-title>Tu portfolio</ion-card-title>
 </ion-card-header>
 <ion-card-content>
-  <canvas #doughnutCanvas></canvas>
+  <canvas #doughnutCanvas [hidden]="!hayDatos"></canvas>
+  <ion-text color="primary" [hidden]="hayDatos">
+    <h1>No hay datos con los que generar el grafico...</h1>
+  </ion-text>
 </ion-card-content>

@@ -17,13 +17,13 @@ export class GraficoBComponent implements OnInit {
   private totalSumaActivos: number = 0;
   private totalSumaCripto: number = 0;
   private totalSumaStock: number = 0;
-  public porcentajeCripto: any;
-  public porcentajeStock: any;
+  public porcentajeCripto: any = 0;
+  public porcentajeStock: any = 0;
+  public hayDatos: boolean = true;
   constructor(private service: ServiceLoginDashboardService) { }
 
   ngOnInit() {
     this.arrayActivo = this.service.getArrayActivosCompletos();
-    console.log(this.arrayActivo)
     this.calcularPorcentaje();
     this.generarChart();
   }
@@ -34,7 +34,6 @@ export class GraficoBComponent implements OnInit {
       let cantidad = activo['cantidad'];
       let precioActual = activo['activo']['precio'];
       let tipo = activo['activo']['tipo'];
-      console.log(precioActual)
       this.totalSumaActivos = +this.totalSumaActivos + (+precioActual * +cantidad);
       if (tipo == "Stock") {
         this.totalSumaStock = +this.totalSumaStock + (+precioActual * +cantidad);
@@ -45,41 +44,44 @@ export class GraficoBComponent implements OnInit {
 
     this.porcentajeCripto = (+(100 * +this.totalSumaCripto) / +this.totalSumaActivos).toFixed(3);
     this.porcentajeStock = (+(100 * +this.totalSumaStock) / +this.totalSumaActivos).toFixed(3);
-    console.log(this.porcentajeCripto)
-    console.log(this.porcentajeStock)
   }
   generarChart() {
-    console.log("entramos");
+    console.log(this.porcentajeCripto)
+    console.log(this.porcentajeStock)
+    if (isNaN(this.porcentajeStock) || isNaN(this.porcentajeCripto) || this.arrayLabels.length == 0) {
+      this.hayDatos = false;
+    } else {
+      this.hayDatos = true;
+      this.pieChart = new Chart(this.pieCanvas.nativeElement, {
 
-    this.pieChart = new Chart(this.pieCanvas.nativeElement, {
+        type: 'pie',
+        data: {
+          labels: this.arrayLabels,
+          datasets: [{
+            label: '# of Votes',
+            data: [this.porcentajeCripto, this.porcentajeStock],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            hoverBackgroundColor: [
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56",
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56"
+            ]
+          }]
+        }
 
-      type: 'pie',
-      data: {
-        labels: this.arrayLabels,
-        datasets: [{
-          label: '# of Votes',
-          data: [this.porcentajeCripto , this.porcentajeStock ],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
-          ],
-          hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
-          ]
-        }]
-      }
+      });
 
-    });
-
+    }
   }
 
 }

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 import { stringify } from '@angular/core/src/util';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { ToastController } from '@ionic/angular';
 import { DashboardPage } from '../dashboard/dashboard.page';
 import { UsuarioInterface } from '../perfil/class/UsuarioInterface';
@@ -109,7 +109,7 @@ export class ServiceLoginDashboardService {
   actualizarActivos(array: any) {
 
     array.forEach(element => {
-      console.log(element)
+      //console.log(element)
       if (element.tipo == "Criptomoneda") {
         this.recuperarPrecioCryptoCompare(element.siglas, "USD").subscribe(respuesta => {
           console.log("precio recibido actual " + element.siglas + respuesta[element.siglas]["USD"])
@@ -128,6 +128,15 @@ export class ServiceLoginDashboardService {
 
 
   }
+
+  public anyadirActivoAUsuario(idUsuario: any, activoId: any, tipoActivo: any, precioCompra: number, fechaOperacion: any, exchange: string, par: string, cantidad: any, observaciones: string,deExchange:number): Observable<any> {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": idUsuario, "id_activo_ajeno": activoId, "tipo": tipoActivo, "precio_compra": precioCompra, "fecha_operacion": fechaOperacion, "exchange": exchange, "siglas_operacion": par, "cantidad": cantidad, "observaciones": observaciones,"de_exchange":deExchange },
+      url: any = this.baseURI + "manage-dataIONIC.php";
+
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
   public getPrecioForexPar(siglasIzq, siglasDere) {
     return this.http.get("https://forex.1forge.com/1.0.3/quotes?pairs=" + siglasIzq.toUpperCase() + "" + siglasDere.toUpperCase() + "&api_key=sqiS3IAJBRMm8jRIpEAOQmjOvZRfDHhL");
   }

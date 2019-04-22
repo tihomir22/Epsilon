@@ -1,0 +1,25 @@
+<ion-list>
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>{{workflowStepping}}</ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let activoBalance of balanceUsuarioFase1">
+      <ion-item (click)="mostrarSubItemsYposiblesParesFiltrados(activoBalance);">
+        <ion-icon slot="end" name="arrow-down" *ngIf="activoBalance.clickeado==undefined"></ion-icon>
+        <ion-icon slot="end" name="arrow-down" *ngIf="activoBalance.clickeado==false"></ion-icon>
+        <ion-icon slot="end" name="arrow-up" *ngIf="activoBalance.clickeado==true"></ion-icon>
+        <ion-label>{{activoBalance.nombre}}</ion-label>
+      </ion-item>
+      <ng-container *ngIf="activoBalance.clickeado==true">
+        <ion-item *ngFor="let subitem of activoBalance.subitems">
+          <ion-icon slot="start" name="return-right"></ion-icon>
+          <ion-label> {{subitem}}</ion-label>
+          <ion-chip color="primary" (click)="verTransacciones(subitem)">
+            <ion-label>Ver historial</ion-label>
+            <ion-icon name="eye"></ion-icon>
+          </ion-chip>
+        </ion-item>
+      </ng-container>
+    </ng-container>
+  </ion-item-group>
+</ion-list>
