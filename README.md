@@ -19,8 +19,6 @@
 [travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
 [wiki]: https://github.com/yourname/yourproject/wiki
 
-## Screenshots
-![](https://previews.dropbox.com/p/thumb/AAbgQ10Jv1lIy4ZG_ci_K67yLzGvqvOizsG7Glv2DPZySxwN-PZX46ko2Gzo6Q0BbVuZ-zzLKRQquAAy7RRCPPTcfy8gXzbtynZ13KlFC7Q6kTn0bKE-Q8LhGimVRWogwJgXxmRCqN7dnZCTQohyKNmbdaEIhyV7MHkiJAmHpZrrG8JZ5BRCiQSrwl5Hh25CbxHvpi-SQt5I7XJMOc_r-lt62V3aq5jMaT1Kn7cxbvNWZfUsGh4maJ3-VLKUKALmDjZ5L3U2uQE6Bnu9oj1dil_CwSY8j3ztmSedevRywy7zsINwh5QP6WawZeLqIDpO41-zlys8pbnrcgRhcbYN3pFLI7NuJMFIluhsMq1Kz20mcvNKVIoVQXD5Uqw1H4du0Orm65RQVMnsdxRfpBisYikNvb2YOTa_Z9BKxe4UOhgR01GPpvSTgzBnZvi19IhQfXk-33D1sbuFUVi9NEvJcsYCnvZ_2E8kTxzFUPY3wR92PTiTRsyUxO1Yaa1sjZkOgkAuRKeYaXcPe0QTE7mQuJKM/p.png?size=2048x1536&size_mode=3)
 ## Epsilon Progress
 * Ultima compilacion exitosa
 * https://www.dropbox.com/s/tp3wf1uh575uzq9/app-debug.apk?dl=0
