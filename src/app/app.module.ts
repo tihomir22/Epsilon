@@ -37,6 +37,7 @@ import { SharedModule } from './shared/shared.module';
 
 
 
+
 @NgModule({
   declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent],
   entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent],
@@ -51,6 +52,7 @@ import { SharedModule } from './shared/shared.module';
     IonicStorageModule.forRoot(),
     PlantillaAPIPageModule,
     SharedModule
+    
   ],
   providers: [
     StatusBar,

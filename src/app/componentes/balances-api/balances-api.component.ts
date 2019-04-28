@@ -20,7 +20,6 @@ export class BalancesApiComponent implements OnInit {
 
     for (var key in arrayTMP) {
       if (arrayTMP.hasOwnProperty(key)) {
-        //console.log(key + " -> " + this.arrayRes[key]["btcTotal"]);
         if (arrayTMP[key]["btcTotal"] > 0 && arrayTMP[key]["btcTotal"] != 0) {
           console.log("añadiendo", key)
           let activo: ActivoBalance = arrayTMP[key]
@@ -38,6 +37,8 @@ export class BalancesApiComponent implements OnInit {
 
       }
     }
+
+
   }
 
   public _arrayFinal: Array<ActivoBalance> = [];
@@ -46,9 +47,9 @@ export class BalancesApiComponent implements OnInit {
   }
 
   ngOnInit() {
- 
+
   }
- 
+
   generarImgCripto(nombreCripto: string): Observable<any> {
     let devolucion =
       this.servicioApi.recuperarImagenesAPartirDeSiglas(nombreCripto)

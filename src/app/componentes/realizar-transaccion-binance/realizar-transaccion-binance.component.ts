@@ -20,6 +20,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
   public seleccionBase: any = { siglas: "BTC", tipo: "Criptomoneda", nombre: "Bitcoin" };
   public seleccionContra: any = { siglas: "USDT", tipo: "Criptomoneda", nombre: "Tether" };
   public precioActivoSeleccionado: any = 5000;
+  public precioLimitOrder: number = 0;
   public acompanyanteCPrecisa: string = '';
   public cantidadBase: any = 0;
   public cantidadContra: any = 0;
@@ -57,12 +58,12 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
     this.recuperarPrecioActivo("USDT", "BTC", this.seleccionContra);
 
     this.presentLoading();
-    this.cargarPrecioBinance();
+    this.cargarPrecioBinance(false);
     this.obtenerBalanceBNB();
 
 
     this.observablePrecios = interval(5000).subscribe((data) => {
-      this.cargarPrecioBinance()
+      this.cargarPrecioBinance(true)
     })
 
 
@@ -79,10 +80,12 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
 
   public obtenerBalanceBNB(): void {
     this.apiservice.obtenerBalanceBinance(this.apiservice.devolverPaquete(this.apiservice.getApi().apiKey, this.apiservice.getApi().privateKey)).subscribe((data: ActivoBalance[]) => {
+      console.log(data);
       this.listaBalanceBinanceUsuario = data;
       this.cantidadBase = this.listaBalanceBinanceUsuario[this.seleccionBase.siglas].available;
       this.cantidadContra = this.listaBalanceBinanceUsuario[this.seleccionContra.siglas].available;
       //  console.log(this.listaBalanceBinanceUsuario)
+      this.loadingController.dismiss();
     })
   }
 
@@ -98,7 +101,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
         this.cantidadResultante = "No dispone de fondos";
       } else {
         this.valorCantidadPrecisa = ((+this.cantidadContra * +this.valorCantidad) / 100)
-        this.cantidadResultante = (this.valorCantidadPrecisa / (this.precioActivoSeleccionado.split(" ")[0])) + " " + this.seleccionBase.siglas;
+        this.cantidadResultante = (this.valorCantidadPrecisa / this.precioLimitOrder) + " " + this.seleccionBase.siglas;
       }
       //se comprobará si existe la cantidad suficiente para vender la base
     } else if (this.tipoOperacion == 'venta') {
@@ -108,11 +111,11 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
       } else {
         this.valorCantidadPrecisa = ((+this.cantidadBase * +this.valorCantidad) / 100)
         // console.log(this.cantidadBase,this.valorCantidad)
-        this.cantidadResultante = (this.valorCantidadPrecisa * (this.precioActivoSeleccionado.split(" ")[0])) + " " + this.seleccionContra.siglas;
+        this.cantidadResultante = (this.valorCantidadPrecisa * this.precioLimitOrder) + " " + this.seleccionContra.siglas;
       }
     }
     console.log("cantidadPrecisa", this.valorCantidadPrecisa)
-    console.log("split raro", (this.precioActivoSeleccionado.split(" ")[0]))
+    console.log("split raro", (this.precioLimitOrder))
     console.log("resultado", this.cantidadResultante)
   }
 
@@ -179,7 +182,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
                   this.tratamientoErroresTransaccion(error);
                 })
               } else if (this.tipoOrden == 'limit') {
-                this.apiservice.placeLIMITbuy(this.apiservice.devolverPaquete(this.apiservice.getApi().apiKey, this.apiservice.getApi().privateKey), this.cantidadResultante, precioLimpio, this.seleccionBase.siglas, this.seleccionContra.siglas).subscribe((data: any) => {
+                this.apiservice.placeLIMITbuy(this.apiservice.devolverPaquete(this.apiservice.getApi().apiKey, this.apiservice.getApi().privateKey), this.cantidadResultante, this.precioLimitOrder, this.seleccionBase.siglas, this.seleccionContra.siglas).subscribe((data: any) => {
                   this.alertaExitosa(data);
                   this.valorCantidad = 0;
                   this.comprobarSiSeDebeAgregarAPortofolioPrincipal();
@@ -197,7 +200,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
                   this.tratamientoErroresTransaccion(error);
                 })
               } else if (this.tipoOrden == 'limit') {
-                this.apiservice.placeLIMITsell(this.apiservice.devolverPaquete(this.apiservice.getApi().apiKey, this.apiservice.getApi().privateKey), this.valorCantidadPrecisa, precioLimpio, this.seleccionBase.siglas, this.seleccionContra.siglas).subscribe((data: any) => {
+                this.apiservice.placeLIMITsell(this.apiservice.devolverPaquete(this.apiservice.getApi().apiKey, this.apiservice.getApi().privateKey), this.valorCantidadPrecisa, this.precioLimitOrder, this.seleccionBase.siglas, this.seleccionContra.siglas).subscribe((data: any) => {
                   this.alertaExitosa(data);
                   this.valorCantidad = 0;
                   this.comprobarSiSeDebeAgregarAPortofolioPrincipal();
@@ -216,10 +219,8 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
 
   private comprobarSiSeDebeAgregarAPortofolioPrincipal(): void {
     if (this.agregarAPortfolio) {
-      console.log("agregamos...")
-      console.log(this.seleccionBase)
       let precioEntrada = this.precioActivoSeleccionado.split(" ")[0].trim();
-      this.loginService.anyadirActivoAUsuario(this.loginService.getDestn().idepsilon_usuarios, this.seleccionBase.id, this.tipoOperacion, precioEntrada, this.recuperarFechaFormateada(), "Binance", this.seleccionContra.siglas, this.valorCantidadPrecisa, "Compra realizada con la API de Binance numero de orden 1488",1).subscribe((data) => {
+      this.loginService.anyadirActivoAUsuario(this.loginService.getDestn().idepsilon_usuarios, this.seleccionBase.id, this.tipoOperacion, precioEntrada, this.recuperarFechaFormateada(), "Binance", this.seleccionContra.siglas, this.valorCantidadPrecisa, "Compra realizada con la API de Binance numero de orden 1488", 1).subscribe((data) => {
         console.log(data)
       })
     }
@@ -239,15 +240,13 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
   }
 
   private tratamientoErroresTransaccion(error: any): void {
-    console.log(error)
     if (error.error.text.includes("1013")) {
       this.cantidadDemasiadaBajaAlert();
     } else if (error.error.text.includes("2010")) {
       this.noTieneFondosAlert();
     }
+    this.loadingController.dismiss();
   }
-
-
 
   async alertaExitosa(paquete: OrderFilledModel) {
     this.obtenerBalanceBNB();
@@ -340,7 +339,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
       return false;
     }
   }
-  private cargarPrecioBinance(): void {
+  private cargarPrecioBinance(esTicker: boolean): void {
 
     this.colorMensajeRecibido = 'medium';
     let paquete = this.apiservice.devolverPaquete(this.apiservice.getApi().apiKey, this.apiservice.getApi().privateKey)
@@ -355,8 +354,13 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
         //let num = parseFloat(data);
         this.ultimoPrecio = data;
         this.precioActivoSeleccionado = this.ultimoPrecio + " " + this.seleccionContra.siglas;
+
+        if (!esTicker) {
+          this.precioLimitOrder = this.precioActivoSeleccionado.split(" ")[0];
+        }
       }
     }, (error) => {
+      console.log(error)
       this.colorMensajeRecibido = "danger";
       this.precioActivoSeleccionado = "Ha habido un error." + "\n" + " Prueba a introducir otro par de criptomoneda."
 
@@ -371,7 +375,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
   async presentLoading() {
     const loading = await this.loadingController.create({
       message: 'Cargando precios',
-      duration: 2000
+      duration: 10000
     });
     await loading.present();
   }
@@ -393,7 +397,7 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
             this.cantidadContra = this.listaBalanceBinanceUsuario[data.data.siglas].available;
           }
           this.valorCantidad = 0;
-          this.cargarPrecioBinance();
+          this.cargarPrecioBinance(false);
           this.actualizarAcompanyante();
         }
       });
@@ -413,10 +417,10 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
     let tmpCantidad = this.cantidadBase;
     this.cantidadBase = this.cantidadContra;
     this.cantidadContra = tmpCantidad;
-    this.cargarPrecioBinance();
+    this.cargarPrecioBinance(false);
 
     this.observablePrecios = interval(5000).subscribe((data) => {
-      this.cargarPrecioBinance()
+      this.cargarPrecioBinance(true)
     })
 
   }

@@ -7,7 +7,8 @@ import { ServiceLoginDashboardService } from '../servicios/service-login-dashboa
 import { ApisService } from '../servicios/apis.service';
 import { apiInterfaz } from '../modales/vista-rapida-api/models/apiInterfaz';
 import { MailingService } from '../servicios/mailing.service';
-
+import Typed from 'typed.js';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @Component({
   selector: 'app-login',
@@ -30,6 +31,10 @@ export class LoginPage implements OnInit {
     */
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
+  myStyle: object = {};
+  myParams: object = {};
+  width: number = 100;
+  height: number = 100;
 
 
   constructor(public menuCtrl: MenuController,
@@ -40,7 +45,8 @@ export class LoginPage implements OnInit {
     public toastCtrl: ToastController,
     public service: ServiceLoginDashboardService,
     private apiservice: ApisService,
-    private mailingservice: MailingService) {
+    private mailingservice: MailingService,
+    private iab:InAppBrowser) {
     this.formgroup = formbuilder.group({
       usuario: ['', Validators.required],
       pass: ['', Validators.required]
@@ -89,10 +95,50 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.menuCtrl.enable(false);
+    this.myStyle = {
+      'position': 'fixed',
+      'width': '100%',
+      'height': '100%',
+      'background-color': '#343148',
+      'z-index': 0,
+      'top': 0,
+      'left': 0,
+      'right': 0,
+      'bottom': 0,
+    };
+    this.myParams = {
+      particles: {
+        number: {
+          value: 100,
+        },
+        color: {
+          value: '#0074D9'
+        },
+        shape: {
+          type: 'triangle',
+        },
+      }
+    };
+
+    const options = {
+      strings: ['Epsilon.', 'Exito.', 'Ciencia.', 'Voluntad.', 'Fortaleza.'],
+      typeSpeed: 100,
+      backSpeed: 100,
+      showCursor: true,
+      cursorChar: '|',
+      loop: true
+    };
+
+    const typed = new Typed('.typed-element', options);
+
+
   }
 
   abrirRegistro() {
     this.navCtrl.navigateForward("/registro");
+  }
+  public abrirArticulo(url: string) {
+    this.iab.create(url);
   }
 
 }

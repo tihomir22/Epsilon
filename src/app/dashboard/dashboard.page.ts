@@ -20,7 +20,6 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   data: any;
   cambiado: boolean = false;
   relaciones: Array<any> = new Array;
-  permitirCarga: boolean = true;
   contadorEmpezado: boolean = false;
 
   private arrayActivos: Array<any>;
@@ -80,6 +79,35 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   ngOnInit() {
     this.presentLoading();
     AppComponent.avisar(this.data);
+
+    this.contActivos = 0;
+    // this.permitirActualizacionTotal();
+    this.reiniciarFinanzasUsuario();
+    this.cargarActivos().subscribe((data: any) => {
+      if (data == null || data == false) {
+        this.sendNotification("No tiene activos el usuario...");
+        this.hayActivos = false;
+        this.stopLoading();
+      } else {
+        this.hayActivos = true;
+        this.service.setArrayActivoCompletos(data);
+        let observable = of(data);
+        observable.subscribe((data: Array<any>) => {
+          this.arrayActivos = data;
+          this.procesarActivos(data)
+        }, (error) => {
+          console.log(error)
+        }, () => {
+        })
+      }
+    },
+      err => {
+        this.sendNotification("Hubo un error inesperado...");
+        this.hayActivos = false;
+      },
+
+    )
+
   }
   ngAfterViewInit() {
 
@@ -88,49 +116,11 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   ionViewWillEnter() {
-    if (this.permitirCarga) {
-      this.contActivos = 0;
-      // this.permitirActualizacionTotal();
-      this.reiniciarFinanzasUsuario();
-      this.cargarActivos().subscribe((data: any) => {
-        if (data == null || data == false) {
-          this.sendNotification("No tiene activos el usuario...");
-          this.hayActivos = false;
-          this.stopLoading();
-        } else {
-          this.hayActivos = true;
-          this.service.setArrayActivoCompletos(data);
-          let observable = of(data);
-          observable.subscribe((data: Array<any>) => {
-            this.arrayActivos = data;
-            this.procesarActivos(data)
-          }, (error) => {
-            console.log(error)
-          }, () => {
-          })
-        }
-      },
-        err => {
-          this.sendNotification("Hubo un error inesperado...");
-          this.hayActivos = false;
-        },
 
-      )
-    } else {
-      console.log("no se cargan de nuevo");
-
-
-    }
 
 
   }
-  async permitirActualizacionTotal() {
-    this.permitirCarga = false;
-    setTimeout(
-      function () {
-        this.permitirCarga = true;
-      }, 3000000);
-  }
+
 
 
   async presentLoading() {
@@ -141,6 +131,12 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
   public stopLoading() {
     this.loadingController.dismiss();
+  }
+  public mostrarInfo(item: any) {
+    console.log(item)
+    this.service.setActivo(item);
+    this.service.setTipoAdquisicion("indeterminada");
+    this.navCtrl.navigateForward("/detalles-activo");
   }
 
 
@@ -345,6 +341,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       }, 1000);
 
     }
+
     if (this.barChart) {
       this.barChart.destroy();
     }

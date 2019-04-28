@@ -93,5 +93,5 @@
     </ion-button>
   </ion-card>
   <!--Balance-->
-  <app-balances-api [arrayFinal]="arrayFinal"></app-balances-api>
+  <app-balances-api [arrayFinal]="arrayFinal" *ngIf="terminaCargaBalanceExchange"></app-balances-api>
 </ion-content>

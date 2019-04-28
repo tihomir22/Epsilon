@@ -41,7 +41,7 @@ export class ApisService {
     // console.log("vamos a enviar ", json)
 
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "conectar_binance", "json": json },
+      options: any = { "key": "conectar_binance", "json": json, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
 
     return this.http.post(url, JSON.stringify(options), headers)
@@ -120,7 +120,7 @@ export class ApisService {
 
   public recuperarPrecioActivo(json: any, base: string, contraparte: string) {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "recuperar_precio", "json": json, "base": base, "contraparte": contraparte },
+      options: any = { "key": "recuperar_precio", "json": json, "base": base, "contraparte": contraparte, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
@@ -134,7 +134,7 @@ $order = $api->buy("BNBBTC", $quantity, $price);
   public placeMARKETbuy(json: any, cantidad: any, precio: number, base: string, contraparte: string) {
     let parsed = parseInt(cantidad)
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "market_buy", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte },
+      options: any = { "key": "market_buy", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
@@ -144,7 +144,7 @@ $order = $api->buy("BNBBTC", $quantity, $price);
   public placeMARKETsell(json: any, cantidad: any, precio: number, base: string, contraparte: string) {
     let parsed = parseInt(cantidad)
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "market_sell", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte },
+      options: any = { "key": "market_sell", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
@@ -152,30 +152,39 @@ $order = $api->buy("BNBBTC", $quantity, $price);
   public placeLIMITbuy(json: any, cantidad: any, precio: number, base: string, contraparte: string) {
     let parsed = parseInt(cantidad)
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "limit_buy", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte },
+      options: any = { "key": "limit_buy", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
   public placeLIMITsell(json: any, cantidad: any, precio: number, base: string, contraparte: string) {
     let parsed = parseInt(cantidad)
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "limit_sell", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte },
+      options: any = { "key": "limit_sell", "json": json, "base": base, "cantidad": parsed, "precio": precio, "contraparte": contraparte, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
 
   public getPreciosYSimbolos(json: any) {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "symbols_and_prices", "json": json },
+      options: any = { "key": "symbols_and_prices", "json": json, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
 
   public consultarTransaccionesHistoricasParaUnSimbolo(json: any, simbolo: string) {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "transacciones_historicas_simbolo", "json": json, "simbolo": simbolo },
+      options: any = { "key": "transacciones_historicas_simbolo", "json": json, "simbolo": simbolo, "id": this.service.getDestn().idepsilon_usuarios },
       url: any = this.baseURI + "apis/Binance/index.php";
     return this.http.post(url, JSON.stringify(options), headers)
   }
+
+  public cancelarOrden(json: any, parcompleto: string, orden: string) {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "detener_orden", "json": json, par: parcompleto, ordenid: orden, "id": this.service.getDestn().idepsilon_usuarios },
+      url: any = this.baseURI + "apis/Binance/index.php";
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
+
 
 }

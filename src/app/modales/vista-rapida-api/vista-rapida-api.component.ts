@@ -20,7 +20,7 @@ export class VistaRapidaApiComponent implements OnInit {
   public exchange: exchangeClass = null;
   private terminaCargaBalanceExchange: boolean = false;
   private arrayRes: Array<any> = [];
-  private arrayFinal: Array<ActivoBalance> = new Array;
+  public arrayFinal: Array<any> = new Array;
   private mostrarMensajeErrorCarga: boolean = false;
   public huboModificaciones: boolean = false;
   public cargandoDatos: boolean = false;
@@ -71,31 +71,27 @@ export class VistaRapidaApiComponent implements OnInit {
       console.log("termianda carga exchange")
     })
   }
- 
+
   public enviarKeysYRecibirBalanceActivos(apikey: string, privateKey: string) {
     this.presentLoading();
     let observable = this.servicioApi.obtenerBalanceBinance(this.servicioApi.devolverPaquete(apikey, privateKey)).subscribe((data) => {
-      console.log(data)
       this.arrayRes = new Array<any>();
       this.arrayRes.push(data);
       this.arrayRes = this.arrayRes[0];
-
       for (var key in this.arrayRes) {
         if (this.arrayRes.hasOwnProperty(key)) {
           //console.log(key + " -> " + this.arrayRes[key]["btcTotal"]);
           if (this.arrayRes[key]["btcTotal"] > 0 && this.arrayRes[key]["btcTotal"] != 0) {
-            console.log("añadiendo", key)
             let activo: ActivoBalance = this.arrayRes[key]
-            activo.nombre = key;
-            this.generarImgCripto(activo.nombre).subscribe((data) => {
-              console.log(data)
+            //activo['nombreActivo'] = key;
+            this.generarImgCripto(activo['nombreActivo']).subscribe((data) => {
               if (data[0] != undefined) {
                 activo.imgURL = "http://dembow.gearhostpreview.com/img-activos/" + data[0].nombre + ".png"
               } else {
                 activo.imgURL = "http://dembow.gearhostpreview.com/logoepsilonoluminado.png"
               }
             })
-            this.arrayFinal.push(activo);
+            this.arrayFinal[key] = activo;
           }
 
         }

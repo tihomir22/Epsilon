@@ -25,21 +25,16 @@ export class PlantillaAPIPage implements OnInit {
     this.procesarParams();
 
   }
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: 'Cargando datos',
-      duration: 2000
-    });
-    await loading.present();
-  }
+
   goBack() {
     this.navCtrl.goBack();
   }
 
   public procesarParams(): void {
-    this.presentLoading();
+
     switch (this.datosQueryParams) {
       case Constantes.balance:
+        this.presentLoading();
         this.apiService.obtenerBalanceBinance(this.apiService.devolverPaquete(this.apiService.getApi().apiKey, this.apiService.getApi().privateKey)).subscribe((data: ActivoBalanceInterface[]) => {
           console.log(data)
           this.arrayFinal = data;
@@ -61,6 +56,14 @@ export class PlantillaAPIPage implements OnInit {
         this.realizarTransaccion = true;
         break;
     }
+  }
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Cargando',
+      duration: 10000
+    });
+    await loading.present();
   }
 
 }

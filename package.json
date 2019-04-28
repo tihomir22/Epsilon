@@ -35,6 +35,7 @@
     "@ionic-native/status-bar": "5.0.0-beta.21",
     "@ionic/angular": "^4.0.0-rc.0",
     "@ionic/storage": "^2.2.0",
+    "angular-particle": "^1.0.4",
     "body-parser": "^1.18.3",
     "chart.js": "^2.7.3",
     "cordova-android": "7.1.4",
@@ -69,7 +70,9 @@
     "ng-socket-io": "^0.2.4",
     "run": "1.4.0",
     "rxjs-compat": "^6.3.3",
+    "typed.js": "^2.0.10",
     "update": "^0.7.4",
+    "wc-typed-js": "^1.0.1",
     "zone.js": "^0.8.28"
   },
   "devDependencies": {

@@ -1,3 +1,10 @@
+
+<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+  <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Suelta para refrescar" refreshingSpinner="bubbles"
+    refreshingText="Refrescando...">
+  </ion-refresher-content>
+</ion-refresher>
+
 <ion-list>
   <ion-item-group>
     <ion-item-divider>
@@ -10,15 +17,70 @@
         <ion-icon slot="end" name="arrow-up" *ngIf="activoBalance.clickeado==true"></ion-icon>
         <ion-label>{{activoBalance.nombre}}</ion-label>
       </ion-item>
+
+
       <ng-container *ngIf="activoBalance.clickeado==true">
-        <ion-item *ngFor="let subitem of activoBalance.subitems">
-          <ion-icon slot="start" name="return-right"></ion-icon>
-          <ion-label> {{subitem}}</ion-label>
-          <ion-chip color="primary" (click)="verTransacciones(subitem)">
-            <ion-label>Ver historial</ion-label>
-            <ion-icon name="eye"></ion-icon>
-          </ion-chip>
-        </ion-item>
+        <ng-container *ngFor="let subitem of activoBalance.subitems">
+          <ion-item>
+            <ion-icon slot="start" name="return-right"></ion-icon>
+            <ion-label> {{subitem.par}}</ion-label>
+            <ion-chip color="primary" (click)="verTransacciones(subitem.par);subitem.mostrar=!subitem.mostrar"
+              *ngIf="subitem.historial!=undefined">
+              <ion-label>{{subitem.historial.length}} registros</ion-label>
+              <ion-icon name="eye"></ion-icon>
+            </ion-chip>
+          </ion-item>
+
+          <ng-container *ngIf="subitem.historial!=undefined && subitem.mostrar">
+            <ion-item *ngFor="let item of subitem.historial;let i=index">
+
+
+              <ion-label>
+                <ion-badge slot="start">{{item.time | date}}</ion-badge>
+
+                <ion-badge color="secondary">{{item.type}}</ion-badge>
+                <ion-badge color="success" *ngIf="item.status=='FILLED'">COMPLETADA</ion-badge>
+                <ion-badge color="danger" *ngIf="item.status=='CANCELED'">CANCELADA</ion-badge>
+                <ion-badge color="danger" *ngIf="item.status=='NEW'">SIN COMPLETAR</ion-badge>
+
+
+                <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="item.status=='NEW'"
+                  (click)="detenerOrden(item.symbol,item.orderId,i,subitem.historial)">
+                  <ion-fab-button color="danger">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-fab-button>
+                </ion-fab>
+
+                <p>
+                  <ion-text *ngIf="item.side=='BUY'" color="success">
+                    COMPRA
+                  </ion-text>
+                  <ion-text *ngIf="item.side=='SELL'" color="danger">
+                    VENTA
+                  </ion-text> de <strong>{{item.symbol}}</strong>
+                </p>
+                <p>
+                  Cantidad ejecutada
+                  <strong>{{item.executedQty}}</strong>
+                </p>
+                <p>Acumulativa
+                  <strong>{{item.cummulativeQuoteQty}}</strong></p>
+              </ion-label>
+
+
+
+            </ion-item>
+          </ng-container>
+
+          <ng-container *ngIf="subitem.historial!=undefined && subitem.mostrar && subitem.historial.length==0">
+            <ion-item>
+              <ion-label color="danger">No se encontraron registros.</ion-label>
+            </ion-item>
+          </ng-container>
+        </ng-container>
+
+
+
       </ng-container>
     </ng-container>
   </ion-item-group>

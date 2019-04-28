@@ -4,6 +4,7 @@ import { ActivoBalance } from '../modales/gestion-api/modelos/ActivoBalance';
 import { combineLatest, Observable } from 'rxjs';
 import { timeout } from 'q';
 import { ActivoBalanceInterface } from '../modales/gestion-api/modelos/ActivoBalanceInterface';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-listado-ordenes-transacciones',
@@ -15,11 +16,18 @@ export class ListadoOrdenesTransaccionesComponent implements OnInit {
   private balanceUsuarioFase1: Array<any>;
   private resultadoPosiblesOrdenes: Array<any> = [];
   public workflowStepping: string = 'Elige una de las siguientes criptomonedas'
-  constructor(private apiService: ApisService) { }
+  constructor(private apiService: ApisService, public loadingController: LoadingController) { }
 
   ngOnInit() {
+    this.iniciar("dembow");
+  }
 
+  public doRefresh(event: any): void {
+    this.iniciar(event);
+  }
 
+  private iniciar(event: any): void {
+    this.presentLoading();
     let preciosYSimbolos$ = this.apiService.getPreciosYSimbolos(this.apiService.devolverPaquete(this.apiService.getApi().apiKey, this.apiService.getApi().privateKey));
     let balanceUsuario$ = this.apiService.obtenerBalanceBinance(this.apiService.devolverPaquete(this.apiService.getApi().apiKey, this.apiService.getApi().privateKey));
 
@@ -29,11 +37,20 @@ export class ListadoOrdenesTransaccionesComponent implements OnInit {
         this.preciosYSimbolosFase1 = Object.keys(pair.preciosYSimbolos);
         this.balanceUsuarioFase1 = this.filtrarSoloCantidadesPositivas(pair.balanceUsuario);
         this.filtrarPosiblesOrdenesYEliminarDuplicados();
-        console.log("balance user 1 fase 1 ", this.balanceUsuarioFase1)
-        console.log("arrayFinal!!!!", this.resultadoPosiblesOrdenes)
-
+        this.loadingController.dismiss();
+        if (event != "dembow") {
+          event.target.complete();
+        }
       })
 
+  }
+
+  public detenerOrden(symbol: string, id: string, index: number, arrayHistorial: Array<any>) {
+    console.log(symbol, id)
+    this.apiService.cancelarOrden(this.apiService.devolverPaquete(this.apiService.getApi().apiKey, this.apiService.getApi().privateKey), symbol, id).subscribe((data) => {
+      console.log(data)
+      arrayHistorial = arrayHistorial.splice(index, 1);
+    })
   }
 
   public verTransacciones(simbolo: string): void {
@@ -43,37 +60,75 @@ export class ListadoOrdenesTransaccionesComponent implements OnInit {
     }))
   }
 
+  public verTodasLasTransaccionesDeUnaLista(listaPares: Array<string>): any {
+    let listaFinal = [];
+    listaPares.forEach(par => {
+      this.apiService.consultarTransaccionesHistoricasParaUnSimbolo(this.apiService.devolverPaquete(this.apiService.getApi().apiKey, this.apiService.getApi().privateKey), par).subscribe((data => {
+        listaFinal.push({ "par": par, "historial": data, "mostrar": false });
+        if (listaPares[listaPares.length - 1] == par) {
+          this.loadingController.dismiss();
+        }
+      }))
+    });
+    return listaFinal;
+  }
+
   public mostrarSubItemsYposiblesParesFiltrados(parparcial: ActivoBalanceInterface) {
+    if (parparcial['clickeado'] == undefined || parparcial['clickeado'] == false) {
+      this.presentLoading();
+    }
     this.filtrarPosiblesOrdenesYEliminarDuplicadosUnitario(parparcial);
+    parparcial['subitems'] = this.verTodasLasTransaccionesDeUnaLista(parparcial['subitems']);
     parparcial['clickeado'] = !parparcial['clickeado'];
   }
+
 
   public filtrarPosiblesOrdenesYEliminarDuplicadosUnitario(parparcial: ActivoBalanceInterface) { // recordar que se excluye a USD,USDT,ETC...
     let arrayTMP: Array<any> = [];
     this.preciosYSimbolosFase1.forEach(parcompleto => {
       if (parcompleto.includes(parparcial.nombre) && parparcial.nombre != "USDT" && parparcial.nombre != "BTC" && parparcial.nombre != "ETH") {
-        console.log("detectada coincidencia", [parcompleto, parparcial])
         arrayTMP.push(parcompleto)
-        // this.preciosYSimbolosFase1 = this.preciosYSimbolosFase1.splice(j, 1);
       }
+
     });
+    if (parparcial.nombre == "BTC") {
+      this.añadirParesEstaticos("BTC", arrayTMP);
+    }
+    if (parparcial.nombre == "ETH") {
+      this.añadirParesEstaticos("ETH", arrayTMP);
+    }
     parparcial['subitems'] = arrayTMP;
+
   }
 
+  private añadirParesEstaticos(simboloBase: string, arrayAModificar: Array<any>) {
+    if (simboloBase != "BTC") {
+      arrayAModificar.push(simboloBase + "BTC");
+    }
+    arrayAModificar.push(simboloBase + "USDT");
+    arrayAModificar.push(simboloBase + "PAX");
+    arrayAModificar.push(simboloBase + "TUSD");
+    arrayAModificar.push(simboloBase + "USDC");
+    if (simboloBase != "ETH") {
+      arrayAModificar.push(simboloBase + "USDS");
+    }
+  }
 
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Cargando registros',
+      duration: 10000
+    });
+    await loading.present();
+  }
 
   private filtrarPosiblesOrdenesYEliminarDuplicados() { // recordar que se excluye a USD,USDT,ETC...
     let j: number = 0;
     this.balanceUsuarioFase1.forEach(parparcial => {
-      //console.log(parparcial.nombre)
       this.preciosYSimbolosFase1.forEach(parcompleto => {
-        //console.log(parcompleto)
-
         if (parcompleto.includes(parparcial.nombre) && parparcial.nombre != "USDT" && parparcial.nombre != "BTC" && parparcial.nombre != "ETH") {
           console.log("detectada coincidencia", [parcompleto, parparcial])
           this.resultadoPosiblesOrdenes.push(parcompleto)
-          // this.preciosYSimbolosFase1 = this.preciosYSimbolosFase1.splice(j, 1);
-
         }
         j++;
       });

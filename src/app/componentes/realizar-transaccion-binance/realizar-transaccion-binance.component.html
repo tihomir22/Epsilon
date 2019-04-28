@@ -92,7 +92,7 @@
     </ion-item>
     <ion-item *ngIf="tipoOrden!='market'">
       <ion-label position="inline">Precio</ion-label>
-      <ion-input type="number" [placeholder]="precioActivoSeleccionado" style="text-align:right;" step="0.00000000"></ion-input>
+      <ion-input type="number" [placeholder]="precioActivoSeleccionado" style="text-align:right;" step="0.00000000" [(ngModel)]="precioLimitOrder" (ionChange)="comprobarValor();"></ion-input>
     </ion-item>
 
     <ion-item>
