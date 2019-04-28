@@ -19,9 +19,11 @@
 [travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
 [wiki]: https://github.com/yourname/yourproject/wiki
 
+## Screenshots
+![](https://www.dropbox.com/s/6eyvvoj8lo6nsit/81688.png?dl=0)
 ## Epsilon Progress
 * Ultima compilacion exitosa
-* https://www.dropbox.com/s/s96d1vw8kifjksu/app-debug.apk?dl=0
+* https://www.dropbox.com/s/tp3wf1uh575uzq9/app-debug.apk?dl=0
 * 0.0.1 : Creación de 2 paginas. Login y registro y implementado diseño basico.
 * 0.0.2 : Implementada validación en formularios, mejoras graficas, funcionabilidad y preparación para CRUD.
 * 0.0.3 : Terminado de implementar registro y login , junto a verificaciones importantes, empezada dashboard post-login
@@ -51,3 +53,5 @@
 * ALPHA 0.4.2 : Scourge of Iron V3 => Implementado funcionalidad de realizar transacciones REALES de tipo market/limit en la app, tanto de compra como venta. Modificada la interfaz de esta funcionalidad para que sea más intuitiva. Creado componente para listar las transacciones del usuario por PAR. Modificados otros componentes para mejorar la estabilidad y eficacia. Bugs menores solucionados
 
 * BETA 0.5.0:Spirit Crusher V1 => Estabilización de la aplicacion, posibilidad de fijar precio en ordenes de tipo limit y realizar calculos pertinentes, listado de transacciones del  usuario implementadas, tambien la cancelación de ordenes que esten a la espera, modificación del login para hacerlo más intuitivo elegante y bonito, tambien  agregadas nuevas opciones en el login pendientes de implementar, solucion de bugs menores y backend modificado.
+
+
