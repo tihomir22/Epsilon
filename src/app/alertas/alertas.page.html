@@ -1,0 +1,202 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Notificaciones
+    </ion-title>
+  </ion-toolbar>
+  <ion-fab vertical="top" horizontal="end" slot="fixed"
+    (click)="mostrarAlertas=!mostrarAlertas;presentPopover($event);">
+    <ion-fab-button>
+      <ion-icon name="book"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-header>
+
+<ion-content padding>
+  <ion-item-group>
+    <ion-item-divider color="success">
+      <ion-label>Alertas basicas</ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let opbasica of arrayOpcionesBasicas ; let i=index">
+      <ion-item (click)="opbasica.mostrando=!opbasica.mostrando">
+        <ion-label>{{opbasica.nombre}}</ion-label>
+      </ion-item>
+
+      <ng-container *ngIf="opbasica.mostrando" color="success">
+
+        <ng-container *ngFor="let item of opbasica.subitems">
+
+          <ion-item *ngIf="item.tipo=='item-label-doslineas'" (click)="seleccionarActivo(item);">
+            <ion-label>{{item.nombre}}
+              <p>{{item.valor}}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="item.tipo=='item-date-picker'">
+            <ion-label>{{item.nombre}}</ion-label>
+            <ion-datetime displayFormat="HH:mm" [(ngModel)]="item.valor" (ionChange)="valorFecha=item.valor">
+            </ion-datetime>
+          </ion-item>
+
+        </ng-container>
+        <ion-button (click)="procesarOpcionesBasicas(opbasica.subitems,opbasica);opbasica.mostrando=!opbasica.mostrando" expand="block" fill="outline"
+          color="success">
+          Aplicar cambios
+        </ion-button>
+      </ng-container>
+
+    </ng-container>
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider color="secondary">
+      <ion-label>Alertas intermedias</ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let opbasica of arrayOpcionesMedias ; let i=index">
+      <ion-item (click)="opbasica.mostrando=!opbasica.mostrando">
+        <ion-label>{{opbasica.nombre}}</ion-label>
+      </ion-item>
+
+      <ng-container *ngIf="opbasica.mostrando" color="secondary">
+
+        <ng-container *ngFor="let item of opbasica.subitems">
+
+          <ion-item *ngIf="item.tipo=='item-label-doslineas'" (click)="seleccionarActivo(item);">
+            <ion-label>{{item.nombre}}
+              <p>{{item.valor}}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="item.tipo=='item-date-picker'">
+            <ion-label>{{item.nombre}}</ion-label>
+            <ion-datetime displayFormat="HH:mm" [(ngModel)]="item.valor" (ionChange)="valorFecha=item.valor">
+            </ion-datetime>
+          </ion-item>
+
+          <ng-container *ngIf="item.tipo=='item-label-select'">
+            <ion-item>
+              <ion-label>{{item.nombre}}</ion-label>
+              <ion-select [interfaceOptions]="opcionesActionSheetSelect" interface="alert"
+                placeholder="Seleccione las opciones necesarias" [(ngModel)]="item.valor" multiple="true"
+                okText="Seleccionar opciones" cancelText="Cancelar">
+                <ion-select-option value="avisar_venta_precio">Avisar cuando baje de un precio limite
+                </ion-select-option>
+                <ion-select-option value="avisar_compra_precio">Avisar cuando supere un precio limite
+                </ion-select-option>
+                <ion-select-option value="avisar_venta_porcentaje">Avisar cuando baje un porcentaje limite
+                </ion-select-option>
+                <ion-select-option value="avisar_compra_porcentaje">Avisar cuando supere un porcentaje limite
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item *ngIf="item.valor.indexOf('avisar_venta_precio')!=-1">
+              <ion-icon name="trending-down" slot="start"></ion-icon>
+              <ion-input type="number" placeholder="4000" [(ngModel)]="precioFijadoVenta">
+              </ion-input>
+            </ion-item>
+
+            <ion-item *ngIf="item.valor.indexOf('avisar_compra_precio')!=-1">
+              <ion-icon name="trending-up" slot="start"></ion-icon>
+              <ion-input type="number" placeholder="5000" [(ngModel)]="precioFijadoCompra"></ion-input>
+            </ion-item>
+
+            <ion-item *ngIf="item.valor.indexOf('avisar_venta_porcentaje')!=-1">
+              <ion-chip color="danger" outline="true">
+                <ion-label>%</ion-label>
+              </ion-chip>
+              <ion-input type="number" placeholder="-5" [min]="0" [max]="100" [(ngModel)]="porcentajeFijadoVenta">
+              </ion-input>
+            </ion-item>
+
+            <ion-item *ngIf="item.valor.indexOf('avisar_compra_porcentaje')!=-1">
+              <ion-chip color="success" outline="true">
+                <ion-label>%</ion-label>
+              </ion-chip>
+              <ion-input type="number" placeholder="5" [min]="0" [max]="100" [(ngModel)]="porcentajeFijadoCompra">
+              </ion-input>
+            </ion-item>
+
+          </ng-container>
+        </ng-container>
+        <ion-button (click)="procesarAlertasIntermedias(opbasica.subitems,opbasica);opbasica.mostrando=!opbasica.mostrando" expand="block" fill="outline"
+          color="secondary">
+          Aplicar cambios
+        </ion-button>
+      </ng-container>
+
+    </ng-container>
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider color="danger">
+      <ion-label>Alertas Avanzadas</ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let opavanzada of arrayOpcionesAvanzadas ; let i=index">
+      <ion-item (click)="opavanzada.mostrando=!opavanzada.mostrando">
+        <ion-label>{{opavanzada.nombre}}</ion-label>
+      </ion-item>
+
+      <ng-container *ngIf="opavanzada.mostrando" color="secondary">
+
+        <ng-container *ngFor="let item of opavanzada.subitems">
+
+          <ion-item *ngIf="item.tipo=='item-label-doslineas'" (click)="seleccionarActivo(item);">
+            <ion-label>{{item.nombre}}
+              <p>{{item.valor}}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="item.tipo=='item-date-picker'">
+            <ion-label>{{item.nombre}}</ion-label>
+            <ion-datetime displayFormat="HH:mm" [(ngModel)]="item.valor" (ionChange)="valorFecha=item.valor">
+            </ion-datetime>
+          </ion-item>
+
+          <ion-item *ngIf="item.tipo=='item-number-input'">
+            <ion-label>{{item.nombre}}</ion-label>
+            <ion-input type="number" placeholder="{{item.placeholder}}" style="text-align:right;" [(ngModel)]="item.valor"></ion-input>
+          </ion-item>
+
+
+          <ion-item *ngIf="item.tipo=='item-single-select'">
+            <ion-label>{{item.nombre}}</ion-label>
+            <ion-select value="{{item.opciones[item.opciones.length -1].valor}}" okText="Elegir" cancelText="Minimizar"
+              [(ngModel)]="item.valor">
+              <ng-container *ngFor="let opcion of item.opciones;let j=index">
+                <ion-select-option value="{{opcion.valor}}">{{opcion.texto}}</ion-select-option>
+              </ng-container>
+            </ion-select>
+          </ion-item>
+
+        </ng-container>
+        <ion-grid fixed>
+          <ion-row>
+            <ion-col size="6">
+              <ion-button (click)="procesarAlertasAvanzadas(opavanzada.subitems,opavanzada.nombre);opavanzada.mostrando=!opavanzada.mostrando" expand="block"
+                fill="outline" color="danger">
+                Aplicar cambios
+              </ion-button>
+            </ion-col>
+            <ion-col size="6">
+              <ion-button (click)="verGrafico(opavanzada.subitems,opavanzada)" expand="block" fill="outline"
+                color="secondary">
+                <ion-icon slot="start" name="eye"></ion-icon> Ver grafico
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ng-container>
+
+    </ng-container>
+  </ion-item-group>
+
+
+
+
+
+
+</ion-content>

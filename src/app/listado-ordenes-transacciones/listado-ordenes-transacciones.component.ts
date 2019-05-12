@@ -13,7 +13,7 @@ import { LoadingController } from '@ionic/angular';
 })
 export class ListadoOrdenesTransaccionesComponent implements OnInit {
   private preciosYSimbolosFase1: Array<any>;
-  private balanceUsuarioFase1: Array<any>;
+  public balanceUsuarioFase1: Array<any>;
   private resultadoPosiblesOrdenes: Array<any> = [];
   public workflowStepping: string = 'Elige una de las siguientes criptomonedas'
   constructor(private apiService: ApisService, public loadingController: LoadingController) { }

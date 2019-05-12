@@ -17,8 +17,10 @@ export class ServiceLoginDashboardService {
   private imagenUsuario: any;
   private activo: any;
   private tipoAdquisicion: string = '';
+  public permitirCarga: boolean = false;
   private arrayActivosServ: Array<any> = new Array;
   private arrayActivosCompletos: Array<any> = new Array;
+  private paqueteDeData: Array<any>;
   private result: any;
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
@@ -29,6 +31,17 @@ export class ServiceLoginDashboardService {
   public recuperarPrecioCryptoCompare(siglasActivo: string, siglasContrapartida: string) {
     return this.http.get("https://min-api.cryptocompare.com/data/pricemulti?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
   }
+
+  public recuperarPrecioCryptoCompareFullData(siglasActivo: string, siglasContrapartida: string) {
+    return this.http.get("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
+  }
+  public setPaqueteData(paquetito: any) {
+    this.paqueteDeData = paquetito;
+  }
+  public getPaqueteData(): Array<any> {
+    return this.paqueteDeData;
+  }
+
   public recuperarPrecioIEXTrading(siglasActivo: string) {
     return this.http.get("https://api.iextrading.com/1.0/stock/" + siglasActivo + "/price");
   }
@@ -129,9 +142,9 @@ export class ServiceLoginDashboardService {
 
   }
 
-  public anyadirActivoAUsuario(idUsuario: any, activoId: any, tipoActivo: any, precioCompra: number, fechaOperacion: any, exchange: string, par: string, cantidad: any, observaciones: string,deExchange:number): Observable<any> {
+  public anyadirActivoAUsuario(idUsuario: any, activoId: any, tipoActivo: any, precioCompra: number, fechaOperacion: any, exchange: string, par: string, cantidad: any, observaciones: string, deExchange: number): Observable<any> {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": idUsuario, "id_activo_ajeno": activoId, "tipo": tipoActivo, "precio_compra": precioCompra, "fecha_operacion": fechaOperacion, "exchange": exchange, "siglas_operacion": par, "cantidad": cantidad, "observaciones": observaciones,"de_exchange":deExchange },
+      options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": idUsuario, "id_activo_ajeno": activoId, "tipo": tipoActivo, "precio_compra": precioCompra, "fecha_operacion": fechaOperacion, "exchange": exchange, "siglas_operacion": par, "cantidad": cantidad, "observaciones": observaciones, "de_exchange": deExchange },
       url: any = this.baseURI + "manage-dataIONIC.php";
 
     return this.http.post(url, JSON.stringify(options), headers)
@@ -236,6 +249,8 @@ export class ServiceLoginDashboardService {
     this.userInfo = null;
     this.activo = null;
     this.tipoAdquisicion = null;
+    this.arrayActivosServ = new Array;
+    this.arrayActivosCompletos = new Array;
   }
 
 

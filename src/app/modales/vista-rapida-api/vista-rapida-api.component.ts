@@ -18,7 +18,7 @@ export class VistaRapidaApiComponent implements OnInit {
   @Input() api: apiModel;
   public todosLosExchanges: Array<exchangeClass> = [];
   public exchange: exchangeClass = null;
-  private terminaCargaBalanceExchange: boolean = false;
+  public terminaCargaBalanceExchange: boolean = false;
   private arrayRes: Array<any> = [];
   public arrayFinal: Array<any> = new Array;
   private mostrarMensajeErrorCarga: boolean = false;

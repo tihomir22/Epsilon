@@ -55,13 +55,18 @@ export class AppComponent {
       icon: 'paper'
     },
     {
+      title: 'Alertas',
+      url: '/alertas',
+      icon: 'add'
+    },
+    {
       title: 'Perfil',
       url: '/perfil',
       icon: 'person'
     },
     {
       title: 'Ajustes',
-      url:'/ajustes',
+      url: '/ajustes',
       icon: 'cog'
     },
     {
@@ -115,7 +120,7 @@ export class AppComponent {
   async presentModal() {
     const modal = await this.modalController.create({
       component: SeleccionApiComponent,
-      componentProps: { arrayApis: this.apiservice.getListUserApis() ,parametros:this.apiservice.getParametros() }
+      componentProps: { arrayApis: this.apiservice.getListUserApis(), parametros: this.apiservice.getParametros() }
     });
 
     await modal.present();

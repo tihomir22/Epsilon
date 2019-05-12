@@ -34,13 +34,17 @@ import { PlantillaAPIPageModule } from './plantilla-api/plantilla-api.module';
 import { SeleccionApiComponent } from './modales/seleccion-api/seleccion-api.component';
 
 import { SharedModule } from './shared/shared.module';
-
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { CargaModalComponent } from './modales/carga-modal/carga-modal.component';
+import { EMAmodalComponent } from './modales/graficosTecnicos/emamodal/emamodal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
 @NgModule({
-  declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent],
-  entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent],
+  declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent, CargaModalComponent, EMAmodalComponent],
+  entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent,CargaModalComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -51,8 +55,10 @@ import { SharedModule } from './shared/shared.module';
     HttpModule,
     IonicStorageModule.forRoot(),
     PlantillaAPIPageModule,
-    SharedModule
-    
+    SharedModule,
+    BrowserAnimationsModule
+
+
   ],
   providers: [
     StatusBar,
@@ -64,8 +70,9 @@ import { SharedModule } from './shared/shared.module';
     SocialSharing,
     QRScanner,
     ScreenOrientation,
-
+    LocalNotifications,
     File,
+    InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, {
       provide: HAMMER_GESTURE_CONFIG,
       useClass: AgregarActivosPage

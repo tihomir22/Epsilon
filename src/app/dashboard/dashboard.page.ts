@@ -8,7 +8,6 @@ import { HammerGestureConfig } from "@angular/platform-browser";
 import { Chart } from 'chart.js';
 import { Observable, from, of, timer } from 'rxjs';
 import { AppComponent } from '../app.component';
-import { AgregarActivosCompComponent } from '../componentes/agregar-activos-comp/agregar-activos-comp.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -68,45 +67,42 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.data = this.service.getDestn();
     this.menuCtrl.enable(true);
     this.activeCurrency = "USD";
-    console.dir("dembow")
-    console.dir(this.data['foto_usuario'])
     this.imagenUsuario = this.data['foto_usuario'];
     // this.cargarActivos();
+    //this.presentLoading();
 
   }
 
 
   ngOnInit() {
-    this.presentLoading();
     AppComponent.avisar(this.data);
 
     this.contActivos = 0;
-    // this.permitirActualizacionTotal();
     this.reiniciarFinanzasUsuario();
-    this.cargarActivos().subscribe((data: any) => {
-      if (data == null || data == false) {
-        this.sendNotification("No tiene activos el usuario...");
-        this.hayActivos = false;
-        this.stopLoading();
-      } else {
-        this.hayActivos = true;
-        this.service.setArrayActivoCompletos(data);
-        let observable = of(data);
-        observable.subscribe((data: Array<any>) => {
-          this.arrayActivos = data;
-          this.procesarActivos(data)
-        }, (error) => {
-          console.log(error)
-        }, () => {
-        })
-      }
-    },
-      err => {
-        this.sendNotification("Hubo un error inesperado...");
-        this.hayActivos = false;
-      },
+    let data = this.service.getPaqueteData();
+    if (data == null || data == undefined || data.length == 0) {
+      this.sendNotification("No tiene activos el usuario...");
+      this.hayActivos = false;
+    } else {
+      this.hayActivos = true;
+      this.service.setArrayActivoCompletos(data);
+      let observable = of(data);
+      observable.subscribe((data: Array<any>) => {
+        this.arrayActivos = data;
+        this.procesarActivos(data)
+      }, (error) => {
+        console.log(error)
+      }, () => {
+      })
+    }
 
-    )
+    //},
+    /*err => {
+      this.sendNotification("Hubo un error inesperado...");
+      this.hayActivos = false;
+    },*/
+
+
 
   }
   ngAfterViewInit() {
@@ -116,8 +112,23 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   ionViewWillEnter() {
-
-
+    if (this.service.permitirCarga) {
+      this.presentLoading();
+      this.cargarActivos().subscribe((data: any) => {
+        if (data == null || data == false) {
+          this.sendNotification("No tiene activos el usuario...");
+          this.hayActivos = false;
+          this.service.setArrayActivoCompletos([]);
+        } else {
+          this.hayActivos = true;
+          this.arrayActivos = data;
+          this.service.setArrayActivoCompletos(data);
+          this.procesarActivos(data)
+        }
+        this.stopLoading();
+        this.service.permitirCarga = false;
+      })
+    }
 
   }
 
@@ -157,6 +168,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
         this.service.setArrayActivoCompletos(data);
         this.procesarActivos(data)
       }
+      this.loadingController.dismiss();
     },
 
       (error: any) => {
@@ -164,10 +176,6 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
         this.hayActivos = false;
       });
 
-
-    timer(1000).subscribe((data) => {
-      this.loadingController.dismiss();
-    })
     if (event != undefined) {
       event.target.complete();
     }
@@ -176,6 +184,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     arrayActivos.forEach(relacion => {
       this.procesarActivoAnalconda(relacion, relacion['activo']);
     });
+
     console.log("finaliza el for")
 
 
@@ -245,47 +254,39 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   añadirActivoAGrafico(activoRec, respuesta) {
 
     activoRec['historic_daily'] = respuesta;
-    console.dir(activoRec['historic_daily'])
     this.procesarArrayDeDiasChart7(activoRec);
 
     if (this.arrayDiasTotal.length == 0) {
       this.arrayDiasTotal = new Array(0, 0, 0, 0, 0, 0, 0);
-      console.dir("entro en inicio array total " + this.arrayDiasTotal)
     }
 
     if (activoRec.tipo == "Criptomoneda") {
       if (this.arrayDiasGraficoCripto.length == 0) {
         this.arrayDiasGraficoCripto = new Array(0, 0, 0, 0, 0, 0, 0);
-        console.dir("entro en inicio array cripto " + this.arrayDiasGraficoCripto)
       }
 
       for (let i = 0; i < this.arrayDiasGraficoCripto.length; i++) {
         if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
-          console.dir("detectada venta");
           this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
           this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
         } else {
           this.arrayDiasGraficoCripto[i] = (+this.arrayDiasGraficoCripto[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
           this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
         }
-        console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i] + "cantidad " + activoRec['cantidad'])
       }
 
     } else if (activoRec.tipo == "Stock") {
       if (this.arrayDiasGraficoStock.length == 0) {
         this.arrayDiasGraficoStock = new Array(0, 0, 0, 0, 0, 0, 0);
-        console.dir("entro en inicio array stock " + this.arrayDiasGraficoStock)
       }
       for (let i = 0; i < this.arrayDiasGraficoStock.length; i++) {
         if (activoRec['tipoRelacion'].toLowerCase() == "vender") {
-          console.dir("detectada venta");
           this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
           this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + this.calcularPrecioActivoGrafico(activoRec, activoRec['array_dias_chart'][i]) * +activoRec['cantidad']).toFixed(2);
         } else {
           this.arrayDiasTotal[i] = (+this.arrayDiasTotal[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
           this.arrayDiasGraficoStock[i] = (+this.arrayDiasGraficoStock[i] + (+activoRec['array_dias_chart'][i] * +activoRec['cantidad'])).toFixed(2);
         }
-        console.dir("sumando " + this.arrayDiasTotal[i] + " junto a " + activoRec['array_dias_chart'][i])
       }
 
     }
@@ -333,11 +334,10 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     }
     // console.dir(arrayDias)
     this.contActivos++;
-    console.log(this.contActivos)
-    console.log(this.arrayActivos.length)
+
     if (this.contActivos == this.arrayActivos.length) {
       setTimeout(() => {
-        this.stopLoading();
+        this.modalCtrl.dismiss();
       }, 1000);
 
     }

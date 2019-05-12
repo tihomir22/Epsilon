@@ -315,6 +315,7 @@ export class DetallesActivoPage implements OnInit {
         duration: 3000
       });
     } else {
+      this.service.permitirCarga = true;
       console.log("No hay error se puede enviar" + this.activo.id + " " + this.usuario.idepsilon_usuarios + " " + this.parStr + " " + this.fechaStr + " " + this.exchangeStr + " " + this.cantidad);
       this.idUsuario = this.usuario.idepsilon_usuarios;
       this.activoId = this.activo.id;

@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'noticias', loadChildren: './noticias/noticias.module#NoticiasPageModule' },
   { path: 'perfil', loadChildren: './perfil/perfil.module#PerfilPageModule' },  { path: 'plantilla-api', loadChildren: './plantilla-api/plantilla-api.module#PlantillaAPIPageModule' },
   { path: 'ajustes', loadChildren: './ajustes/ajustes.module#AjustesPageModule' },
+  { path: 'alertas', loadChildren: './alertas/alertas.module#AlertasPageModule' },
 
 
 

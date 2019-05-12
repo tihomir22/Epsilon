@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, ToastController, MenuController, Platform } from '@ionic/angular';
+import { NavController, ToastController, MenuController, Platform, ModalController } from '@ionic/angular';
 import { FormBuilder, FormGroup, AbstractControl, Validators, FormControl } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,6 +9,10 @@ import { apiInterfaz } from '../modales/vista-rapida-api/models/apiInterfaz';
 import { MailingService } from '../servicios/mailing.service';
 import Typed from 'typed.js';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { NotificationService } from '../servicios/notification.service';
+import { AlertModelInterface } from '../alertas/modelo/alertModel';
+import { CargaModalComponent } from '../modales/carga-modal/carga-modal.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -45,8 +49,10 @@ export class LoginPage implements OnInit {
     public toastCtrl: ToastController,
     public service: ServiceLoginDashboardService,
     private apiservice: ApisService,
-    private mailingservice: MailingService,
-    private iab:InAppBrowser) {
+    private iab: InAppBrowser,
+    private notificacionService: NotificationService,
+    private modalController: ModalController
+  ) {
     this.formgroup = formbuilder.group({
       usuario: ['', Validators.required],
       pass: ['', Validators.required]
@@ -57,34 +63,61 @@ export class LoginPage implements OnInit {
     this.menuCtrl.enable(false);
   }
 
-  login() {
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: CargaModalComponent,
+      componentProps: { value: 123 },
+      animated: true
+    });
+
+    await modal.present();
+
+  }
+
+  public login(): void {
+
     if (this.formgroup.status == "VALID") {
+      this.presentModal();
       let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
         options: any = { "key": "login", "usuario": this.userString, "pass": this.passString },
         url: any = this.baseURI + "retrieve-data.php";
 
-      this.http
-        .post(url, JSON.stringify(options), headers)
-        .subscribe((data: any) => {
-          console.dir(data);
-          this.service.setDestn(data);
-          this.apiservice.recuperarClavesAPIbyIDUSER(data.idepsilon_usuarios).subscribe((data: Array<apiInterfaz>) => {
-            this.apiservice.listaApisIniciales = data;
-            console.log(data)
-          }, (error) => {
-            console.log(error)
-          }, () => { })
+      this.http.post(url, JSON.stringify(options), headers).subscribe((data: any) => {
+
+        this.service.setDestn(data);
+        this.cargaActivos(data.idepsilon_usuarios).subscribe((data) => {
+          this.service.setPaqueteData(data)
           this.navCtrl.navigateForward("/dashboard");
-        },
-          (error: any) => {
-            this.sendNotification('Los datos son incorrectos');
-          });
+        })
+
+
+        this.notificacionService.getAll().subscribe((data: Array<AlertModelInterface>) => {
+          this.notificacionService.setNotificacionesActuales(data);
+        })
+        this.apiservice.recuperarClavesAPIbyIDUSER(data.idepsilon_usuarios).subscribe((data: Array<apiInterfaz>) => {
+          this.apiservice.listaApisIniciales = data;
+        }, (error) => {
+          console.log(error)
+        }, () => { })
+      },
+        (error: Response) => {
+          this.sendNotification(error.statusText);
+        });
 
     } else {
       console.log("error de aceso??")
     }
 
   }
+
+  public cargaActivos(idUsuario: number): Observable<any> {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "analconda", "id_usuario": idUsuario },
+      url: any = this.baseURI + "retrieve-data.php";
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
+
   async sendNotification(message: string) {
     let toast = await this.toastCtrl.create({
       message: message,

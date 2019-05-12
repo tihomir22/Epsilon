@@ -1,4 +1,7 @@
 // http://ionicframework.com/docs/theming/
+
+
+@import '~animate.css/animate.min.css';
 @import '~@ionic/angular/css/core.css';
 @import '~@ionic/angular/css/normalize.css';
 @import '~@ionic/angular/css/structure.css';
@@ -33,5 +36,17 @@
     min-width: 90%;
     widows: 90%;
 }
+
+ion-popover{
+    ion-backdrop{
+    opacity: 0.5 !important;
+    }
+    .popover-wrapper{
+    .popover-content{
+    width:80vw;
+    max-width:500px;
+    }
+    }
+    }
 
 
