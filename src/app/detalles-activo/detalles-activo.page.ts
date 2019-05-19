@@ -94,6 +94,9 @@ export class DetallesActivoPage implements OnInit {
 
   public sector: any;
 
+  public coinGeckoInfo: any;
+  public objectKeys = Object.keys;
+
   @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
 
   barChart: any;
@@ -134,6 +137,8 @@ export class DetallesActivoPage implements OnInit {
     this.precio = this.formgroup.controls['precio'];
     this.observaciones = this.formgroup.controls['observaciones'];
     this.iniciarChart(this.activo.tipo);
+
+
   }
 
   ngOnInit() {
@@ -147,6 +152,11 @@ export class DetallesActivoPage implements OnInit {
         this.par.setValue("USD");
         this.exchange.setValidators(this.exchangeStr);
       });
+    } else if (this.activo.tipo == "Criptomoneda") {
+      this.service.requestCoinInfoFromCoinGecko(this.activo.nombre).subscribe((data) => {
+        console.log(data)
+        this.coinGeckoInfo = data;
+      })
     }
 
 
@@ -166,9 +176,6 @@ export class DetallesActivoPage implements OnInit {
     }
   }
   generarChartCripto(respuesta: any) {
-    console.dir(respuesta)
-
-
     var arrayPrecios: Array<any> = this.filtrarRespuestaPrecios(respuesta['Data'])
     var arrayLabelData: Array<any> = this.filtrarRespuestaFechasLabel(respuesta['Data'])
     this.barChart = new Chart(this.barCanvas.nativeElement, {
@@ -199,33 +206,39 @@ export class DetallesActivoPage implements OnInit {
         }]
       },
       options: {
+        legend: {
+          display: false
+        },
         responsive: true,
         title: {
           display: true,
-          text: 'Grafico de ' + this.activo.siglas + ' en el ultimo mes*'
+          text: 'Precio actual ' + arrayPrecios[arrayPrecios.length - 1] + " $"
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+
         },
         hover: {
-          mode: 'nearest',
+          mode: 'dataset',
           intersect: true
-        }, scales: {
-          xAxes: [
-            {
-              ticks: {
-                autoSkip: true,
-                maxTicksLimit: 10
-              }
+        },
+        scales: {
+          xAxes: [{
+            ticks: {
+              display: false
             }
-          ]
+          }],
+          yAxes: [{
+            ticks: {
+              display: false
+            }
+          }]
         }
-
-
       }
-
     });
   }
   generarChartStock(respuesta: any) {
-    console.dir(respuesta)
-
 
     var arrayPrecios: Array<any> = this.filtrarRespuestaPrecios(respuesta)
     var arrayLabelData: Array<any> = this.filtrarRespuestaFechasLabel(respuesta)
@@ -307,13 +320,21 @@ export class DetallesActivoPage implements OnInit {
     return this.http.get("https://api.iextrading.com/1.0/stock/" + stockName + "/quote");
   }
 
-  dembow() {
-    if (this.formgroup.invalid) {
+  async presentAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Error',
+      subHeader: 'El formulario no es valido!',
+      message: 'Vuelve a comprobar los datos del introducidos y vuelve a enviarlos.',
+      buttons: ['OK']
+    });
 
-      this.tostadita.create({
-        message: 'Te falta algun dato por introducir!',
-        duration: 3000
-      });
+    await alert.present();
+  }
+
+  public dembow() {
+    console.log(this.formgroup.valid)
+    if (this.formgroup.valid == false) {
+      this.presentAlert();
     } else {
       this.service.permitirCarga = true;
       console.log("No hay error se puede enviar" + this.activo.id + " " + this.usuario.idepsilon_usuarios + " " + this.parStr + " " + this.fechaStr + " " + this.exchangeStr + " " + this.cantidad);

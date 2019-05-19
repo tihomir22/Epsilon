@@ -9,7 +9,7 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content color="primary">
+<ion-content color="light">
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
@@ -17,23 +17,48 @@
     <ion-card style="color:white;" color="dark">
         <ion-card-header>
             <ion-row>
-                <ion-col size="10">
-                    <ion-card-title>Bienvenido! {{data.usuario}}</ion-card-title>
-                </ion-col>
-                <ion-col size="2">
-                    <ion-fab-button [routerLink]="[ '/perfil' ]">
-                        <ion-img [src]="imagenUsuario"></ion-img>
+                <ion-col size="2" color="dark">
+                    <ion-fab-button [routerLink]="[ '/perfil' ]" style="height:225% !important;" color="dark">
+                        <ion-img [src]="imagenUsuario" style="height:100% !important;" color="dark"></ion-img>
                     </ion-fab-button>
                 </ion-col>
-            </ion-row>
+                <ion-col size="10">
 
+                    <ion-card-title>Bienvenido {{data.usuario}}</ion-card-title>
+                </ion-col>
+
+            </ion-row>
+            <mat-divider>
+            </mat-divider>
 
 
         </ion-card-header>
-        <ion-card *ngIf="hayActivos">
+        <ion-card *ngIf="hayActivos && service.getArrayActivosCompletos().length>0">
             <canvas #barCanvas></canvas>
         </ion-card>
-        <ion-card-content>
+
+        <ion-card *ngIf="!hayActivos || service.getArrayActivosCompletos().length==0" color="dark">
+            <ion-card-header>
+                <ion-card-title text-center>Todavia no tienes ningun activo!</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-row>
+                    <ion-col size="5"></ion-col>
+                    <ion-col size="2">
+                        <img src="../../assets/icons/sad.png" alt="" srcset="">
+                    </ion-col>
+                    <ion-col size="5"></ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col size="12">
+                        <button mat-button (click)="agregarNuevosActivos()" style="width:100%;">Agregar activos</button>
+                    </ion-col>
+                </ion-row>
+
+
+            </ion-card-content>
+        </ion-card>
+        <ion-card-content *ngIf="hayActivos && service.getArrayActivosCompletos().length>0">
 
 
             <ion-row>
@@ -61,7 +86,7 @@
 
 
         </ion-card-content>
-        <ion-card color="light">
+        <ion-card color="light" *ngIf="hayActivos && service.getArrayActivosCompletos().length>0">
             <ion-segment scrollable color="success">
                 <ion-segment-button value="USD" checked (click)="traducirPrecioUsuario('USD','$')">
                     <ion-chip color="success">
@@ -116,120 +141,163 @@
     </ion-card>
 
 
-    <ion-card *ngIf="!hayActivos" color="secondary">
-        <ion-card-header>
-            <ion-card-title text-center>Todavia no tienes ningun activo!</ion-card-title>
-        </ion-card-header>
-        <ion-fab vertical="top" horizontal="end" slot="fixed" (click)="agregarNuevosActivos()">
-            <ion-fab-button>
-                <ion-icon name="add"></ion-icon>
-            </ion-fab-button>
-        </ion-fab>
-        <ion-card-content>
-            <ion-row>
-                <ion-col size="5"></ion-col>
-                <ion-col size="2">
-                    <img src="../../assets/icons/sad.png" alt="" srcset="">
-                </ion-col>
-                <ion-col size="5"></ion-col>
-            </ion-row>
-
-            <p text-center>Empieza a agregarlos desde el boton de la derecha</p>
-        </ion-card-content>
-    </ion-card>
-    <ion-card>
+    <ion-card *ngIf="hayActivos" color="light">
+        <mat-tab-group>
+            <mat-tab label="Operaciones abiertas" color="dark">
+                <ion-list style="padding:0px;">
+                    <mat-accordion>
+                        <mat-expansion-panel *ngFor="let activo of service.getArrayActivos()">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <img [src]="generarImgCripto(activo)"
+                                        style="border-radius:0%;height:32px;width:32px;" item-start
+                                        *ngIf="activo.tipo=='Criptomoneda'">
 
 
-        <ion-list *ngIf="hayActivos" style="padding:0px;">
-            <ion-list-header color="medium">
-                <ion-label>Seguimiento de activos</ion-label>
-
-            </ion-list-header>
-
-            <ion-item-sliding *ngFor="let activo of service.getArrayActivos()" [attr.id]="'sliding' + activo.id_unico">
-                <ion-item style="text-align:center;" (press)="seleccionarItem()" (click)="expandItem(activo)">
-                    <ion-icon color="success" *ngIf="activo.rentabilidad.charAt(0)=='+'" name="arrow-dropup"></ion-icon>
-                    <ion-icon color="danger" *ngIf="activo.rentabilidad.charAt(0)=='-'" name="arrow-dropdown">
-                    </ion-icon>
-                    <ion-avatar item-start *ngIf="activo.tipo=='Criptomoneda'">
-                        <img [src]="generarImgCripto(activo)" style="border-radius:0%;">
-                    </ion-avatar>
-                    <ion-avatar item-start *ngIf="activo.tipo=='Stock'">
-                        <img [src]="generarImgStock(activo)" style="border-radius:0%;">
-                    </ion-avatar>
-
-                    <ion-label style="font-size:14px;">{{activo.PAR_FULL}}</ion-label>
-                    <ion-label>{{activo.precio_compra}}</ion-label>
-                    <ion-label>{{activo.precio}}</ion-label>
-                    <ion-label [color]="tenyirLabel(activo.rentabilidad)">{{activo.rentabilidad}}</ion-label>
-                </ion-item>
-                <ion-item-options side="start">
-                    <ion-item-option (click)="mostrarInfo(activo)" color="warning">
-                        <ion-icon slot="start" name="eye" style="font-size:20px;"></ion-icon>
-                    </ion-item-option>
-                </ion-item-options>
-                <ion-item-options side="end">
-                    <ion-item-option (click)="eliminar_activo(activo)" color="danger">
-                        <ion-icon slot="start" name="trash" style="font-size:20px;"></ion-icon>
-                    </ion-item-option>
-                </ion-item-options>
-                <div class="extendable" [attr.id]="'dembow' + activo.id_unico"
-                    style="display:none;border:1px solid white;">
-                    <ion-item-group>
-                        <ion-item color="dark">
-                            <ion-label color="primary"><strong> Precio inicial : </strong>{{activo.precio_compra}}
-                                {{activo.contrapartida}}</ion-label>
-                        </ion-item>
-                        <ion-item color="dark">
-                            <ion-label color="primary"><strong> Precio Actual : </strong>{{activo.precio}}
-                                {{activo.contrapartida}}</ion-label>
-                        </ion-item>
-                        <ion-item color="dark">
-                            <ion-label color="primary"><strong>Cantidad : </strong>{{activo.cantidad}} {{activo.siglas}}
-                            </ion-label>
-                        </ion-item>
-                        <ion-item color="dark">
-                            <ion-label color="primary"><strong>Exchange : </strong>{{activo.exchange}}</ion-label>
-                        </ion-item>
-                        <ion-item color="dark">
-                            <ion-label color="primary"><strong>Tipo : </strong>{{activo.tipoRelacion}}</ion-label>
-                        </ion-item>
-                        <ion-item color="dark">
-                            <ion-label color="primary"><strong>Fecha : </strong>{{activo.fecha_operacion}}</ion-label>
-                        </ion-item>
-                        <ion-item color="dark">
-
-                            <ion-button expand="full" shape="round" color="secondary" fill="outline"
-                                (click)="expandItem(activo)">
-                                <ion-icon name="arrow-dropup"></ion-icon> Cerrar
-                            </ion-button>
-                            <ion-button expand="full" shape="round" color="danger" fill="outline"
-                                (click)="eliminar_activo(activo)">
-                                <ion-icon name="trash"></ion-icon> Eliminar
-                            </ion-button>
-                            <ion-button expand="full" shape="round" color="warning" fill="outline"
-                                *ngIf="activo.de_exchange==1" (click)="abrirOperacionesExchange()">
-                                <ion-icon slot="start" name="analytics" style="margin:5px;"></ion-icon>
-                                Operaciones
-                                <ion-select interface="action-sheet" placeholder="">
-                                    <ion-select-option value="peperoni">Peperoni</ion-select-option>
-                                    <ion-select-option value="hawaii">Hawaii</ion-select-option>
-                                </ion-select>
-
-                            </ion-button>
-
-                        </ion-item>
+                                    <img [src]="generarImgStock(activo)"
+                                        style="border-radius:0%;height:32px;width:32px;" item-start
+                                        *ngIf="activo.tipo=='Stock'">
 
 
-                    </ion-item-group>
+                                    <ion-label style="font-size:14px;margin-top:5%;margin-left:1%;" color="medium">
+                                        {{activo.PAR_FULL}}
+                                    </ion-label>
+                                </mat-panel-title>
+                                <mat-panel-description>
+                                    <ion-label style="margin-top:3%;text-align: center;width: 100%;"
+                                        *ngIf="activo.tipoRelacion=='vender'">Operacion de
+                                        venta</ion-label>
+                                    <ion-label style="margin-top:3%;text-align: center;width: 100%;"
+                                        *ngIf="activo.tipoRelacion=='comprar'">Operacion de
+                                        compra</ion-label>
 
-                </div>
+                                    <ion-label [color]="tenyirLabel(activo.rentabilidad)"
+                                        style="margin-top:3%;text-align: right;width: 100%;">
+                                        {{activo.rentabilidad}}</ion-label>
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <mat-list>
+                                <h3 mat-subheader>Transaccion realizada en {{activo.exchange}}</h3>
+                                <mat-list-item>
+                                    <mat-icon mat-list-icon>access_time</mat-icon>
+                                    <h4 mat-line>Fecha de entrada</h4>
+                                    <p mat-line> {{activo.fecha_operacion}} </p>
+                                </mat-list-item>
+                                <mat-divider></mat-divider>
+                                <mat-list-item>
+                                    <mat-icon mat-list-icon>timeline</mat-icon>
+                                    <h4 mat-line>Precio de entrada</h4>
+                                    <p mat-line> {{activo.precio_compra}} </p>
+                                </mat-list-item>
+                                <mat-divider></mat-divider>
+                                <mat-list-item>
+                                    <mat-icon mat-list-icon>update</mat-icon>
+                                    <h4 mat-line>Precio actual</h4>
+                                    <p mat-line> {{activo.precio}} </p>
+                                </mat-list-item>
+                                <mat-divider></mat-divider>
+                                <mat-list-item>
+                                    <mat-icon mat-list-icon>shopping_cart</mat-icon>
+                                    <h4 mat-line>Cantidad ejecutada</h4>
+                                    <p mat-line> {{activo.cantidad}} unidades </p>
+                                </mat-list-item>
+                                <mat-divider></mat-divider>
+                                <mat-list-item>
+                                    <button mat-raised-button color="warn" style="width:100%;"
+                                        (click)="cerrar_operacion(activo)">Cerrar operacion</button>
+                                </mat-list-item>
+                            </mat-list>
 
-            </ion-item-sliding>
+                        </mat-expansion-panel>
+                    </mat-accordion>
 
 
-        </ion-list>
+                </ion-list>
+            </mat-tab>
+            <mat-tab label="Operaciones cerradas" color="dark">
+                <mat-accordion>
+                    <mat-expansion-panel *ngFor="let activo of service.getArrayActivoCompletosCerrados()">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <img [src]="generarImgCripto(activo.activo)"
+                                    style="border-radius:0%;height:32px;width:32px;" item-start
+                                    *ngIf="activo.activo.tipo=='Criptomoneda'">
+                                <img [src]="generarImgStock(activo.activo)"
+                                    style="border-radius:0%;height:32px;width:32px;" item-start
+                                    *ngIf="activo.activo.tipo=='Stock'">
+                                <ion-label style="font-size:14px;margin-top:5%;margin-left:1%;" color="medium">
+                                    {{activo.activo.siglas}}{{activo.siglas_operacion}}
+                                </ion-label>
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                <ion-label style="margin-top:3%;text-align: center;width: 100%;"
+                                    *ngIf="activo.tipo=='vender'">Operacion de
+                                    venta</ion-label>
+                                <ion-label style="margin-top:3%;text-align: center;width: 100%;"
+                                    *ngIf="activo.tipo=='comprar'">Operacion de
+                                    compra</ion-label>
 
+                                <ion-label [color]="tenyirLabel(activo.rentabilidad)"
+                                    style="margin-top:3%;text-align: right;width: 30%;">
+                                    {{activo.rentabilidad}}</ion-label>
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <mat-list>
+                            <h3 mat-subheader>Transaccion realizada en {{activo.exchange}}</h3>
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>access_time</mat-icon>
+                                <h4 mat-line>Fecha de entrada</h4>
+                                <p mat-line> {{activo.fecha_operacion}} </p>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>access_time</mat-icon>
+                                <h4 mat-line>Fecha de salida</h4>
+                                <p mat-line> {{activo.fecha_cierre}} </p>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>timeline</mat-icon>
+                                <h4 mat-line>Precio de entrada</h4>
+                                <p mat-line> {{activo.precio_compra}} </p>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>close</mat-icon>
+                                <h4 mat-line>Precio de salida</h4>
+                                <p mat-line> {{activo.activo.precio}} </p>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>format_quote</mat-icon>
+                                <h4 mat-line>Comentario</h4>
+                                <p mat-line> {{activo.observaciones}} </p>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <button mat-raised-button color="primary" style="width:100%;"
+                                    (click)="eliminar_operacion(activo)">Eliminar registro</button>
+                            </mat-list-item>
+                        </mat-list>
+
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <ion-card *ngIf="service.getArrayActivoCompletosCerrados().length==0" color="primary">
+                    <ion-card-header>
+                        <ion-card-title text-center>No tienes operaciones cerradas todavia</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-row>
+                            <ion-col size="5"></ion-col>
+                            <ion-col size="2">
+                                <img src="../../assets/icons/sad.png" alt="" srcset="">
+                            </ion-col>
+                            <ion-col size="5"></ion-col>
+                        </ion-row>
+                    </ion-card-content>
+                </ion-card>
+            </mat-tab>
+        </mat-tab-group>
     </ion-card>
 
 </ion-content>

@@ -37,8 +37,11 @@ export class SeleccionApiComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.cargarTodosLosExchanges();
 
+
+  }
+  ionViewWillEnter() {
+    this.cargarTodosLosExchanges();
   }
 
   public cargarTodosLosExchanges(): void {

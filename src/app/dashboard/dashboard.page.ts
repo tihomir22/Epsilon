@@ -8,6 +8,7 @@ import { HammerGestureConfig } from "@angular/platform-browser";
 import { Chart } from 'chart.js';
 import { Observable, from, of, timer } from 'rxjs';
 import { AppComponent } from '../app.component';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,7 +36,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   porcentajeNum: any;
   imagenUsuario: any;
 
-  activeCurrency: any;
+  activeCurrency: string = "USD";
 
 
   @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
@@ -62,11 +63,18 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     */
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
-  constructor(public menuCtrl: MenuController, private modalCtrl: ModalController, public loadingController: LoadingController, private ref: ChangeDetectorRef, public service: ServiceLoginDashboardService, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: NavController) {
+  constructor(public menuCtrl: MenuController,
+    private modalCtrl: ModalController,
+    public loadingController: LoadingController,
+    public service: ServiceLoginDashboardService,
+    public http: HttpClient,
+    public toastCtrl: ToastController,
+    public navCtrl: NavController) {
     super();
     this.data = this.service.getDestn();
+    console.log(this.data)
+    console.log(this.service.getDestn())
     this.menuCtrl.enable(true);
-    this.activeCurrency = "USD";
     this.imagenUsuario = this.data['foto_usuario'];
     // this.cargarActivos();
     //this.presentLoading();
@@ -80,20 +88,36 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.contActivos = 0;
     this.reiniciarFinanzasUsuario();
     let data = this.service.getPaqueteData();
+    
     if (data == null || data == undefined || data.length == 0) {
       this.sendNotification("No tiene activos el usuario...");
+      this.modalCtrl.dismiss();
       this.hayActivos = false;
+      console.log(data)
+
     } else {
-      this.hayActivos = true;
-      this.service.setArrayActivoCompletos(data);
-      let observable = of(data);
-      observable.subscribe((data: Array<any>) => {
+      this.hayActivos = false;
+      console.log(data)
+      //this.service.setArrayActivoCompletos(data);
+      let streamSinFiltrar = of(data);
+      streamSinFiltrar.pipe(map(itemsArray => itemsArray.filter(item => item.estado_operacion != 'cerrada'))).subscribe((data) => {
+        this.hayActivos = true;
+        this.service.setArrayActivoCompletos(data)
         this.arrayActivos = data;
         this.procesarActivos(data)
-      }, (error) => {
-        console.log(error)
-      }, () => {
       })
+      streamSinFiltrar.pipe(map(itemsArray => itemsArray.filter(item => item.estado_operacion != 'abierta'))).subscribe((data) => {
+        this.service.setArrayActivoCompletosCerrados(data)
+        this.service.getArrayActivoCompletosCerrados().forEach(activo => {
+          this.calcularPorcentajeActivo(activo)
+        });
+      })
+      timer(3000).subscribe((data) => {
+        this.modalCtrl.dismiss();
+        this.loadingController.dismiss();
+      })
+
+
     }
 
     //},
@@ -108,26 +132,39 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   ngAfterViewInit() {
 
   }
+  private cargaActivosAutomatica(): void {
+    this.cargarActivos().subscribe((data: any) => {
+      if (data == null || data == false) {
+        this.sendNotification("No tiene activos el usuario...");
+        this.hayActivos = false;
+        this.service.setArrayActivoCompletos([]);
+        this.loadingController.dismiss();
+      } else {
+        this.hayActivos = true;
+        let streamSinFiltrar = of(data);
+        streamSinFiltrar.pipe(map(itemsArray => itemsArray.filter(item => item.estado_operacion != 'cerrada'))).subscribe((data) => {
+          this.service.setArrayActivoCompletos(data)
+          this.procesarActivos(data)
+        })
+        streamSinFiltrar.pipe(map(itemsArray => itemsArray.filter(item => item.estado_operacion != 'abierta'))).subscribe((data) => {
+          this.service.setArrayActivoCompletosCerrados(data)
+        })
+      }
+      this.loadingController.dismiss();
+    },
 
+      (error: any) => {
+        this.sendNotification("Hubo un error inesperado..." + error);
+        this.hayActivos = false;
+        this.loadingController.dismiss();
+      });
+  }
 
 
   ionViewWillEnter() {
     if (this.service.permitirCarga) {
       this.presentLoading();
-      this.cargarActivos().subscribe((data: any) => {
-        if (data == null || data == false) {
-          this.sendNotification("No tiene activos el usuario...");
-          this.hayActivos = false;
-          this.service.setArrayActivoCompletos([]);
-        } else {
-          this.hayActivos = true;
-          this.arrayActivos = data;
-          this.service.setArrayActivoCompletos(data);
-          this.procesarActivos(data)
-        }
-        this.stopLoading();
-        this.service.permitirCarga = false;
-      })
+      this.cargaActivosAutomatica();
     }
 
   }
@@ -155,37 +192,18 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.arrayDiasTotal.length = 0;
     this.presentLoading();
 
-    console.log('Begin async operation');
     this.service.actualizarActivos(this.service.getArrayActivos())
-    this.cargarActivos().subscribe((data: any) => {
-      if (data == null || data == false) {
-        this.sendNotification("No tiene activos el usuario...");
-        this.hayActivos = false;
-        this.service.setArrayActivoCompletos([]);
-      } else {
-        this.hayActivos = true;
-        console.dir(data);
-        this.service.setArrayActivoCompletos(data);
-        this.procesarActivos(data)
-      }
-      this.loadingController.dismiss();
-    },
-
-      (error: any) => {
-        this.sendNotification("Hubo un error inesperado..." + error);
-        this.hayActivos = false;
-      });
+    this.cargaActivosAutomatica();
 
     if (event != undefined) {
       event.target.complete();
     }
   }
+
   procesarActivos(arrayActivos: any) {
     arrayActivos.forEach(relacion => {
       this.procesarActivoAnalconda(relacion, relacion['activo']);
     });
-
-    console.log("finaliza el for")
 
 
   }
@@ -325,7 +343,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
 
 
-  generarChart() {
+  public generarChart() {
 
     var arrayDias: Array<String> = new Array();
     for (let i = 6; i >= 0; i--) { // metodo usado para calcular los labels para el grafico de los dias anteriores al actual
@@ -334,12 +352,16 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     }
     // console.dir(arrayDias)
     this.contActivos++;
-
-    if (this.contActivos == this.arrayActivos.length) {
+    if (this.arrayActivos != undefined) {
+      if (this.contActivos == this.arrayActivos.length) {
+        setTimeout(() => {
+          this.modalCtrl.dismiss();
+        }, 1000);
+      }
+    } else {
       setTimeout(() => {
         this.modalCtrl.dismiss();
       }, 1000);
-
     }
 
     if (this.barChart) {
@@ -349,11 +371,10 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     //console.dir("recibido " + arrayAux)
     this.barChart = new Chart(this.barCanvas.nativeElement, {
       type: 'line',
-
       data: {
         labels: arrayDias,
         datasets: [{
-          label: 'Rendimiento total en dolares',
+          //label: 'Rendimiento total en dolares',
           data: this.arrayDiasTotal,
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
@@ -373,40 +394,46 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
             'rgba(255, 159, 64, 1)'
           ],
           borderWidth: 1
-        }],
-        options: {
-          legend: {
-            display: false
-          },
-          responsive: true,
-          title: {
-            display: true,
-            text: 'Rendimiento total'
-          },
-          tooltips: {
-            mode: 'index',
-            intersect: false,
+        }]
+       
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Rendimiento del portfolio'
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false,
 
-          },
-          hover: {
-            mode: 'dataset',
-            intersect: true
-          },
-          scales: {
-            xAxes: [{
-              display: false,
-
-            }],
-            yAxes: [{
-              display: false,
-            }]
-          }
-
+        },
+        hover: {
+          mode: 'dataset',
+          intersect: true
+        },
+        scales: {
+          xAxes: [{
+            ticks: {
+              display: false
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              display: false
+            }
+          }]
         }
 
       }
     });
   }
+
+
+
 
 
   seleccionarItem() {
@@ -417,27 +444,6 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.totalInvertidoActual = 0;
     this.porcentajeNum = '';
   }
-
-  expandItem(item: any) {
-    console.log(item)
-    var actual: string = document.getElementById("dembow" + item.id_unico).style.display;
-    if (actual == "none") {
-      document.getElementById("dembow" + item.id_unico).style.display = "block";
-      item.expanded = true;
-      document.getElementById("sliding" + item.id_unico).setAttribute("disabled", "disabled");
-    } else {
-      document.getElementById("dembow" + item.id_unico).style.display = "none";
-      item.expanded = false;
-      document.getElementById("sliding" + item.id_unico).removeAttribute("disabled");
-    }
-  }
-
-
-
-
-
-
-
 
 
   calcularPrecioActivoGrafico(activoRec, precioVivo) {
@@ -531,13 +537,11 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     const base = this.totalInvertidoBase;
     const actual = this.totalInvertidoActual;
 
-    this.service.getPrecioForexPar(this.activeCurrency, siglasDeseadas).subscribe(respuesta => {
+    this.service.recuperarPrecioCryptoCompare(this.activeCurrency, siglasDeseadas).subscribe(respuesta => {
       if (this.activeCurrency.toLowerCase() == siglasDeseadas.toLowerCase()) {
-        //this.reiniciarFinanzasUsuario();
         var precio: number = 1;
-        console.dir("entro " + siglasDeseadas)
       } else {
-        var precio: number = respuesta[0]['price'];
+        var precio: number = respuesta[this.activeCurrency][siglasDeseadas];
       }
       this.totalInvertidoBase = base * precio;
       this.totalInvertidoActual = actual * precio;
@@ -558,8 +562,17 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   public calcularPorcentajeActivo(item: any) {
-    var precioActual = item.precio;
+    let precioActual;
+    if (item.precio != undefined) {
+      precioActual = item.precio;
+    } else {
+      precioActual = item.activo.precio;
+    }
     var precioCompra = item.precio_compra;
+
+    if (item.tipoRelacion == undefined) {
+      item['tipoRelacion'] = item.tipo;
+    }
 
     if (item.tipoRelacion.toLocaleLowerCase() == "vender") {
       var calculoNegativo = (+precioCompra - +precioActual);
@@ -595,18 +608,22 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
       }
     }
   }
-  eliminar_activo(activo: any) {
+  public cerrar_operacion(activo: any) {
     const index = this.service.getArrayActivos().indexOf(activo);
-    this.service.setArrayActivos(this.service.getArrayActivos().splice(index, 1))
-    this.service.eliminarRelacion(activo.id_relacion);
-    this.arrayDiasTotal.length = 0;
-    if (this.service.getArrayActivos().length == 0) {
-      this.hayActivos = false;
-      this.reiniciarFinanzasUsuario();
-    }
-    this.generarChart();
-    this.doRefresh(undefined);
+    this.service.getArrayActivos().splice(index, 1);
+    this.service.desactivarRelacion(activo.id_relacion).subscribe((data) => {
+      this.sendNotification(data.message)
+      this.doRefresh(undefined);
+    }, (error) => {
+      this.sendNotification(error)
+    })
+  }
 
+  public eliminar_operacion(item: any) {
+    const index = this.service.getArrayActivos().indexOf(item);
+    this.service.getArrayActivoCompletosCerrados().splice(index, 1);
+    this.service.eliminarRelacion(item.id)
+    this.sendNotification("Registro eliminado para siempre")
   }
 
   agregarNuevosActivos() {

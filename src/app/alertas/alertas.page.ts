@@ -133,6 +133,7 @@ export class AlertasPage implements OnInit {
       arrayTMP.forEach(notificacion => {
         console.log("iniciando " + notificacion.numero)
 
+
         if (notificacion.tipo == "recurrente") {
           let intervalos = interval(notificacion.tiempo_segundos * 1000).subscribe((data) => {
             this.loginService.recuperarPrecioCryptoCompareFullData(notificacion.simbolo_base, notificacion.simbolo_contra).subscribe((data) => {
@@ -266,7 +267,7 @@ export class AlertasPage implements OnInit {
 
   public procesarAlertasAvanzadas(arraySubitems: Array<any>, nombreOpcion: any, numero?: number, evitarGuardado?: boolean) {
     console.log(arraySubitems)
-
+    let intervaloSMA = new Subscription;
     if (!this.comprobarSiHayValorSinDefinir(arraySubitems)) {
       let simboloA = arraySubitems[0].valor
       let simboloB = arraySubitems[1].valor
@@ -279,8 +280,10 @@ export class AlertasPage implements OnInit {
           } else {
             idAlertaSMA = Math.floor(Math.random() * 10000);
           }
+          let notificacion: AlertModelInterface = this.generarAlertaSQL(idAlertaSMA, "Notificacion SMA " + idAlertaSMA, "unico", "avisar_sma", 0, intervaloSMA, simboloA, simboloB)
+          this.scheduledObservables.push(notificacion)
 
-          let intervaloSMA = interval(10 * 1000).subscribe((data) => {
+          intervaloSMA = interval(5 * 1000).subscribe((data) => {
             this.technicalindicator.recuperarSMA(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
               let keyDatos = Object.keys(data)[1]
               let datos = data[keyDatos]
@@ -295,11 +298,8 @@ export class AlertasPage implements OnInit {
                   intervaloSMA.unsubscribe();
                   this.notificacionservice.eliminarNotificacion(idAlertaSMA)
                 }
-                let notificacion: AlertModelInterface = this.generarAlertaSQL(idAlertaSMA, "Notificacion SMA " + idAlertaSMA, "unico", "avisar_sma", 0, intervaloSMA, simboloA, simboloB)
 
-                this.scheduledObservables.push(notificacion)
                 if (!evitarGuardado) {
-
                   this.notificacionservice.guardarNotificacion(notificacion, simboloA, simboloB, valorAComparar, JSON.stringify(arraySubitems)).subscribe((data) => {
                     console.log(data)
                   })
@@ -339,7 +339,7 @@ export class AlertasPage implements OnInit {
                 console.log("ha habido un error longitud 0")
               }
             } else {
-              console.log(data)
+              this.presentToast(data)
             }
           })
           break;

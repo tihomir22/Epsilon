@@ -20,9 +20,10 @@
       <ion-card-title>
         <ion-badge color="dark" style="font-size:32px;">{{activo.nombre}}</ion-badge>
       </ion-card-title>
-
     </ion-card-header>
-    <ion-card-content color="dark">
+    <mat-divider>
+    </mat-divider>
+    <ion-card-content color="dark" style="padding:0px;">
       <ion-fab vertical="top" horizontal="end" slot="fixed" color="secondary" (click)="cambiarRotacion()">
         <ion-fab-button>
           <ion-icon name="sync"></ion-icon>
@@ -30,7 +31,6 @@
       </ion-fab>
 
       <canvas #barCanvas></canvas>
-      <ion-label padding color="medium">*Precio en dolares</ion-label>
     </ion-card-content>
   </ion-card>
 
@@ -41,6 +41,99 @@
     </ion-card-header>
     <ion-card-content style="margin-top:10px;">
       {{activo.descripcion}}
+      <div *ngIf="activo.tipo=='Criptomoneda' && coinGeckoInfo!=undefined">
+
+        <mat-list-item>
+          <h3 mat-subheader style="margin-left:-3%;">
+            <ion-icon slot="start" name="logo-github" style="margin-right:1%;"></ion-icon> Información de repositorio
+          </h3>
+          <ion-badge color="medium" mode="ios">
+            Bifurcaciones {{coinGeckoInfo.developer_data.forks}}
+          </ion-badge>
+          <ion-badge color="medium" mode="ios">
+            Estrellas {{coinGeckoInfo.developer_data.stars}}
+          </ion-badge>
+          <ion-badge color="medium" mode="ios">
+            Commits realizados ultimo mes {{coinGeckoInfo.developer_data.commit_count_4_weeks}}
+          </ion-badge>
+          <ion-badge color="medium" mode="ios">
+            Problemas {{coinGeckoInfo.developer_data.total_issues}}
+          </ion-badge>
+        </mat-list-item>
+
+        <mat-tab-group>
+          <mat-tab label="Social">
+            <mat-list>
+              <mat-list-item *ngIf="coinGeckoInfo.community_data.facebook_likes!=null">
+                <mat-icon>
+                  <ion-icon name="logo-facebook"></ion-icon>
+                </mat-icon>
+                <h4 mat-line color="medium">Likes de facebook</h4>
+                <p mat-line> {{coinGeckoInfo.community_data.facebook_likes}}</p>
+              </mat-list-item>
+              <mat-list-item *ngIf="coinGeckoInfo.community_data.reddit_subscribers!=null">
+                <mat-icon>
+                  <ion-icon name="logo-reddit"></ion-icon>
+                </mat-icon>
+                <h4 mat-line color="medium">Suscriptores en reddit</h4>
+                <p mat-line> {{coinGeckoInfo.community_data.reddit_subscribers}}</p>
+              </mat-list-item>
+              <mat-list-item *ngIf="coinGeckoInfo.community_data.twitter_followers!=null">
+                <mat-icon>
+                  <ion-icon name="logo-twitter"></ion-icon>
+                </mat-icon>
+                <h4 mat-line color="medium">Seguidores en twitter</h4>
+                <p mat-line> {{coinGeckoInfo.community_data.twitter_followers}}</p>
+              </mat-list-item>
+              <mat-list-item *ngIf="coinGeckoInfo.community_data.telegram_channel_user_count!=null">
+                <mat-icon>
+                  <ion-icon name="send"></ion-icon>
+                </mat-icon>
+                <h4 mat-line color="medium">Usuarios en telegram</h4>
+                <p mat-line> {{coinGeckoInfo.community_data.telegram_channel_user_count}}</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-tab>
+          <mat-tab label="Puntuacion">
+            <h3 mat-subheader>Puntuaciones acordes a CoinGecko y Epsilon</h3>
+            <mat-list>
+              <mat-list-item>
+                <mat-icon>show_chart
+                </mat-icon>
+                <h4 mat-line color="medium">Puntuacion Epsilon</h4>
+                <p mat-line> {{coinGeckoInfo.coingecko_score}}</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon>people</mat-icon>
+                <h4 mat-line color="medium">Puntuacion de la comunidad</h4>
+                <p mat-line> {{coinGeckoInfo.community_score}}</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon>
+                  code
+                </mat-icon>
+                <h4 mat-line color="medium">Puntuacion de desarollo</h4>
+                <p mat-line> {{coinGeckoInfo.developer_score}}</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon>public
+                </mat-icon>
+                <h4 mat-line color="medium">Interes publico</h4>
+                <p mat-line> {{coinGeckoInfo.public_interest_score}}</p>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon>attach_money
+                </mat-icon>
+                <h4 mat-line color="medium">Puntuacion de liquideza</h4>
+                <p mat-line> {{coinGeckoInfo.liquidity_score}}</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+      <div *ngIf="activo.tipo=='Criptomoneda' && coinGeckoInfo==undefined">
+        <ion-spinner name="lines"></ion-spinner>
+      </div>
     </ion-card-content>
   </ion-card>
 
@@ -179,6 +272,9 @@
         <ion-button size="large" expand="block" color="dark" type="submit">
           <ion-label color="success">Añadir Compra</ion-label>
         </ion-button>
+        <ion-button size="large" expand="block" color="light" type="button" (click)="tipo='indeterminada'">
+          <ion-label color="success">Cerrar</ion-label>
+        </ion-button>
       </form>
     </ion-card-content>
   </ion-card>
@@ -279,6 +375,9 @@
 
         <ion-button size="large" expand="block" color="dark" type="submit">
           <ion-label color="danger">Añadir Venta</ion-label>
+        </ion-button>
+        <ion-button size="large" expand="block" color="light" type="button" (click)="tipo='indeterminada'">
+          <ion-label color="danger">Cerrar</ion-label>
         </ion-button>
 
       </form>

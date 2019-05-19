@@ -6,11 +6,11 @@
     <ion-col size="12" text-center>Seleccione el par que desea comprar/vender</ion-col>
   </ion-row>
   <ion-row>
-    <ion-col size="3"></ion-col>
-    <ion-col size="6" style="text-align:center;font-size:xx-large;margin-top: 5%;" color="success">
+
+    <ion-col size="12" style="text-align:center;font-size:xx-large;margin-top: 5%;" color="success">
       {{seleccionBase.siglas}} / {{seleccionContra.siglas}}
     </ion-col>
-    <ion-col size="3"></ion-col>
+   
   </ion-row>
   <ion-row>
     <ion-col size="12" style="text-align:center;font-size:x-large;margin-bottom: 5%">
@@ -25,12 +25,14 @@
 
 
     <ion-col size="5" (click)="abrirSeleccion();eRbase=true;eRcontra=false;">
-      <ion-button expand="full" color="light">
-        <ion-avatar style="height:24px;width:24px;margin:5px;">
+
+       <ion-button expand="full" color="light">
+        <ion-avatar style="width:24px;height:24px;margin-right:5%;">
           <img [src]="generarIMG(seleccionBase)" (error)="updateUrl($event)">
         </ion-avatar>
-        <ion-label>{{cantidadBase}}</ion-label>
+        <ion-label>{{cantidadBase | number}}</ion-label>
       </ion-button>
+    
     </ion-col>
 
     <ion-col size="2">
@@ -41,11 +43,13 @@
 
     <ion-col size="5" (click)="abrirSeleccion();eRbase=false;eRcontra=true;">
       <ion-button expand="full" color="light">
-        <ion-avatar style="height:24px;width:24px;margin:5px;">
+        <ion-avatar style="width:24px;height:24px;margin-right:5%;">
           <img [src]="generarIMG(seleccionContra)" (error)="updateUrl($event)">
         </ion-avatar>
-        <ion-label>{{cantidadContra}}</ion-label>
+        <ion-label>{{cantidadContra | number}}</ion-label>
       </ion-button>
+      
+
     </ion-col>
   </ion-row>
 
@@ -92,7 +96,8 @@
     </ion-item>
     <ion-item *ngIf="tipoOrden!='market'">
       <ion-label position="inline">Precio</ion-label>
-      <ion-input type="number" [placeholder]="precioActivoSeleccionado" style="text-align:right;" step="0.00000000" [(ngModel)]="precioLimitOrder" (ionChange)="comprobarValor();"></ion-input>
+      <ion-input type="number" [placeholder]="precioActivoSeleccionado" style="text-align:right;" step="0.00000000"
+        [(ngModel)]="precioLimitOrder" (ionChange)="comprobarValor();"></ion-input>
     </ion-item>
 
     <ion-item>

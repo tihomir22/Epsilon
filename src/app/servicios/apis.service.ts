@@ -17,7 +17,7 @@ export class ApisService {
   public listaApisIniciales: Array<apiInterfaz> = [];
 
   constructor(private http: HttpClient, private service: ServiceLoginDashboardService) {
-    this.infoUsuario = service.getDestn();
+    this.infoUsuario = this.service.getDestn();
   }
   public setApi(api: apiInterfaz) {
     this.apiSeleccioanda = api;
@@ -71,7 +71,7 @@ export class ApisService {
 
   public guardarClaveAPI(apiKey: string, privateKey: string, name: string, idExchange: number) {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "anyadir_claves_api_a_usuario", "idUsuario": this.infoUsuario['idepsilon_usuarios'], "apikey": apiKey, "privatekey": privateKey, "name": name, "idExchange": idExchange },
+      options: any = { "key": "anyadir_claves_api_a_usuario", "idUsuario":  this.service.getDestn().idepsilon_usuarios, "apikey": apiKey, "privatekey": privateKey, "name": name, "idExchange": idExchange },
       url: any = this.baseURI + "manage-dataIONIC.php";
 
     return this.http.post(url, JSON.stringify(options), headers)
@@ -96,7 +96,7 @@ export class ApisService {
 
   public recuperarClavesAPI(apiKey: string, privateKey: string, name: string) {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "buscar_claves_en_bbdd", "idUsuario": this.infoUsuario['idepsilon_usuarios'], "apikey": apiKey, "privatekey": privateKey },
+      options: any = { "key": "buscar_claves_en_bbdd", "idUsuario": this.service.getDestn().idepsilon_usuarios, "apikey": apiKey, "privatekey": privateKey },
       url: any = this.baseURI + "retrieve-data.php";
 
     return this.http.post(url, JSON.stringify(options), headers)

@@ -12,7 +12,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NotificationService } from '../servicios/notification.service';
 import { AlertModelInterface } from '../alertas/modelo/alertModel';
 import { CargaModalComponent } from '../modales/carga-modal/carga-modal.component';
-import { Observable } from 'rxjs';
+import { Observable, timer } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -98,10 +98,18 @@ export class LoginPage implements OnInit {
           this.apiservice.listaApisIniciales = data;
         }, (error) => {
           console.log(error)
+          this.sendNotification(error.error.text)
+          timer(2000).subscribe((data) => {
+            this.modalController.dismiss();
+          })
+
         }, () => { })
       },
-        (error: Response) => {
-          this.sendNotification(error.statusText);
+        (error) => {
+          this.sendNotification(error.error.text)
+          timer(2000).subscribe((data) => {
+            this.modalController.dismiss();
+          })
         });
 
     } else {

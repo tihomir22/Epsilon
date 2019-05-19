@@ -10,6 +10,7 @@ import { BalancesApiComponent } from '../componentes/balances-api/balances-api.c
 import { BarChartComponent } from '../componentes/bar-chart/bar-chart.component';
 import { RealizarTransaccionBinanceComponent } from '../componentes/realizar-transaccion-binance/realizar-transaccion-binance.component';
 import { SharedModule } from '../shared/shared.module';
+import { MatIconModule, MatListModule } from '@angular/material';
 
 
 const routes: Routes = [
@@ -27,6 +28,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    MatIconModule,
+    MatListModule,
     SharedModule
   ],
   exports: [BalancesApiComponent, BarChartComponent]

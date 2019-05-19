@@ -14,7 +14,7 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-spinner name="crescent" *ngIf="cargando"></ion-spinner>
   <ion-searchbar animated (ionChange)="filtrarActivos()" [(ngModel)]="searchTerm" debounce="100"></ion-searchbar>
 

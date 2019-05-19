@@ -20,10 +20,12 @@ export class PlantillaAPIPage implements OnInit {
   constructor(private route: Router, private activaruta: ActivatedRoute, private apiService: ApisService, public loadingController: LoadingController, private navCtrl: NavController) { }
 
   ngOnInit() {
+    /*this.datosQueryParams = this.activaruta.snapshot.queryParamMap.get('tipo');
+    this.procesarParams();*/
+  }
+  ionViewWillEnter(){
     this.datosQueryParams = this.activaruta.snapshot.queryParamMap.get('tipo');
-    console.log(this.apiService.getApi())
     this.procesarParams();
-
   }
 
   goBack() {

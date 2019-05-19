@@ -20,6 +20,7 @@ export class ServiceLoginDashboardService {
   public permitirCarga: boolean = false;
   private arrayActivosServ: Array<any> = new Array;
   private arrayActivosCompletos: Array<any> = new Array;
+  private arrayActivosCompletosCerrados: Array<any> = new Array;
   private paqueteDeData: Array<any>;
   private result: any;
   private baseURI: string = "http://dembow.gearhostpreview.com/";
@@ -41,6 +42,11 @@ export class ServiceLoginDashboardService {
   public getPaqueteData(): Array<any> {
     return this.paqueteDeData;
   }
+
+  public requestCoinInfoFromCoinGecko(nombre_moneda_minusculas: string): Observable<any> {
+    return this.http.get("https://api.coingecko.com/api/v3/coins/" + nombre_moneda_minusculas.toLowerCase())
+  }
+
 
   public recuperarPrecioIEXTrading(siglasActivo: string) {
     return this.http.get("https://api.iextrading.com/1.0/stock/" + siglasActivo + "/price");
@@ -167,6 +173,14 @@ export class ServiceLoginDashboardService {
     return this.arrayActivosCompletos;
   }
 
+  public setArrayActivoCompletosCerrados(array: Array<any>) {
+    this.arrayActivosCompletosCerrados = array;
+  }
+
+  public getArrayActivoCompletosCerrados() {
+    return this.arrayActivosCompletosCerrados;
+  }
+
   public setDestn(destn) {
     this.userInfo = destn;
   }
@@ -232,6 +246,14 @@ export class ServiceLoginDashboardService {
         });
   }
 
+  public desactivarRelacion(idRelacion: any): Observable<any> {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "desactivar_relacion", "id_relacion": idRelacion },
+      url: any = this.baseURI + "manage-dataIONIC.php";
+
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
 
 
 
@@ -251,6 +273,7 @@ export class ServiceLoginDashboardService {
     this.tipoAdquisicion = null;
     this.arrayActivosServ = new Array;
     this.arrayActivosCompletos = new Array;
+    this.arrayActivosCompletosCerrados = new Array;
   }
 
 

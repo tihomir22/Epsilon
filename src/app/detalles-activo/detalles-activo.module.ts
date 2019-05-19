@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { DetallesActivoPage } from './detalles-activo.page';
+import { MatDividerModule, MatTabsModule, MatListModule, MatIconModule } from '@angular/material';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
+    MatDividerModule,
+    MatTabsModule,
+    MatListModule,
+    MatIconModule,
     RouterModule.forChild(routes)
   ],
   declarations: [DetallesActivoPage]

@@ -13,9 +13,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpModule } from '@angular/http';
 import { AgregarActivosPage } from './agregar-activos/agregar-activos.page';
 import { ModalpagePage } from '../app/modales/modalpage/modalpage.page';
-
-
-
 import { Camera } from '@ionic-native/camera/ngx/';
 import { Crop } from '@ionic-native/crop/ngx/';
 import { File } from '@ionic-native/file/ngx';
@@ -42,6 +39,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
+
 @NgModule({
   declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent, CargaModalComponent, EMAmodalComponent],
   entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent,CargaModalComponent],
@@ -57,6 +55,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PlantillaAPIPageModule,
     SharedModule,
     BrowserAnimationsModule
+    
 
 
   ],

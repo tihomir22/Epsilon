@@ -388,7 +388,8 @@ export class RealizarTransaccionBinanceComponent implements OnInit {
 
     modal.onDidDismiss()
       .then((data) => {
-        if (data != undefined) {
+        console.log(data)
+        if (data.data != undefined) {
           if (this.eRbase) {
             this.seleccionBase = data.data;
             this.cantidadBase = this.listaBalanceBinanceUsuario[data.data.siglas].available;

@@ -63,32 +63,37 @@ export class EMAmodalComponent implements OnInit {
           fill: false,
           borderColor: '#0074D9',
           borderWidth: 1
-        }],
-        options: {
-          legend: {
-            display: false
-          },
-          elements: {
-            point: {
-              radius: 0
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        responsive: true,
+        title: {
+          display: false,
+          text: 'Rendimiento del portfolio'
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+
+        },
+        hover: {
+          mode: 'dataset',
+          intersect: true
+        },
+        scales: {
+          xAxes: [{
+            ticks: {
+              display: false
             }
-          },
-          responsive: true,
-          title: {
-            display: true,
-            text: 'SMA'
-          },
-          tooltips: {
-            mode: 'index',
-            intersect: false,
-
-          },
-          hover: {
-            mode: 'dataset',
-            intersect: true
-          },
-
-
+          }],
+          yAxes: [{
+            ticks: {
+              display: false
+            }
+          }]
         }
 
       }
