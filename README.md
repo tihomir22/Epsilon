@@ -57,3 +57,5 @@
 
 * BETA 0.6.0 : BITE THE PAIN V1 => Implementada nueva pagina de notificaciones personalizabels por el usuario,de tres tipos, basicas-intermedias-avanzadas, con su respectivo crud y funcionabilidad. Mejorado ENORMEMENTE el login y no tiene bugs, aparte de un remodelado visual total. Aparte fue creado un modal que muestra el SMA (una opcion avanza) con ngMaterial incorporado. Solucion de bugs menores y efectos visuales. Profesionalización de la app (icono,texto,desc,metadata,etc)..
 
+* BETA 0.6.1: BITE THE PAIN V2 => Estabilizacion de la App, estilos mejorados y estetica. Nueva libreria implementada (ngMaterial). Implementada notificacion avanzada con SMA. Muchos bugs solucionados y intuición mejorada.
+
