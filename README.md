@@ -21,7 +21,7 @@
 
 ## Epsilon Documentation
 * Ultima compilacion exitosa
-* https://mega.nz/#!rvpEwY4S!zY8gNoQwtgWUaIR-X9_zAVjWpiul21tPMlhKRAhMjxA
+* https://mega.nz/#!GzhyjAab!PAt0dwM8-3TzfsX5GyZHTh_4p1EXHOuhvE1c_xA8fdU
 * Documentacion online
 * https://docs.google.com/document/d/1A0hKtf_DiZKZzCqE4Zl_llTbedzGU9gf4FrsUz_cRAc/edit?usp=sharing
 ## Epsilon Progress
@@ -56,4 +56,6 @@
 * BETA 0.5.0 : Spirit Crusher V1 => Estabilización de la aplicacion, posibilidad de fijar precio en ordenes de tipo limit y realizar calculos pertinentes, listado de transacciones del  usuario implementadas, tambien la cancelación de ordenes que esten a la espera, modificación del login para hacerlo más intuitivo elegante y bonito, tambien  agregadas nuevas opciones en el login pendientes de implementar, solucion de bugs menores y backend modificado.
 
 * BETA 0.6.0 : BITE THE PAIN V1 => Implementada nueva pagina de notificaciones personalizabels por el usuario,de tres tipos, basicas-intermedias-avanzadas, con su respectivo crud y funcionabilidad. Mejorado ENORMEMENTE el login y no tiene bugs, aparte de un remodelado visual total. Aparte fue creado un modal que muestra el SMA (una opcion avanza) con ngMaterial incorporado. Solucion de bugs menores y efectos visuales. Profesionalización de la app (icono,texto,desc,metadata,etc)..
+
+* BETA 0.6.1: BITE THE PAIN V2 => Estabilizacion de la App, estilos mejorados y estetica. Nueva libreria implementada (ngMaterial). Implementada notificacion avanzada con SMA. Muchos bugs solucionados y intuición mejorada.
 
