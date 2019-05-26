@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Platform, AlertController, ModalController, ToastController, PopoverController } from '@ionic/angular';
+import { Platform, AlertController, ModalController, ToastController, PopoverController, LoadingController } from '@ionic/angular';
 import { LocalNotifications, ELocalNotificationTriggerUnit, ILocalNotification } from '@ionic-native/local-notifications/ngx';
 import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { AgregarActivosCompComponent } from '../componentes/agregar-activos-comp/agregar-activos-comp.component';
-import { timer, interval, Observable, Subscription } from 'rxjs';
+import { timer, interval, Observable, Subscription, of } from 'rxjs';
 import { AlertModelInterface } from './modelo/alertModel';
 import { onlyAlerts } from './onlyAlerts';
 import { NotificacionesListaCompComponent } from './componentes/notificaciones-lista-comp/notificaciones-lista-comp.component';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { NotificationService } from '../servicios/notification.service';
 import { TechnicalIndicatorsService } from '../servicios/technical-indicators.service';
 import { EMAmodalComponent } from '../componentes/graficosTecnicos/smamodal/emamodal.component';
-import { Platforms } from '@ionic/core';
+
+import { constantesAlertas } from './constantesAlertas';
+import { DoslineasconbarrasComponent } from '../componentes/graficosTecnicos/doslineasconbarras/doslineasconbarras.component';
 
 @Component({
   selector: 'app-alertas',
@@ -50,7 +51,8 @@ export class AlertasPage implements OnInit {
     private popoverController: PopoverController,
     private notificacionservice: NotificationService,
     private technicalindicator: TechnicalIndicatorsService,
-    private platform: Platform) {
+    private platform: Platform,
+    private loadingController: LoadingController) {
 
 
 
@@ -79,32 +81,16 @@ export class AlertasPage implements OnInit {
 
     this.arrayOpcionesAvanzadas = [
       {
-        nombre: "Avisar cuando el SMA se acerque a cierto punto", mostrando: false, subitems: [
-          { nombre: "Par base", valor: "Sin asignar", tipo: 'item-label-doslineas' },
-          { nombre: "Par contra", valor: "Sin asignar", tipo: 'item-label-doslineas' },
-          {
-            nombre: "Intervalo de tiempo", valor: "60min", tipo: 'item-single-select', opciones: [
-              { valor: "1min", texto: "1 Minuto" },
-              { valor: "5min", texto: "5 Minutos" },
-              { valor: "15min", texto: "15 Minutos" },
-              { valor: "30min", texto: "30 Minutos" },
-              { valor: "60min", texto: "60 Minutos" },
-              { valor: "daily", texto: "Diario" },
-              { valor: "weekly", texto: "Semanal" },
-              { valor: "monthly", texto: "Mensual" }
-            ]
-          },
-          { nombre: "Periodo de tiempo", valor: "100", tipo: 'item-number-input', placeholder: 'Ej : 50, 100, 200,' },
-          {
-            nombre: "Tipo de precio", valor: "close", tipo: 'item-single-select', opciones: [
-              { valor: "close", texto: "Precio de cierre" },
-              { valor: "open", texto: "Precio de apertura" },
-              { valor: "high", texto: "Precio maximo (high)" },
-              { valor: "low", texto: "Precio minimo (low)" },
-            ]
-          },
-          { nombre: "SMA objetivo", valor: "", tipo: 'item-number-input', placeholder: 'Ej : 6000,7000,1000,' },
-        ]
+        nombre: "Avisar cuando el SMA se acerque a cierto punto", mostrando: false, subitems: constantesAlertas.devolverParamsEMASMARSI('SMA'),
+      },
+      {
+        nombre: "Avisar cuando el EMA se acerque a cierto punto", mostrando: false, subitems: constantesAlertas.devolverParamsEMASMARSI('EMA')
+      },
+      {
+        nombre: "Avisar cuando el RSI se acerque a cierto punto", mostrando: false, subitems: constantesAlertas.devolverParamsEMASMARSI('RSI')
+      },
+      {
+        nombre: "Avisar cuando el MACD se acerque a cierto punto", mostrando: false, subitems: constantesAlertas.devolverParamsMACD('MACD')
       }
     ]
 
@@ -115,10 +101,8 @@ export class AlertasPage implements OnInit {
     this.platform.ready().then((data) => {
       if (this.platform.is('android') || this.platform.is('ios'))
         this.localNotifications.hasPermission().then(data => {
-          console.log(data)
           if (data != true) {
             this.localNotifications.requestPermission().then(data => {
-              console.log(data)
             })
           }
         })
@@ -132,8 +116,6 @@ export class AlertasPage implements OnInit {
     if (arrayTMP.length > 0) {
       arrayTMP.forEach(notificacion => {
         console.log("iniciando " + notificacion.numero)
-
-
         if (notificacion.tipo == "recurrente") {
           let intervalos = interval(notificacion.tiempo_segundos * 1000).subscribe((data) => {
             this.loginService.recuperarPrecioCryptoCompareFullData(notificacion.simbolo_base, notificacion.simbolo_contra).subscribe((data) => {
@@ -150,6 +132,12 @@ export class AlertasPage implements OnInit {
         } else if (notificacion.tipo == "unico") {
           if (notificacion.subtipo == "avisar_sma") {
             this.procesarAlertasAvanzadas(JSON.parse(notificacion.subitems), "Avisar cuando el SMA se acerque a cierto punto", notificacion.numero, true)
+          } else if (notificacion.subtipo == "avisar_ema") {
+            this.procesarAlertasAvanzadas(JSON.parse(notificacion.subitems), "Avisar cuando el EMA se acerque a cierto punto", notificacion.numero, true)
+          } else if (notificacion.subtipo == "avisar_rsi") {
+            this.procesarAlertasAvanzadas(JSON.parse(notificacion.subitems), "Avisar cuando el RSI se acerque a cierto punto", notificacion.numero, true)
+          } else if (notificacion.subtipo == "avisar_macd") {
+            this.procesarAlertasAvanzadas(JSON.parse(notificacion.subitems), "Avisar cuando el MACD se acerque a cierto punto", notificacion.numero, true)
           } else {
             this.ejecutarAlertaOpcionesMultiples([notificacion.subtipo], notificacion.simbolo_base, notificacion.simbolo_contra, true, notificacion.numero)
           }
@@ -266,24 +254,25 @@ export class AlertasPage implements OnInit {
   }
 
   public procesarAlertasAvanzadas(arraySubitems: Array<any>, nombreOpcion: any, numero?: number, evitarGuardado?: boolean) {
-    console.log(arraySubitems)
-    let intervaloSMA = new Subscription;
+    let idAlerta;
+    let alertaSql: AlertModelInterface;
+
     if (!this.comprobarSiHayValorSinDefinir(arraySubitems)) {
       let simboloA = arraySubitems[0].valor
       let simboloB = arraySubitems[1].valor
       switch (nombreOpcion) {
         case "Avisar cuando el SMA se acerque a cierto punto":
+          let intervaloSMA = new Subscription;
           //cada 10 secs comprobara si el precio de X ha tocado el precio marcado por el usuario!
-          let idAlertaSMA;
           if (numero != undefined) {
-            idAlertaSMA = numero;
+            idAlerta = numero;
           } else {
-            idAlertaSMA = Math.floor(Math.random() * 10000);
+            idAlerta = Math.floor(Math.random() * 10000);
           }
-          let notificacion: AlertModelInterface = this.generarAlertaSQL(idAlertaSMA, "Notificacion SMA " + idAlertaSMA, "unico", "avisar_sma", 0, intervaloSMA, simboloA, simboloB)
-          this.scheduledObservables.push(notificacion)
+          alertaSql = this.generarAlertaSQL(idAlerta, "Notificacion SMA " + idAlerta, "unico", "avisar_sma", 0, intervaloSMA, simboloA, simboloB)
+          this.scheduledObservables.push(alertaSql)
 
-          intervaloSMA = interval(5 * 1000).subscribe((data) => {
+          intervaloSMA = interval(5 * 4000).subscribe((data) => {
             this.technicalindicator.recuperarSMA(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
               let keyDatos = Object.keys(data)[1]
               let datos = data[keyDatos]
@@ -293,14 +282,15 @@ export class AlertasPage implements OnInit {
                 });
                 let datoMasReciente = resultadoData[0];
                 let valorAComparar = arraySubitems[arraySubitems.length - 1].valor
-                if (datoMasReciente > (valorAComparar - 100) && datoMasReciente < (valorAComparar + 100)) {
+                if (datoMasReciente > (valorAComparar - (valorAComparar * 0.1)) && datoMasReciente < (valorAComparar + (valorAComparar * 0.1))) {
                   onlyAlerts.mostrarPrecioInmediatoTest("Nos acercamos al nivel SMA", "El nivel de SMA " + datoMasReciente + " se esta acercando a su nivel establecido de " + valorAComparar, this.localNotifications)
                   intervaloSMA.unsubscribe();
-                  this.notificacionservice.eliminarNotificacion(idAlertaSMA)
+                  of(this.scheduledObservables).map(observables => observables.filter(observable => observable.numero != idAlerta)).subscribe((data) => { this.scheduledObservables = data })
+                  this.notificacionservice.eliminarNotificacion(idAlerta)
                 }
 
                 if (!evitarGuardado) {
-                  this.notificacionservice.guardarNotificacion(notificacion, simboloA, simboloB, valorAComparar, JSON.stringify(arraySubitems)).subscribe((data) => {
+                  this.notificacionservice.guardarNotificacion(alertaSql, simboloA, simboloB, valorAComparar, JSON.stringify(arraySubitems)).subscribe((data) => {
                     console.log(data)
                   })
                   evitarGuardado = true;
@@ -309,6 +299,128 @@ export class AlertasPage implements OnInit {
             })
           })
           break;
+        case "Avisar cuando el EMA se acerque a cierto punto":
+          let intervaloEMA = new Subscription;
+          if (numero != undefined) {
+            idAlerta = numero;
+          } else {
+            idAlerta = Math.floor(Math.random() * 10000);
+          }
+          alertaSql = this.generarAlertaSQL(idAlerta, "Notificacion EMA " + idAlerta, "unico", "avisar_ema", 0, intervaloEMA, simboloA, simboloB)
+          this.scheduledObservables.push(alertaSql);
+          intervaloEMA = interval(5 * 4000).subscribe((data) => {
+            this.technicalindicator.recuperarEMA(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
+              let keyDatos = Object.keys(data)[1]
+              let datos = data[keyDatos]
+              if (datos != undefined) {
+                let resultadoData = Object.keys(datos).map(function (key) {
+                  return Number(datos[key]['EMA'])
+                });
+                let datoMasReciente = resultadoData[0];
+                let valorAComparar = arraySubitems[arraySubitems.length - 1].valor
+                if (datoMasReciente > (valorAComparar - (valorAComparar * 0.1)) && datoMasReciente < (valorAComparar + (valorAComparar * 0.1))) {
+                  onlyAlerts.mostrarPrecioInmediatoTest("Nos acercamos al nivel EMA", "El nivel de EMA " + datoMasReciente + " se esta acercando a su nivel establecido de " + valorAComparar, this.localNotifications)
+                  intervaloEMA.unsubscribe();
+                  of(this.scheduledObservables).map(observables => observables.filter(observable => observable.numero != idAlerta)).subscribe((data) => { this.scheduledObservables = data })
+                  this.notificacionservice.eliminarNotificacion(idAlerta)
+                }
+
+                if (!evitarGuardado) {
+                  this.notificacionservice.guardarNotificacion(alertaSql, simboloA, simboloB, valorAComparar, JSON.stringify(arraySubitems)).subscribe((data) => {
+                    console.log(data)
+                  })
+                  evitarGuardado = true;
+                }
+              }
+            })
+          })
+          break;
+        case "Avisar cuando el RSI se acerque a cierto punto":
+          let intervaloRSI = new Subscription;
+          if (numero != undefined) {
+            idAlerta = numero;
+          } else {
+            idAlerta = Math.floor(Math.random() * 10000);
+          }
+          alertaSql = this.generarAlertaSQL(idAlerta, "Notificacion RSI " + idAlerta, "unico", "avisar_rsi", 0, intervaloRSI, simboloA, simboloB)
+          this.scheduledObservables.push(alertaSql);
+          intervaloRSI = interval(5 * 4000).subscribe((data) => {
+            this.technicalindicator.recuperarRSI(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
+              let keyDatos = Object.keys(data)[1]
+              let datos = data[keyDatos]
+              if (datos != undefined) {
+                let resultadoData = Object.keys(datos).map(function (key) {
+                  return Number(datos[key]['RSI'])
+                });
+                let datoMasReciente = resultadoData[0];
+                let valorAComparar = arraySubitems[arraySubitems.length - 1].valor
+                if (datoMasReciente > (valorAComparar - (valorAComparar * 0.1)) && datoMasReciente < (valorAComparar + (valorAComparar * 0.1))) {
+                  onlyAlerts.mostrarPrecioInmediatoTest("Nos acercamos al nivel RSI", "El nivel de RSI " + datoMasReciente + " se esta acercando a su nivel establecido de " + valorAComparar, this.localNotifications)
+                  intervaloRSI.unsubscribe();
+                  of(this.scheduledObservables).map(observables => observables.filter(observable => observable.numero != idAlerta)).subscribe((data) => { this.scheduledObservables = data })
+                  this.notificacionservice.eliminarNotificacion(idAlerta)
+                }
+
+                if (!evitarGuardado) {
+                  this.notificacionservice.guardarNotificacion(alertaSql, simboloA, simboloB, valorAComparar, JSON.stringify(arraySubitems)).subscribe((data) => {
+                    console.log(data)
+                  })
+                  evitarGuardado = true;
+                }
+              }
+            })
+          })
+          break;
+        case "Avisar cuando el MACD se acerque a cierto punto":
+          let intervaloMACD = new Subscription;
+          if (numero != undefined) {
+            idAlerta = numero;
+          } else {
+            idAlerta = Math.floor(Math.random() * 10000);
+          }
+          alertaSql = this.generarAlertaSQL(idAlerta, "Notificacion MACD " + idAlerta, "unico", "avisar_macd", 0, intervaloMACD, simboloA, simboloB)
+          this.scheduledObservables.push(alertaSql);
+          console.log(arraySubitems);
+          intervaloMACD = interval(5 * 4000).subscribe((data) => {
+            this.technicalindicator.recuperarMACD(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor).subscribe((data) => {
+              let keyDatos = Object.keys(data)[1]
+              let datos = data[keyDatos]
+              if (datos != undefined) {
+                let resultadoData = Object.keys(datos).map(function (key) {
+                  return Number(datos[key]['MACD'])
+                });
+                let resultadoData2 = Object.keys(datos).map(function (key) {
+                  return Number(datos[key]['MACD_Signal'])
+                });
+                let resultadoData3 = Object.keys(datos).map(function (key) {
+                  return Number(datos[key]['MACD_Hist'])
+                });
+                let datoMasReciente = resultadoData[0];
+                let datosMasReciente2 = resultadoData2[0];
+                let datosMasReciente3 = resultadoData3[0];
+
+                let valorAComparar1 = arraySubitems[arraySubitems.length - 3].valor
+                let valorAComparar2 = arraySubitems[arraySubitems.length - 2].valor
+                let valorAComparar3 = arraySubitems[arraySubitems.length - 1].valor
+
+                if (this.realizarComparativaMACD(datoMasReciente, datosMasReciente2, datosMasReciente3, valorAComparar1, valorAComparar2, valorAComparar3)) {
+                  onlyAlerts.mostrarPrecioInmediatoTest("Nos acercamos al nivel MACD limite", "MACD " + valorAComparar1 + " MACD señal" + valorAComparar2 + " Histograma " + valorAComparar3, this.localNotifications)
+                  intervaloMACD.unsubscribe();
+                  of(this.scheduledObservables).map(observables => observables.filter(observable => observable.numero != idAlerta)).subscribe((data) => { this.scheduledObservables = data })
+                  this.notificacionservice.eliminarNotificacion(idAlerta)
+                }
+
+                if (!evitarGuardado) {
+                  this.notificacionservice.guardarNotificacion(alertaSql, simboloA, simboloB, valorAComparar1, valorAComparar2, valorAComparar3, JSON.stringify(arraySubitems)).subscribe((data) => {
+                    console.log(data)
+                  })
+                  evitarGuardado = true;
+                }
+              }
+            })
+          })
+          break;
+
         default:
           break;
       }
@@ -317,8 +429,30 @@ export class AlertasPage implements OnInit {
     }
   }
 
+  private realizarComparativaMACD(dato1: number, dato2: number, dato3: number, comparador1: number, comparador2: number, comparador3: number): boolean {
+    let res: boolean = false;
+    if (dato2 > (comparador1 - (comparador1 * 0.1)) && dato2 < (comparador1 + (comparador1 * 0.1))) {
+      res = true;
+    }
+    if (dato1 > (comparador2 - (comparador2 * 0.1)) && dato1 < (comparador2 + (comparador2 * 0.1))) {
+      res = true;
+    }
+    if (dato3 > (comparador3 - (comparador3 * 0.1)) && dato3 < (comparador3 + (comparador3 * 0.1))) {
+      res = true;
+    }
+    return res;
+  }
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Cargando'
+    });
+    await loading.present();
+  }
+
   public verGrafico(arraySubitems: Array<any>, opcionActual: any) {
     if (!this.comprobarSiHayValorSinDefinir(arraySubitems)) {
+      this.presentLoading();
       switch (opcionActual.nombre) {
         case "Avisar cuando el SMA se acerque a cierto punto":
           this.technicalindicator.recuperarSMA(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
@@ -334,15 +468,97 @@ export class AlertasPage implements OnInit {
               if (resultadoData.length > 0) {
                 resultadoData.length = 50;
                 resultadoLabel.length = 50;
-                this.presentarModalGraficoSMA(resultadoData, resultadoLabel)
+                this.presentarModalGraficoEMASMA(resultadoData, resultadoLabel, "SMA")
               } else if (resultadoData.length == 0) {
                 console.log("ha habido un error longitud 0")
               }
             } else {
-              this.presentToast(data)
+              this.mostrarError(data);
             }
           })
           break;
+        case "Avisar cuando el EMA se acerque a cierto punto":
+          this.technicalindicator.recuperarEMA(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
+            let keyDatos = Object.keys(data)[1]
+            let datos = data[keyDatos]
+            if (datos != undefined) {
+              let resultadoData = Object.keys(datos).map(function (key) {
+                return Number(datos[key]['EMA'])
+              });
+              let resultadoLabel = Object.keys(datos).map(function (key) {
+                return key
+              });
+              if (resultadoData.length > 0) {
+                resultadoData.length = 50;
+                resultadoLabel.length = 50;
+                this.presentarModalGraficoEMASMA(resultadoData, resultadoLabel, "EMA")
+              } else if (resultadoData.length == 0) {
+                console.log("ha habido un error longitud 0")
+              }
+            } else {
+              this.mostrarError(data);
+            }
+          })
+          break;
+
+        case "Avisar cuando el RSI se acerque a cierto punto":
+          this.technicalindicator.recuperarRSI(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor, arraySubitems[4].valor).subscribe((data) => {
+            let keyDatos = Object.keys(data)[1]
+            let datos = data[keyDatos]
+            if (datos != undefined) {
+              let resultadoData = Object.keys(datos).map(function (key) {
+                return Number(datos[key]['RSI'])
+              });
+              let resultadoLabel = Object.keys(datos).map(function (key) {
+                return key
+              });
+              if (resultadoData.length > 0) {
+                resultadoData.length = 50;
+                resultadoLabel.length = 50;
+                this.presentarModalGraficoEMASMA(resultadoData, resultadoLabel, "RSI")
+              } else if (resultadoData.length == 0) {
+                console.log("ha habido un error longitud 0")
+              }
+            } else {
+              this.mostrarError(data);
+            }
+          })
+          break;
+
+        case "Avisar cuando el MACD se acerque a cierto punto":
+          console.log(arraySubitems)
+          this.technicalindicator.recuperarMACD(arraySubitems[0].valor, arraySubitems[1].valor, arraySubitems[2].valor, arraySubitems[3].valor).subscribe((data) => {
+            let keyDatos = Object.keys(data)[1]
+            let datos = data[keyDatos]
+            if (datos != undefined) {
+              let resultadoData = Object.keys(datos).map(function (key) {
+                return Number(datos[key]['MACD'])
+              });
+              let resultadoData2 = Object.keys(datos).map(function (key) {
+                return Number(datos[key]['MACD_Signal'])
+              });
+              let resultadoData3 = Object.keys(datos).map(function (key) {
+                return Number(datos[key]['MACD_Hist'])
+              });
+
+              let resultadoLabel = Object.keys(datos).map(function (key) {
+                return key
+              });
+              if (resultadoData.length > 0) {
+                resultadoData.length = 50;
+                resultadoData2.length = 50;
+                resultadoData3.length = 50;
+                resultadoLabel.length = 50;
+                this.presentarModalGraficoMACD(resultadoData, resultadoData2, resultadoData3, resultadoLabel, "MACD")
+              } else if (resultadoData.length == 0) {
+                console.log("ha habido un error longitud 0")
+              }
+            } else {
+              this.presentToast("Se ha sobrepasado el limite, intentelo más tarde.")
+            }
+          })
+          break;
+
         default:
           break;
       }
@@ -351,12 +567,37 @@ export class AlertasPage implements OnInit {
     }
   }
 
-  private async presentarModalGraficoSMA(arrayDatos: Array<number>, arrayLabels: Array<string>) {
+  async mostrarError(data) {
+    this.presentToast(data['Error Message'])
+    timer(1000).subscribe((data) => {
+      this.loadingController.dismiss()
+    })
+
+  }
+
+  private async presentarModalGraficoEMASMA(arrayDatos: Array<number>, arrayLabels: Array<string>, tipo: string) {
     const modal = await this.modalctrl.create({
       component: EMAmodalComponent,
       componentProps: {
+        'tipo': tipo,
         'arrayDatos': arrayDatos,
         'arrayLabels': arrayLabels
+
+      }
+    });
+    return await modal.present();
+  }
+
+  private async presentarModalGraficoMACD(arrayDatos1: Array<number>, arrayDatos2: Array<number>, arrayDatos3: Array<number>, arrayLabels: Array<string>, tipo: string) {
+    const modal = await this.modalctrl.create({
+      component: DoslineasconbarrasComponent,
+      componentProps: {
+        'tipo': tipo,
+        'arrayDatosPrimarios': arrayDatos1,
+        'arrayDatosSecundarios': arrayDatos2,
+        'arrayDatosTerciarios': arrayDatos3,
+        'arrayLabels': arrayLabels
+
       }
     });
     return await modal.present();

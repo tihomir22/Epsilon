@@ -196,6 +196,7 @@ export class RegistroPage {
       }
       var rutaReal = this.generarImagen.substr(this.generarImagen.lastIndexOf('/') + 1)
       rutaReal = this.baseURI + "fotosusuarios/" + rutaReal;
+      
       let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
         options: any = { "key": "create", "usuario": this.usuarioString, "email": this.emailString, "pass": this.passString, "sexo": this.sexoString, "rutaImagen": rutaReal, "telefono": this.codigoPais + "" + this.telString },
         url: any = this.baseURI + "manage-dataIONIC.php";

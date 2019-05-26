@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { Chart } from 'chart.js';
-import { ModalController } from '@ionic/angular';
+import { ModalController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-emamodal',
@@ -14,6 +14,13 @@ export class EMAmodalComponent implements OnInit {
   set arrayDatos(arrayDatos: Array<number>) {
     if (arrayDatos != undefined) {
       this._arrayDatos = arrayDatos.reverse();
+    }
+  }
+
+  @Input('tipo')
+  set tipo(tipo: string) {
+    if (tipo != undefined) {
+      this._tipo = tipo
     }
   }
 
@@ -31,14 +38,16 @@ export class EMAmodalComponent implements OnInit {
 
   public _arrayDatos: Array<number>;
   public _arrayLabels: Array<string>;
+  public _tipo: string;
   public totalRegistros: number;
   public datosCortados: Array<any>;
   public labelCortados: Array<any>;
   public numeroRecorteMin = 0;
   public numeroRecorteMax = 5;
-  constructor(private modalctrl: ModalController) { }
+  constructor(private modalctrl: ModalController, private loadingController: LoadingController) { }
 
   ngOnInit() {
+    this.loadingController.dismiss();
   }
 
   private recalcularDatos(): void {
@@ -57,7 +66,7 @@ export class EMAmodalComponent implements OnInit {
       data: {
         labels: arrayLabels,
         datasets: [{
-          label: 'Rendimiento del SMA',
+          label: 'Rendimiento del ' + this._tipo,
           data: arrayDatos,
           backgroundColor: '#0074D9',
           fill: false,
@@ -66,6 +75,11 @@ export class EMAmodalComponent implements OnInit {
         }]
       },
       options: {
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
         legend: {
           display: false
         },
@@ -105,7 +119,6 @@ export class EMAmodalComponent implements OnInit {
   }
 
   public pageChangeEvent(event) {
-    console.log(event)
     let distancia = this.numeroRecorteMax - this.numeroRecorteMin;
     if (event.previousPageIndex < event.pageIndex) {
       //siguiente pagina

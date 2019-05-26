@@ -192,10 +192,10 @@ export class AgregarActivosCompComponent extends HammerGestureConfig implements 
 
 
 
-  generarImgCripto(activo) {
-    return this.baseURI + "img-activos/" + activo.nombre + ".png";
+  public generarImgCripto(activo) {
+    return activo.rutaIMG;
   }
-  generarImgStock(activo) {
+  public generarImgStock(activo) {
     return this.baseURI + "img-activos-stocks/" + activo.nombre + ".png";
   }
 

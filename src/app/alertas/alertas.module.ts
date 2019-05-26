@@ -9,6 +9,7 @@ import { AlertasPage } from './alertas.page';
 import { NotificacionesListaCompComponent } from './componentes/notificaciones-lista-comp/notificaciones-lista-comp.component';
 import { EMAmodalComponent } from '../componentes/graficosTecnicos/smamodal/emamodal.component';
 import { MatListModule, MatPaginatorModule } from '@angular/material';
+import { DoslineasconbarrasComponent } from '../componentes/graficosTecnicos/doslineasconbarras/doslineasconbarras.component';
 
 const routes: Routes = [
   {
@@ -27,7 +28,7 @@ const routes: Routes = [
     MatPaginatorModule
 
   ],
-  declarations: [AlertasPage, NotificacionesListaCompComponent, EMAmodalComponent],
-  entryComponents: [NotificacionesListaCompComponent, EMAmodalComponent]
+  declarations: [AlertasPage, NotificacionesListaCompComponent, EMAmodalComponent,DoslineasconbarrasComponent],
+  entryComponents: [NotificacionesListaCompComponent, EMAmodalComponent, DoslineasconbarrasComponent]
 })
 export class AlertasPageModule { }

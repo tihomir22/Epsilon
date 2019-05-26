@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="primary">
+      <ion-button color="light" (click)="cerrarModal()">
+        <ion-label>
+          <ion-icon slot="start" name="close" style="font-size:20px;"></ion-icon>
+        </ion-label>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{_tipo}}</ion-title>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <canvas #mixedCanvas></canvas>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Registros en detalle</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <mat-list>
+        <mat-list-item *ngFor="let datos of datosCortados;let i=index">
+          <h3 matLine><strong>{{labelCortados[i]}}</strong></h3>
+          <p matLine>
+            <span>MACD {{datosCortados[i]}} </span>
+          </p>
+          <p matLine>
+            <span>MACD señal {{datosCortados2[i]}} </span>
+          </p>
+          <p matLine>
+            <span>MACD histograma {{datosCortados3[i]}} </span>
+          </p>
+        </mat-list-item>
+        <mat-paginator [length]="totalRegistros" [pageSize]="5" [pageSizeOptions]="" (page)="pageChangeEvent($event)">
+        </mat-paginator>
+      </mat-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

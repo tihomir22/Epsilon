@@ -13,6 +13,11 @@ import { NotificationService } from '../servicios/notification.service';
 import { AlertModelInterface } from '../alertas/modelo/alertModel';
 import { CargaModalComponent } from '../modales/carga-modal/carga-modal.component';
 import { Observable, timer } from 'rxjs';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+import { UsuarioInterface } from '../perfil/class/UsuarioInterface';
+import { AdminServiceService } from '../servicios/admin-service.service';
+
+
 
 @Component({
   selector: 'app-login',
@@ -51,7 +56,8 @@ export class LoginPage implements OnInit {
     private apiservice: ApisService,
     private iab: InAppBrowser,
     private notificacionService: NotificationService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private adminSer: AdminServiceService
   ) {
     this.formgroup = formbuilder.group({
       usuario: ['', Validators.required],
@@ -83,8 +89,23 @@ export class LoginPage implements OnInit {
         url: any = this.baseURI + "retrieve-data.php";
 
       this.http.post(url, JSON.stringify(options), headers).subscribe((data: any) => {
-
+        console.log(data)
         this.service.setDestn(data);
+        if (this.service.getDestn().privilegios == 'admin') {
+          if (this.adminSer.getAppPages()[0].title != 'Administracion') {
+            this.adminSer.getAppPages().unshift({
+              title: 'Administracion',
+              url: '/admin',
+              icon: 'code'
+            })
+          }
+        } else {
+          if (this.adminSer.getAppPages()[0].title == 'Administracion') {
+            this.adminSer.getAppPages().shift();
+            let tmp = this.adminSer.getAppPages();
+            this.adminSer.setAppPages(tmp);
+          }
+        }
         this.cargaActivos(data.idepsilon_usuarios).subscribe((data) => {
           this.service.setPaqueteData(data)
           this.navCtrl.navigateForward("/dashboard");
@@ -135,42 +156,45 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-    this.menuCtrl.enable(false);
-    this.myStyle = {
-      'position': 'fixed',
-      'width': '100%',
-      'height': '100%',
-      'background-color': '#343148',
-      'z-index': 0,
-      'top': 0,
-      'left': 0,
-      'right': 0,
-      'bottom': 0,
-    };
-    this.myParams = {
-      particles: {
-        number: {
-          value: 100,
-        },
-        color: {
-          value: '#0074D9'
-        },
-        shape: {
-          type: 'triangle',
-        },
-      }
-    };
+    this.platform.ready().then((data) => {
+      this.menuCtrl.enable(false);
+      this.myStyle = {
+        'position': 'fixed',
+        'width': '100%',
+        'height': '100%',
+        'background-color': '#343148',
+        'z-index': 0,
+        'top': 0,
+        'left': 0,
+        'right': 0,
+        'bottom': 0,
+      };
+      this.myParams = {
+        particles: {
+          number: {
+            value: 100,
+          },
+          color: {
+            value: '#0074D9'
+          },
+          shape: {
+            type: 'triangle',
+          },
+        }
+      };
 
-    const options = {
-      strings: ['Epsilon.', 'Exito.', 'Ciencia.', 'Voluntad.', 'Fortaleza.'],
-      typeSpeed: 100,
-      backSpeed: 100,
-      showCursor: true,
-      cursorChar: '|',
-      loop: true
-    };
+      const options = {
+        strings: ['Epsilon.', 'Exito.', 'Ciencia.', 'Voluntad.', 'Fortaleza.'],
+        typeSpeed: 100,
+        backSpeed: 100,
+        showCursor: true,
+        cursorChar: '|',
+        loop: true
+      };
 
-    const typed = new Typed('.typed-element', options);
+      const typed = new Typed('.typed-element', options);
+
+    })
 
 
   }

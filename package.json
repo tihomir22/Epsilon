@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "~7.1.4",
     "@angular/router": "~7.1.4",
     "@ionic-native/android-permissions": "^5.5.1",
+    "@ionic-native/background-mode": "^5.6.0",
     "@ionic-native/camera": "^5.0.0-beta.24",
     "@ionic-native/core": "5.0.0-beta.21",
     "@ionic-native/crop": "^5.0.0-beta.24",
@@ -48,6 +49,7 @@
     "cordova-browser": "5.0.4",
     "cordova-ios": "4.5.5",
     "cordova-plugin-android-permissions": "1.0.0",
+    "cordova-plugin-background-mode": "0.7.2",
     "cordova-plugin-badge": "0.8.8",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-crop": "^0.4.0",
@@ -137,7 +139,8 @@
       "cordova-plugin-qrscanner": {},
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-local-notification": {},
-      "cordova-plugin-android-permissions": {}
+      "cordova-plugin-android-permissions": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
       "ios",

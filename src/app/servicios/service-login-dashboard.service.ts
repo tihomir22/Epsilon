@@ -131,9 +131,13 @@ export class ServiceLoginDashboardService {
       //console.log(element)
       if (element.tipo == "Criptomoneda") {
         this.recuperarPrecioCryptoCompare(element.siglas, "USD").subscribe(respuesta => {
-          console.log("precio recibido actual " + element.siglas + respuesta[element.siglas]["USD"])
-          element.precio = respuesta[element.siglas]["USD"];
-          this.actualizarPrecioActivo(element.id, element.precio)
+          if (respuesta[element.siglas] != undefined) {
+            console.log("precio recibido actual " + element.siglas + respuesta[element.siglas]["USD"])
+            element.precio = respuesta[element.siglas]["USD"];
+            this.actualizarPrecioActivo(element.id, element.precio)
+          } else {
+            console.log("omitiendo", respuesta)
+          }
         })
       } else if (element.tipo == "Stock") {
         this.recuperarPrecioIEXTrading(element.siglas).subscribe(respuesta => {

@@ -8,6 +8,8 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Chart } from 'chart.js';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { timer } from 'rxjs';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @Component({
   selector: 'app-detalles-activo',
@@ -93,6 +95,7 @@ export class DetallesActivoPage implements OnInit {
   public precioDouble: any;
 
   public sector: any;
+  private _link: string;
 
   public coinGeckoInfo: any;
   public objectKeys = Object.keys;
@@ -100,9 +103,6 @@ export class DetallesActivoPage implements OnInit {
   @ViewChild('barCanvas') barCanvas: { nativeElement: any; };
 
   barChart: any;
-
-
-
 
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
@@ -115,7 +115,9 @@ export class DetallesActivoPage implements OnInit {
     public tostadita: ToastController,
     public http: HttpClient,
     public router: Router,
-    private screenOrientation: ScreenOrientation) {
+    private appBrowser: InAppBrowser,
+    private screenOrientation: ScreenOrientation,
+    private _element: ElementRef) {
     this.activo = service.getActivo();
     this.tipo = service.getTipoAdquisicion();
     this.usuario = service.getDestn();
@@ -158,10 +160,36 @@ export class DetallesActivoPage implements OnInit {
         this.coinGeckoInfo = data;
       })
     }
-
+    this._enableDynamicHyperlinks();
 
   }
 
+  private _enableDynamicHyperlinks(): void {
+    timer(2000).subscribe((data) => {
+      // Query the DOM to find ALL occurrences of the <a> hyperlink tag
+      const urls: any = this._element.nativeElement.querySelectorAll('a');
+
+      // Iterate through these
+      urls.forEach((url) => {
+        // Listen for a click event on each hyperlink found
+        url.addEventListener('click', (event) => {
+          // Retrieve the href value from the selected hyperlink
+          event.preventDefault();
+          this._link = event.target.href;
+
+          // Log values to the console and open the link within the InAppBrowser plugin
+          console.log('Name is: ' + event.target.innerText);
+          console.log('Link is: ' + this._link);
+          this._launchInAppBrowser(this._link);
+        }, false);
+      });
+    })
+  }
+
+  private _launchInAppBrowser(link: string): void {
+    let opts: string = "location=yes,clearcache=yes,hidespinner=no"
+    this.appBrowser.create(link, '_blank', opts);
+  }
 
   iniciarChart(tipoGrafico: any) {
     console.dir("entro aqui las singlas son " + this.activo.siglas)
@@ -554,12 +582,12 @@ export class DetallesActivoPage implements OnInit {
     } else if (this.activo.tipo == "Stock") {
       url = this.generarImgStock(this.activo);
     }
-    const style = `background-image:url(${url});`;
+    const style = `background-image:url(${url});background-position:center center;background-repeat:no-repeat;background-size: 100px 100px;`;
     return this.sanitizer.bypassSecurityTrustStyle(style);
   }
 
   generarImgCripto(activo) {
-    return this.baseURI + "img-activos/" + activo.nombre + ".png";
+    return activo.rutaIMG;
   }
   generarImgStock(activo) {
     return this.baseURI + "img-activos-stocks/" + activo.nombre + ".png";

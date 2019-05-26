@@ -16,6 +16,7 @@ import { ModalpagePage } from '../app/modales/modalpage/modalpage.page';
 import { Camera } from '@ionic-native/camera/ngx/';
 import { Crop } from '@ionic-native/crop/ngx/';
 import { File } from '@ionic-native/file/ngx';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
@@ -42,7 +43,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent, CargaModalComponent, EMAmodalComponent],
-  entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent,CargaModalComponent],
+  entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent, CargaModalComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -55,7 +56,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PlantillaAPIPageModule,
     SharedModule,
     BrowserAnimationsModule
-    
+
 
 
   ],
@@ -72,6 +73,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LocalNotifications,
     File,
     InAppBrowser,
+    BackgroundMode,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, {
       provide: HAMMER_GESTURE_CONFIG,
       useClass: AgregarActivosPage

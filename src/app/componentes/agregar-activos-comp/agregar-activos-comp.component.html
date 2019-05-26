@@ -28,7 +28,7 @@
         [disabled]="_desactivarSliding">
         <ion-item #item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)" class="my-animation"
           style="border-left: 2px solid #3880ff;">
-          <ion-avatar item-start style="margin:10px;">
+          <ion-avatar item-start style="margin:10px; max-width: 32px;max-height: 32px;">
             <img [src]="generarImgCripto(activo)">
           </ion-avatar>
           <ion-label>{{activo.nombre}}</ion-label>
@@ -45,10 +45,10 @@
       </ion-item-sliding>
     </ion-list>
     <ion-button *ngIf="paginationLimit < activos_cripto.length" (click)="showMoreItems('cripto')" class="haciaArriba">
-      Show More
+      Mostrar más
     </ion-button>
     <ion-button *ngIf="paginationLimit > 3" (click)="showLessItems('cripto')" class="haciaArriba">
-      Show Less
+      Mostrar menos
     </ion-button>
   </div>
 
@@ -61,7 +61,7 @@
       [disabled]="_desactivarSliding">
       <ion-item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)" class="my-animation"
         style="border-left: 2px solid #10dc60;">
-        <ion-avatar item-start style="margin:10px;">
+        <ion-avatar item-start style="margin:10px;max-width: 32px;max-height: 32px;">
           <img [src]="generarImgStock(activo)">
         </ion-avatar>
         <ion-label>{{activo.nombre}}</ion-label>
@@ -79,11 +79,11 @@
     </ion-item-sliding>
     <ion-button *ngIf="paginationLimitStocks < activos_stock.length" (click)="showMoreItems('stocks')"
       class="haciaArriba" color="success">
-      Show More
+      Mostrar más
     </ion-button>
     <ion-button *ngIf="paginationLimitStocks > 3 " (click)="showLessItems('stocks')" class="haciaArriba"
       color="success">
-      Show Less
+      Mostrar menos
     </ion-button>
   </ion-list>
 
@@ -98,7 +98,7 @@
         [disabled]="_desactivarSliding">
         <ion-item #item (click)="abrirDetalles(activo)" (press)="presentAlert(activo)" class="my-animation"
           style="border-left: 2px solid #111111;">
-          <ion-avatar item-start style="margin:10px;">
+          <ion-avatar item-start style="margin:10px;max-width: 32px;max-height: 32px;">
             <img [src]="activo.img">
           </ion-avatar>
           <ion-label>{{activo.siglas}}</ion-label>
@@ -117,10 +117,10 @@
     </ion-list>
     <ion-button *ngIf="paginationLimitDivisas < activos_divisas.length" (click)="showMoreItems('divisas')"
       class="haciaArriba" color="dark">
-      Show More
+      Mostrar más
     </ion-button>
     <ion-button *ngIf="paginationLimitDivisas > 3" (click)="showLessItems('divisas')" class="haciaArriba" color="dark">
-      Show Less
+      Mostrar menos
     </ion-button>
   </div>
 </ion-content>

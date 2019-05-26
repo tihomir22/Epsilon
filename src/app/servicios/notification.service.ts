@@ -16,7 +16,7 @@ export class NotificationService {
 
   }
 
-  public guardarNotificacion(notificacion: AlertModelInterface, simboloBASE: string, simboloCONTRA: string, parametro: any, subitems?: string): Observable<any> {
+  public guardarNotificacion(notificacion: AlertModelInterface, simboloBASE: string, simboloCONTRA: string, parametro: any, parametro2?: any, parametro3?: any, subitems?: string): Observable<any> {
     if (subitems == undefined) {
       subitems = ''
     }
@@ -33,6 +33,8 @@ export class NotificationService {
         "simbolo_base": simboloBASE,
         "simbolo_contra": simboloCONTRA,
         "parametro": parametro,
+        "parametro2": parametro2,
+        "parametro3": parametro3,
         "subitems": subitems
       },
       url: any = this.baseURI + "manage-dataIONIC.php";

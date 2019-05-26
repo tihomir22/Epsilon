@@ -7,7 +7,7 @@
                 </ion-label>
             </ion-button>
         </ion-buttons>
-        <ion-title>SMA</ion-title>
+        <ion-title>{{_tipo}}</ion-title>
 
     </ion-toolbar>
 
@@ -24,12 +24,13 @@
         <ion-card-content>
             <mat-list>
                 <mat-list-item *ngFor="let datos of datosCortados;let i=index">
-                    <h3 matLine>SMA {{datosCortados[i]}} </h3>
+                    <h3 matLine>{{_tipo}} {{datosCortados[i]}} </h3>
                     <p matLine>
                         <span>Fecha {{labelCortados[i]}} </span>
                     </p>
                 </mat-list-item>
-                <mat-paginator [length]="totalRegistros" [pageSize]="5" [pageSizeOptions]="" (page)="pageChangeEvent($event)">
+                <mat-paginator [length]="totalRegistros" [pageSize]="5" [pageSizeOptions]=""
+                    (page)="pageChangeEvent($event)">
                 </mat-paginator>
             </mat-list>
         </ion-card-content>

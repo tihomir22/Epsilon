@@ -11,7 +11,7 @@
 
 <ion-content>
   <ion-card>
-    <ion-card-header [style]="getStyle()">
+    <ion-card-header [style]="getStyle()" class="limitacionImg">
       <br><br><br>
       <ion-card-subtitle>
         <ion-badge color="medium" style="font-size:12px;margin-bottom: -12px;">{{activo.tipo}}</ion-badge>
@@ -40,7 +40,14 @@
       Información del activo
     </ion-card-header>
     <ion-card-content style="margin-top:10px;">
-      {{activo.descripcion}}
+
+      <div scrollY="true" id="myFixZone">
+        <ion-text color="dark">
+          <p [innerHTML]="activo.descripcion"></p>
+        </ion-text>
+      </div>
+
+
       <div *ngIf="activo.tipo=='Criptomoneda' && coinGeckoInfo!=undefined">
 
         <mat-list-item>
@@ -137,13 +144,15 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="tipo=='comprar'" color="success">
-    <ion-card-header>
-      <ion-card-title>Compra {{activo.tipo}}</ion-card-title>
-      <ion-card-subtitle>Introduzca los datos a continuación para registrar su compra</ion-card-subtitle>
+  <ion-card *ngIf="tipo=='comprar'" color="dark">
+    <ion-card-header style="text-align:center;" color="dark">
+      <ion-card-title>
+        <mat-icon color="success">trending_up</mat-icon>
+      </ion-card-title>
+      <ion-card-subtitle color="success">Compra {{activo.tipo}}</ion-card-subtitle>
     </ion-card-header>
 
-    <ion-card-content>
+    <ion-card-content style="padding:0px;">
       <form (ngSubmit)="dembow()" [formGroup]="formgroup" class="form-horizontal">
         <ion-item color="dark" style="text-align:right;">
           <ion-label fixed>
@@ -268,23 +277,32 @@
         <ion-label *ngIf="fecha.hasError('required') && fecha.touched" style="color:red;">
           <ion-icon slot="start" name="alert"></ion-icon> Debes elegir una fecha
         </ion-label>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button size="large" expand="block" color="success" type="submit">
+              <ion-label color="light">Añadir Compra</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button size="large" expand="block" color="light" type="button" (click)="tipo='indeterminada'">
+              <ion-label color="success">Cerrar</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
 
-        <ion-button size="large" expand="block" color="dark" type="submit">
-          <ion-label color="success">Añadir Compra</ion-label>
-        </ion-button>
-        <ion-button size="large" expand="block" color="light" type="button" (click)="tipo='indeterminada'">
-          <ion-label color="success">Cerrar</ion-label>
-        </ion-button>
+
       </form>
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="tipo=='vender'" color="danger">
-    <ion-card-header>
-      <ion-card-title>Venta {{activo.tipo}}</ion-card-title>
-      <ion-card-subtitle>Introduzca los datos a continuación para registrar su venta</ion-card-subtitle>
+  <ion-card *ngIf="tipo=='vender'" color="dark">
+    <ion-card-header style="text-align:center;" color="dark">
+      <ion-card-title>
+        <mat-icon color="danger">trending_down</mat-icon>
+      </ion-card-title>
+      <ion-card-subtitle color="danger">Venta {{activo.tipo}}</ion-card-subtitle>
     </ion-card-header>
-    <ion-card-content>
+    <ion-card-content style="padding:0px;">
       <form (ngSubmit)="dembow()" [formGroup]="formgroup" class="form-horizontal">
         <ion-item color="dark" style="text-align:right;">
           <ion-label fixed>
@@ -372,13 +390,20 @@
         <ion-label *ngIf="observaciones.hasError('maxLength') && observaciones.touched" style="color:red;">
           <ion-icon slot="start" name="alert"></ion-icon> No puedes introducir más de 255 chars
         </ion-label>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button size="large" expand="block" color="danger" type="submit">
+              <ion-label color="light">Añadir Venta</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button size="large" expand="block" color="light" type="button" (click)="tipo='indeterminada'">
+              <ion-label color="danger">Cerrar</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
 
-        <ion-button size="large" expand="block" color="dark" type="submit">
-          <ion-label color="danger">Añadir Venta</ion-label>
-        </ion-button>
-        <ion-button size="large" expand="block" color="light" type="button" (click)="tipo='indeterminada'">
-          <ion-label color="danger">Cerrar</ion-label>
-        </ion-button>
+
 
       </form>
     </ion-card-content>
@@ -386,7 +411,7 @@
 
 </ion-content>
 
-<ion-footer>
+<ion-footer *ngIf="tipo=='indeterminada'">
   <ion-toolbar color="light">
     <ion-row>
       <ion-col size="6">

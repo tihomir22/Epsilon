@@ -1,3 +1,21 @@
-ion-card{
-    transition: 0.2s linear;
+
+
+#myFixZone {
+    max-height: 200px;
 }
+div[scrollx=true], div[scrolly=true] {
+    position: relative;
+    overflow: hidden;
+  
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
+  div[scrollx=true] {
+    overflow-x: auto;
+  }
+  
+  div[scrolly=true] {
+    overflow-y: auto;
+  }

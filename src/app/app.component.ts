@@ -9,6 +9,7 @@ import { isUndefined } from 'util';
 import { Constantes } from 'src/Constantes';
 import { Router } from '@angular/router';
 import { SeleccionApiComponent } from './modales/seleccion-api/seleccion-api.component';
+import { AdminServiceService } from './servicios/admin-service.service';
 
 @Component({
   selector: 'app-root',
@@ -86,10 +87,11 @@ export class AppComponent {
     private renderer: Renderer2,
     private apiservice: ApisService,
     private router: Router,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private adminService: AdminServiceService
   ) {
     this.initializeApp();
-
+    this.adminService.setAppPages(this.appPages);
   }
 
 

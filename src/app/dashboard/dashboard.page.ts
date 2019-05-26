@@ -562,7 +562,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   public calcularPorcentajeActivo(item: any) {
-    let precioActual;
+    let precioActual=0;
     if (item.precio != undefined) {
       precioActual = item.precio;
     } else {
@@ -577,9 +577,9 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     if (item.tipoRelacion.toLocaleLowerCase() == "vender") {
       var calculoNegativo = (+precioCompra - +precioActual);
       if (calculoNegativo > 0) { // la operacion de venta esta obteniendo beneficios
-        precioActual = (+precioCompra + +calculoNegativo);
+        precioActual = (precioCompra + calculoNegativo);
       } else {
-        precioActual = (+precioCompra - +calculoNegativo);
+        precioActual = (precioCompra + calculoNegativo);
       }
     }
     var resta = precioCompra - precioActual;
@@ -650,7 +650,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
   }
 
   generarImgCripto(activo) {
-    return this.baseURI + "img-activos/" + activo.nombre + ".png";
+    return activo.rutaIMG;
   }
   generarImgStock(activo) {
     return this.baseURI + "img-activos-stocks/" + activo.nombre + ".png";
