@@ -59,3 +59,4 @@
 
 * BETA 0.6.1: BITE THE PAIN V2 => Estabilizacion de la App, estilos mejorados y estetica. Nueva libreria implementada (ngMaterial). Implementada notificacion avanzada con SMA. Muchos bugs solucionados y intuición mejorada.
 
+* BETA 0.7.0 : BERSERKER => Implementadas 4 nuevas opciones para las notificaciones programables, alerta de EMA, RSI, MACD, SMA. Nuevo modo administrador implementado para usuarios de tipo admin, mejoras visuales, estabilizacion y bugs solucionados
