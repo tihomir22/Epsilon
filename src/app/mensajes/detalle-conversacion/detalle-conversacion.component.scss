@@ -1,0 +1,22 @@
+.item-borderless{
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+    }
+
+ion-card{
+    width: 80% !important;
+}
+
+.derecha{
+    float:right;
+}
+
+.izquierda{
+    float:left;
+}
+.my-list {
+    height: 300px;
+    overflow: auto;
+  }

@@ -12,10 +12,31 @@
 <ion-content>
   <ion-list>
     <ion-item (click)="cambiarContrasenya()">
-      <ion-label >
+      <ion-label>
         Cambiar contraseña
       </ion-label>
       <ion-icon name="information-circle" slot="end"></ion-icon>
+    </ion-item>
+    <ion-list-header>
+      <ion-label>Temas</ion-label>
+    </ion-list-header>
+    <ion-item (click)="activarTema('day')">
+      <ion-label>
+        Vampire
+      </ion-label>
+      <ion-icon name="color-palette" slot="end" style="color:#f94c4e"></ion-icon>
+    </ion-item>
+    <ion-item (click)="activarTema('night')">
+      <ion-label>
+        Medianoche
+      </ion-label>
+      <ion-icon name="color-palette" slot="end" style="color:#383838"></ion-icon>
+    </ion-item>
+    <ion-item (click)="activarTema('normal')">
+      <ion-label>
+        Normal
+      </ion-label>
+      <ion-icon name="color-palette" slot="end"></ion-icon>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -14,8 +14,8 @@ export class MailingService {
 
   public cambiarContrasenyaYEnviarEmailAviso(id_usuario: number, nuevaContrasenya: string,email:string): Observable<any> {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
-      options: any = { "key": "cambiar_contrasenya_y_enviar_email", "usuario_id": id_usuario, "pass": nuevaContrasenya,"email":email },
-      url: any = this.baseURI + "manage-dataIONIC.php";
+      options: any = { "key": "enviar_email", "usuario_id": id_usuario, "pass": nuevaContrasenya,"email":email },
+      url: any = this.baseURI + "mailing/mailing.php";
 
     return this.http.post(url, JSON.stringify(options), headers)
 

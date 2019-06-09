@@ -88,16 +88,6 @@ export class ModalpagePage implements OnInit {
         console.dir(correctPath)
 
         this.copyFileToLocalDir(correctPath,currentName,this.createFileName());
-        
-      /*
-        do {
-          console.dir("valor url " + this.url)
-            if(this.url!=undefined){
-              this.startUploadV2(this.url);
-              break;
-            }
-        }while(this.url==undefined);
-       */
 
       },err=>console.dir(err));
   }
@@ -124,14 +114,6 @@ export class ModalpagePage implements OnInit {
   }
 
   copyFileToLocalDir(namePath, currentName, newFileName) {
-  /* console.dir("namePath parametro1")
-    console.dir(namePath)
-    console.dir("currentName parametro2")
-    console.dir(currentName)
-    console.dir("this.file.dataDiretory parametro de funcion")
-    console.dir(this.file.dataDirectory)
-    console.dir("newFileName parametro3")
-    console.dir(newFileName)*/
     this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
      // this.presentToast('Dispongo a actualizar.');
      console.dir("Respuesta de la copiada")

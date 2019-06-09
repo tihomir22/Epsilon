@@ -36,7 +36,7 @@
     <ion-card-content>
       {{exchange.descripcion}}
       <hr>
-      <ion-label color="primary">En {{exchange.nombre}} tienes un total de {{arrayFinal.length()}} activos</ion-label>
+      <ion-label color="primary">En {{exchange.nombre}} tienes un total de {{totalActivos}} activos</ion-label>
     </ion-card-content>
   </ion-card>
 
@@ -51,7 +51,7 @@
       </ion-list-header>
       <ion-item>
         <ion-label position="floating" color="medium">Nombre de API</ion-label>
-        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.nombre" ></ion-input>
+        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.nombre"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="floating" color="medium">API Key</ion-label>
@@ -61,8 +61,10 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating" color="medium">Private Key</ion-label>
-        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.privateKey" *ngIf="!mostrarTexto2"></ion-input>
-        <ion-input type="password" (input)="enModificacion()" [(ngModel)]="api.privateKey" *ngIf="mostrarTexto2"></ion-input>
+        <ion-input type="text" (input)="enModificacion()" [(ngModel)]="api.privateKey" *ngIf="!mostrarTexto2">
+        </ion-input>
+        <ion-input type="password" (input)="enModificacion()" [(ngModel)]="api.privateKey" *ngIf="mostrarTexto2">
+        </ion-input>
         <ion-icon slot="end" name="eye" (click)="mostrarTexto2=!mostrarTexto2"></ion-icon>
       </ion-item>
     </div>

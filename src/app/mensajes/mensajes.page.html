@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Mensajes
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div [formGroup]="formGroup">
+    <mat-form-field style="width: 100%" padding>
+      <mat-icon matSuffix>search</mat-icon>
+      <input type="text" matInput placeholder="Busqueda" formControlName="busqueda">
+    </mat-form-field>
+  </div>
+  <ion-list>
+    <ion-item *ngFor="let usuario of arrayUsuariosExceptoYo" (click)="navegarConversacion(usuario.idepsilon_usuarios)">
+      <ion-avatar slot="start">
+        <img [src]="usuario.foto_usuario" />
+      </ion-avatar>
+      <ion-label>
+        <p>{{usuario.usuario}}</p>
+        <p> {{usuario.telefono}} </p>
+      </ion-label>
+      <ion-icon slot="end" name="mail"></ion-icon>
+      <ion-badge color="primary" mode="ios" [innerHTML]="getOccurrence(usuario.idepsilon_usuarios)"
+        *ngIf="getOccurrence(usuario.idepsilon_usuarios)>0"></ion-badge>
+    </ion-item>
+    <ion-item *ngIf="arrayUsuariosExceptoYo.length==0">
+      <ion-label>No hay usuarios . </ion-label>
+    </ion-item>
+  </ion-list>
+
+
+
+
+</ion-content>

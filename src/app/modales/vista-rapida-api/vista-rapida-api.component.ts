@@ -19,9 +19,10 @@ export class VistaRapidaApiComponent implements OnInit {
   public todosLosExchanges: Array<exchangeClass> = [];
   public exchange: exchangeClass = null;
   public terminaCargaBalanceExchange: boolean = false;
-  private arrayRes: Array<any> = [];
-  public arrayFinal: Array<any> = new Array;
+  public arrayRes: Array<any> = [];
+  public arrayFinal: Array<any> = [];
   private mostrarMensajeErrorCarga: boolean = false;
+  public totalActivos: number = 0;
   public huboModificaciones: boolean = false;
   public cargandoDatos: boolean = false;
   private credencialesBackup: apiModel;
@@ -96,6 +97,7 @@ export class VistaRapidaApiComponent implements OnInit {
 
         }
       }
+      this.totalActivos = Object.keys(this.arrayFinal).length
     }, (error) => {
       observable.unsubscribe();
       console.log(error)

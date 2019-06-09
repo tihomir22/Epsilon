@@ -2,20 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, ToastController, MenuController, Platform, ModalController } from '@ionic/angular';
 import { FormBuilder, FormGroup, AbstractControl, Validators, FormControl } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ServiceLoginDashboardService } from '../servicios/service-login-dashboard.service';
 import { ApisService } from '../servicios/apis.service';
 import { apiInterfaz } from '../modales/vista-rapida-api/models/apiInterfaz';
-import { MailingService } from '../servicios/mailing.service';
 import Typed from 'typed.js';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NotificationService } from '../servicios/notification.service';
 import { AlertModelInterface } from '../alertas/modelo/alertModel';
 import { CargaModalComponent } from '../modales/carga-modal/carga-modal.component';
 import { Observable, timer } from 'rxjs';
-import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-import { UsuarioInterface } from '../perfil/class/UsuarioInterface';
 import { AdminServiceService } from '../servicios/admin-service.service';
+import { MensajeschatService } from '../mensajes/detalle-conversacion/servicios/mensajeschat.service';
+import { ThemeSwitcherService } from '../servicios/theme-switcher.service';
+import { MailingService } from '../servicios/mailing.service';
 
 
 
@@ -57,7 +56,10 @@ export class LoginPage implements OnInit {
     private iab: InAppBrowser,
     private notificacionService: NotificationService,
     private modalController: ModalController,
-    private adminSer: AdminServiceService
+    private adminSer: AdminServiceService,
+    private messaging: MensajeschatService,
+    private tema: ThemeSwitcherService,
+    private mailing: MailingService
   ) {
     this.formgroup = formbuilder.group({
       usuario: ['', Validators.required],
@@ -89,8 +91,18 @@ export class LoginPage implements OnInit {
         url: any = this.baseURI + "retrieve-data.php";
 
       this.http.post(url, JSON.stringify(options), headers).subscribe((data: any) => {
-        console.log(data)
         this.service.setDestn(data);
+        this.tema.setTheme(this.service.getDestn().tema_actual);
+
+        this.messaging.recuperarMensajesSinLeer(this.service.getDestn().idepsilon_usuarios).subscribe((data: Array<any>) => {
+          this.service.setMensajesSinLeer(data);
+          this.adminSer.getAppPages().forEach(appPage => {
+            if (appPage.numMensajes != undefined) {
+              appPage.numMensajes = data.length;
+            }
+          });
+        })
+
         if (this.service.getDestn().privilegios == 'admin') {
           if (this.adminSer.getAppPages()[0].title != 'Administracion') {
             this.adminSer.getAppPages().unshift({
@@ -144,6 +156,12 @@ export class LoginPage implements OnInit {
       options: any = { "key": "analconda", "id_usuario": idUsuario },
       url: any = this.baseURI + "retrieve-data.php";
     return this.http.post(url, JSON.stringify(options), headers)
+  }
+
+  public enviarContrasenyaOlvidada(): void {
+    this.mailing.cambiarContrasenyaYEnviarEmailAviso(23, "dembow", "tihomir_alcudia3@hotmail.com").subscribe((data) => {
+      console.log(data)
+    })
   }
 
 

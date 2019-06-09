@@ -38,9 +38,6 @@ import { CargaModalComponent } from './modales/carga-modal/carga-modal.component
 import { EMAmodalComponent } from './modales/graficosTecnicos/emamodal/emamodal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-
-
-
 @NgModule({
   declarations: [AppComponent, ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent, CargaModalComponent, EMAmodalComponent],
   entryComponents: [ModalpagePage, ModalNoticiasComponent, GestionApiComponent, VistaRapidaApiComponent, PopoverOpcionesComponent, SeleccionApiComponent, CargaModalComponent],

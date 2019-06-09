@@ -51,11 +51,24 @@ export class NoticiasPage implements OnInit {
     }
   }
 
+  public quitarTagCripto(indice: number) {
+    if (this.arraySiglasCripto.length > 1) {
+      this.arraySiglasCripto.splice(indice, 1);
+      this.cargarNoticiasCriptomonedas();
+    }
+  }
+
+  public quitarTagStock(indice: number) {
+    if (this.arraySiglasStock.length > 1) {
+      this.arraySiglasStock.splice(indice, 1);
+      this.cargarNoticiasStock();
+    }
+  }
+
   anadirNoticiaAFavoritos(noticia: Object) {
     console.log("Vamos a checkear el favorito we ", noticia.toString())
     let notician = new Noticia(noticia);
     console.log(notician.toString())
-
     this.servicio.subirNoticiaFavoritaServidor(notician).subscribe((data) => { this.presentToast("Noticia añadida a favoritos!") }, (error) => { console.log(error) }, () => { console.log("he terminado") })
   }
 
@@ -83,9 +96,7 @@ export class NoticiasPage implements OnInit {
     this.presentLoading();
     this.arraySiglasCripto.length = 0;
     this.arraySiglasStock.length = 0;
-    //filtrar activos cripto y activos sotkc ( separlos )
-    console.log(this.servicio.getArrayActivosUsuario())
-    console.log(this.servicio.getArrayActivosUsuario().length)
+
     if (this.servicio.getArrayActivosUsuario().length == 0) {
       this.loadingController.dismiss();
       this.noHayActivo = true;
@@ -93,11 +104,19 @@ export class NoticiasPage implements OnInit {
       const source = from(this.servicio.getArrayActivosUsuario());
 
       const criptos = source.pipe(filter(activo => activo.tipo === "Criptomoneda"));
-      const suscribe = criptos.subscribe(resultado => this.arraySiglasCripto.push(resultado.siglas), (error) => { console.log(error) }, () => {
+      const suscribe = criptos.subscribe((resultado) => {
+        if (this.arraySiglasCripto.indexOf(resultado.siglas) == -1) {
+          this.arraySiglasCripto.push(resultado.siglas)
+        }
+      }, (error) => { console.log(error) }, () => {
         this.cargarNoticiasCriptomonedas()
       });
       const stocks = source.pipe(filter(activo => activo.tipo === "Stock"));
-      const suscribestock = stocks.subscribe(resultado => this.arraySiglasStock.push(resultado.siglas), (error) => { console.log(error) }, () => {
+      const suscribestock = stocks.subscribe((resultado) => {
+        if (this.arraySiglasStock.indexOf(resultado.siglas) == -1) {
+          this.arraySiglasStock.push(resultado.siglas)
+        }
+      }, (error) => { console.log(error) }, () => {
         this.cargarNoticiasStock();
       });
     }
@@ -118,10 +137,7 @@ export class NoticiasPage implements OnInit {
           element['categorias'].length = 5;
         }
       });
-      console.log(this.arrayNoticiasCripto);
-      //this.generarNoticiasCalientes();
       this.cargarCriptoTerminada = true
-      console.log("terminada la carga de cripto y boolean a true", this.cargarCriptoTerminada)
       if (this.cargarStockTerminada) {
         console.log("Es un buen momento para llamar a las noticias calientes")
         this.generarNoticiasCalientes();

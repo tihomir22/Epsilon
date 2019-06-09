@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon slot="start" name="arrow-back" style="width: 30px;height:40px;" padding (click)="volverAtras()">
+      </ion-icon>
+    </ion-buttons>
+    <ion-title>
+      <ion-list no-lines lines="none">
+        <ion-item no-lines class="item-borderless">
+          <ion-avatar slot="start">
+            <img [src]="usuarioDestinatario.foto_usuario" />
+          </ion-avatar>
+          <ion-label>
+            <p><strong>{{usuarioDestinatario.usuario}}</strong></p>
+            <p>{{usuarioDestinatario.telefono}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div>
+    <ion-card *ngFor="let mensajeOrdenado of listadoMensajesOrdenados.reverse()"
+      [class]="mensajeOrdenado.id_usuario_emisor==usuarioActual.idepsilon_usuarios?'derecha':'izquierda'">
+      <ion-card-header>
+        <ion-card-subtitle [innerHTML]="(mensajeOrdenado.visto=='0')?('No fue visto'):('Visto')"
+          [color]="(mensajeOrdenado.visto=='0')?('warning'):('success')"></ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-item>
+        <ion-avatar slot="start">
+          <img
+            [src]="(mensajeOrdenado.id_usuario_emisor==usuarioActual.idepsilon_usuarios)?(usuarioActual.foto_usuario):(usuarioDestinatario.foto_usuario)" />
+        </ion-avatar>
+        <ion-label>
+          <p
+            [innerHTML]="(mensajeOrdenado.id_usuario_emisor==usuarioActual.idepsilon_usuarios)?('Escrito por '+usuarioActual.usuario):('Escrito por '+usuarioDestinatario.usuario)">
+          </p>
+          <p><strong>{{mensajeOrdenado.fecha | date:'medium' }}</strong></p>
+        </ion-label>
+        <ion-icon slot="end" [name]="(mensajeOrdenado.visto=='0')?('eye-off'):('eye')"></ion-icon>
+      </ion-item>
+
+
+      <ion-card-content>
+        {{mensajeOrdenado.mensaje}}
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer [formGroup]="formGroup">
+  <ion-toolbar>
+    <mat-form-field style="width:100%;" padding>
+      <input matInput placeholder="Envia un mensaje" formControlName="mensaje">
+      <mat-icon matSuffix (click)="emitirMensaje()">send</mat-icon>
+    </mat-form-field>
+  </ion-toolbar>
+</ion-footer>

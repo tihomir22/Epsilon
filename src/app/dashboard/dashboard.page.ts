@@ -6,9 +6,11 @@ import 'rxjs/add/operator/map';
 import "hammerjs"; // HAMMER TIME
 import { HammerGestureConfig } from "@angular/platform-browser";
 import { Chart } from 'chart.js';
-import { Observable, from, of, timer } from 'rxjs';
+import { Observable, from, of, timer, forkJoin } from 'rxjs';
 import { AppComponent } from '../app.component';
 import { map } from 'rxjs/operators';
+import { MensajeschatService } from '../mensajes/detalle-conversacion/servicios/mensajeschat.service';
+import { ThemeSwitcherService } from '../servicios/theme-switcher.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -69,15 +71,14 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     public service: ServiceLoginDashboardService,
     public http: HttpClient,
     public toastCtrl: ToastController,
-    public navCtrl: NavController) {
+    public navCtrl: NavController,
+    public themeSwitcher: ThemeSwitcherService,
+    private mensajeService: MensajeschatService) {
     super();
     this.data = this.service.getDestn();
-    console.log(this.data)
-    console.log(this.service.getDestn())
     this.menuCtrl.enable(true);
     this.imagenUsuario = this.data['foto_usuario'];
-    // this.cargarActivos();
-    //this.presentLoading();
+
 
   }
 
@@ -88,7 +89,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
     this.contActivos = 0;
     this.reiniciarFinanzasUsuario();
     let data = this.service.getPaqueteData();
-    
+
     if (data == null || data == undefined || data.length == 0) {
       this.sendNotification("No tiene activos el usuario...");
       this.modalCtrl.dismiss();
@@ -117,7 +118,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
         this.loadingController.dismiss();
       })
 
-
+      //this.themeSwitcher.setTheme('day');
     }
 
     //},
@@ -395,7 +396,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
           ],
           borderWidth: 1
         }]
-       
+
       },
       options: {
         legend: {
@@ -562,7 +563,7 @@ export class DashboardPage extends HammerGestureConfig implements OnInit {
 
 
   public calcularPorcentajeActivo(item: any) {
-    let precioActual=0;
+    let precioActual = 0;
     if (item.precio != undefined) {
       precioActual = item.precio;
     } else {

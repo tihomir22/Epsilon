@@ -8,4 +8,5 @@ export interface UsuarioInterface {
     usuario: string;
     privilegios: string;
     estado: string;
+    tema_actual?:string;
 }

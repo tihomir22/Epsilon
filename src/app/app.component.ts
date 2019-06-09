@@ -10,6 +10,7 @@ import { Constantes } from 'src/Constantes';
 import { Router } from '@angular/router';
 import { SeleccionApiComponent } from './modales/seleccion-api/seleccion-api.component';
 import { AdminServiceService } from './servicios/admin-service.service';
+import { ThemeSwitcherService } from './servicios/theme-switcher.service';
 
 @Component({
   selector: 'app-root',
@@ -56,6 +57,12 @@ export class AppComponent {
       icon: 'paper'
     },
     {
+      title: 'Mensajes',
+      url: '/mensajes',
+      icon: 'mail',
+      numMensajes: 0
+    },
+    {
       title: 'Alertas',
       url: '/alertas',
       icon: 'add'
@@ -84,11 +91,10 @@ export class AppComponent {
     private service: ServiceLoginDashboardService,
     private menuCtrl: MenuController,
     private navCtrl: NavController,
-    private renderer: Renderer2,
     private apiservice: ApisService,
-    private router: Router,
     private modalController: ModalController,
-    private adminService: AdminServiceService
+    private adminService: AdminServiceService,
+    private temas: ThemeSwitcherService
   ) {
     this.initializeApp();
     this.adminService.setAppPages(this.appPages);
@@ -96,7 +102,6 @@ export class AppComponent {
 
 
   static avisar(data: any) {
-    console.log("recibido", data['foto_usuario'])
     AppComponent.rutaImg = data['foto_usuario'];
     let imagen = document.getElementById("imagen")
     let titulo = document.getElementById("titulo")
@@ -113,7 +118,6 @@ export class AppComponent {
   }
   public navegar(event: any, subitem: any): void {
     event.preventDefault();
-    console.log("ahora checkeamos si estan las apis activas...")
     this.apiservice.setParametros(subitem);
     this.presentModal();
 
@@ -135,9 +139,10 @@ export class AppComponent {
       this.splashScreen.hide();
     });
   }
-  dembow(p: any) {
+  logout(p: any) {
 
     if (p.title == this.appPages[this.appPages.length - 1].title) {
+      this.temas.setTheme('normal');
       this.service.logOutMethod();
       this.menuCtrl.enable(false);
       this.navCtrl.navigateRoot("/login");

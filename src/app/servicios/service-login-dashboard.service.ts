@@ -7,6 +7,7 @@ import { Subject, Observable } from 'rxjs';
 import { ToastController } from '@ionic/angular';
 import { DashboardPage } from '../dashboard/dashboard.page';
 import { UsuarioInterface } from '../perfil/class/UsuarioInterface';
+import { mensajeModel } from '../mensajes/detalle-conversacion/modelos/mensajeModel';
 
 @Injectable({
   providedIn: 'root'
@@ -19,10 +20,13 @@ export class ServiceLoginDashboardService {
   private tipoAdquisicion: string = '';
   public permitirCarga: boolean = false;
   private arrayActivosServ: Array<any> = new Array;
+  private todosLosUsuariosExceptoActual: Array<UsuarioInterface> = [];
+
+
+  private mensajesSinLeer: Array<mensajeModel> = [];
   private arrayActivosCompletos: Array<any> = new Array;
   private arrayActivosCompletosCerrados: Array<any> = new Array;
   private paqueteDeData: Array<any>;
-  private result: any;
   private baseURI: string = "http://dembow.gearhostpreview.com/";
 
 
@@ -36,6 +40,25 @@ export class ServiceLoginDashboardService {
   public recuperarPrecioCryptoCompareFullData(siglasActivo: string, siglasContrapartida: string) {
     return this.http.get("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + siglasActivo + "&tsyms=" + siglasContrapartida + "&api_key=6df543455629ca3d59e3d3a38cc6b7db7a922fdfbf6005e9b8c0a126731374cc");
   }
+
+  public getTodosLosUsuariosExceptoActual(): Array<UsuarioInterface> {
+    return this.todosLosUsuariosExceptoActual;
+  }
+
+  public setTodosLosUsuariosExceptoActual(todosLosUsuariosExceptoActual: Array<any>): void {
+    this.todosLosUsuariosExceptoActual = todosLosUsuariosExceptoActual;
+  }
+
+  public getMensajesSinLeer(): Array<mensajeModel> {
+    return this.mensajesSinLeer;
+  }
+
+  public setMensajesSinLeer(mensajesSinLeer: Array<mensajeModel>): void {
+    this.mensajesSinLeer = mensajesSinLeer;
+  }
+
+
+
   public setPaqueteData(paquetito: any) {
     this.paqueteDeData = paquetito;
   }
@@ -152,6 +175,14 @@ export class ServiceLoginDashboardService {
 
   }
 
+  public modificarTemaUsuario(idUsuario: any, tema: string): Observable<any> {
+    let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
+      options: any = { "key": "actualizar_tema_usuario", "id": idUsuario, "tema": tema },
+      url: any = this.baseURI + "manage-dataIONIC.php";
+
+    return this.http.post(url, JSON.stringify(options), headers)
+  }
+
   public anyadirActivoAUsuario(idUsuario: any, activoId: any, tipoActivo: any, precioCompra: number, fechaOperacion: any, exchange: string, par: string, cantidad: any, observaciones: string, deExchange: number): Observable<any> {
     let headers: any = new HttpHeaders({ 'Content-Type': 'application/json' }),
       options: any = { "key": "anyadir_activo_a_usuario", "id_usuario_ajeno": idUsuario, "id_activo_ajeno": activoId, "tipo": tipoActivo, "precio_compra": precioCompra, "fecha_operacion": fechaOperacion, "exchange": exchange, "siglas_operacion": par, "cantidad": cantidad, "observaciones": observaciones, "de_exchange": deExchange },
@@ -184,6 +215,7 @@ export class ServiceLoginDashboardService {
   public getArrayActivoCompletosCerrados() {
     return this.arrayActivosCompletosCerrados;
   }
+
 
   public setDestn(destn) {
     this.userInfo = destn;

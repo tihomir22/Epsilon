@@ -26,8 +26,9 @@ export class BalancesApiComponent implements OnInit {
           activo.nombre = key;
           this.generarImgCripto(activo.nombre).subscribe((data) => {
             console.log(data)
+            
             if (data[0] != undefined) {
-              activo.imgURL = "http://dembow.gearhostpreview.com/img-activos/" + data[0].nombre + ".png"
+              activo.imgURL = data[0].rutaIMG;
             } else {
               activo.imgURL = "http://dembow.gearhostpreview.com/logoepsilonoluminado.png"
             }
