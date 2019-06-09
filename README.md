@@ -21,7 +21,7 @@
 
 ## Epsilon Documentation
 * Ultima compilacion exitosa
-* https://mega.nz/#!GzhyjAab!PAt0dwM8-3TzfsX5GyZHTh_4p1EXHOuhvE1c_xA8fdU
+* https://mega.nz/#!K6p2TIZa!z7FF8avLLN9O81VPeSaTCGjIxH42cn6JhLlRecV7v10
 * Documentacion online
 * https://docs.google.com/document/d/1A0hKtf_DiZKZzCqE4Zl_llTbedzGU9gf4FrsUz_cRAc/edit?usp=sharing
 ## Epsilon Progress
@@ -59,3 +59,4 @@
 
 * BETA 0.6.1: BITE THE PAIN V2 => Estabilizacion de la App, estilos mejorados y estetica. Nueva libreria implementada (ngMaterial). Implementada notificacion avanzada con SMA. Muchos bugs solucionados y intuición mejorada.
 
+* BETA 0.7.0 : BERSERKER => Implementadas 4 nuevas opciones para las notificaciones programables, alerta de EMA, RSI, MACD, SMA. Nuevo modo administrador implementado para usuarios de tipo admin, mejoras visuales, estabilizacion y bugs solucionados
